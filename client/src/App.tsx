@@ -8,6 +8,7 @@ import { NewMeeting } from "./pages/NewMeeting";
 import Meetings from "./pages/Meetings";
 import { Analytics } from "./pages/Analytics";
 import JoinMeeting from "./pages/JoinMeeting";
+import { MeetingRoom } from "./pages/MeetingRoom";
 
 const App: React.FC = () => {
   return (
@@ -28,6 +29,7 @@ const App: React.FC = () => {
             <Route path="meetings/:meetingId/analytics" element={<Analytics />} />
             <Route path="/meetings/new" element={<NewMeeting />} />
           </Route>
+          <Route path="rooms/:meetingId" element={<MeetingRoom />} />
           <Route path="join-meeting" element={<JoinMeeting />} />
         </Routes>
       </UIProvider>
