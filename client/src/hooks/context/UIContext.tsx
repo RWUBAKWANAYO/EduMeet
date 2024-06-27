@@ -27,12 +27,30 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     setActivePage(title);
   }, [location.pathname]);
 
+  // modal logics
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState<ReactNode | null>(null);
+
+  const openModal = (content: ReactNode) => {
+    setModalContent(content);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalContent(null);
+  };
+
   return (
     <UIContext.Provider
       value={{
         theme,
         toggleTheme,
         activePage,
+        isModalOpen,
+        openModal,
+        closeModal,
+        modalContent,
       }}
     >
       {children}

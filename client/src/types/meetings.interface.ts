@@ -20,3 +20,9 @@ export interface IMeetingData {
     participants: string;
   };
 }
+
+export interface IMeetingsResponse {
+  count: number;
+  data: IMeetingData[];
+  status: string;
+}
