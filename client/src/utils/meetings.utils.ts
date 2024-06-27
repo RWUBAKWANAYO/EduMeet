@@ -22,3 +22,7 @@ export const meetingDisplayTime = (
   }
   return `${formattedStartTime} - ${formattedEndTime} | ${timeInfo}`;
 };
+
+export const generateCode = () => {
+  return Math.floor(1000000 + Math.random() * 9000000);
+};

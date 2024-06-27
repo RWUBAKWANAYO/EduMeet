@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import { Layout } from "./components/Layout";
 import { UIProvider } from "./hooks/context/UIContext";
+import { NewMeeting } from "./pages/NewMeeting";
 
 const App: React.FC = () => {
   return (
@@ -10,7 +11,8 @@ const App: React.FC = () => {
       <UIProvider>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route path="/" element={<Home />} />
+            <Route index element={<Home />} />
+            <Route path="/meetings/new" element={<NewMeeting />} />
           </Route>
         </Routes>
       </UIProvider>
