@@ -24,7 +24,7 @@ export const MeetingDetails: React.FC = () => {
   const { selectedMeeting: meeting } = useContext(MeetingsContext);
   const meetingLink = `${process.env.REACT_APP_PROJECT_HOST}/rooms/${meeting?.session_id}`;
 
-  const { meetingControls } = useMeetingDetails(meeting?._id || "");
+  const { meetingControls, navigateToanalytics } = useMeetingDetails(meeting?._id || "");
 
   return (
     <div className="w-full">
@@ -60,6 +60,13 @@ export const MeetingDetails: React.FC = () => {
               children="Join Room"
               type="button"
               extraClass=" h-8 px-4 text-xs font-semi-bold "
+            />
+            <CommonButton
+              hasUniqueColor="bg-blue-100 border-transparent-0 text-white-100"
+              children="View Analytics"
+              type="button"
+              extraClass=" h-8 px-4 text-xs font-semi-bold "
+              onClickHandler={() => navigateToanalytics()}
             />
 
             <CommonClipboard

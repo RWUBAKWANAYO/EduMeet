@@ -56,7 +56,7 @@ export const MeetingsList: React.FC = () => {
           </div>
           <div className=" h-fit flex justify-between">
             <div className="h-10 flex space-x-2">
-              {users.slice(0, 3).map((user) => (
+              {meeting.participants.slice(0, 3).map((user) => (
                 <RenderAvatar
                   key={user._id}
                   photo={user.photo}
@@ -64,14 +64,18 @@ export const MeetingsList: React.FC = () => {
                   hasExtraClass="h-8 w-8 rounded-lg"
                 />
               ))}
-              {users.length > 3 && (
+              {meeting.participants.length > 3 && (
                 <CommonButton
                   hasUniqueColor={`
-                bg-blue-100  text-white-100 border-transparent-0
-                ${selectedMeeting._id === meeting._id ? "shadow " : " shadow-none"} `}
-                  children={`+${users.length - 3}`}
+                bg-blue-100  text-white-100
+                 `}
+                  children={`+${meeting.participants.length - 3}`}
                   type="button"
-                  extraClass="w-8 h-8 text-xs font-semi-bold "
+                  extraClass={`w-8 h-8 text-xs font-semi-bold border ${
+                    selectedMeeting._id === meeting._id
+                      ? " border-transparent-300"
+                      : " border-transparent-0 "
+                  }`}
                 />
               )}
             </div>

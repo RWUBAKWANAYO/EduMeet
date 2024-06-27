@@ -1,8 +1,10 @@
 import { useContext } from "react";
 import { MeetingsContext } from "../../../hooks/context/MeetingsContext";
 import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
 
-export const useMeetingDetails = (_meetingId: string) => {
+export const useMeetingDetails = (meetingId: string) => {
+  const navigate = useNavigate();
   const { selectedMeeting: meeting } = useContext(MeetingsContext);
 
   const meetingControls = () => [
@@ -26,7 +28,10 @@ export const useMeetingDetails = (_meetingId: string) => {
     },
   ];
 
+  const navigateToanalytics = () => navigate(`/meetings/${meetingId}/analytics`);
+
   return {
     meetingControls,
+    navigateToanalytics,
   };
 };

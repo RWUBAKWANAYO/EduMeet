@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { Link } from "react-router-dom";
 import {
   ClockIcon,
   DarkIcon,
@@ -12,7 +12,7 @@ import logo from "../../assets/images/logo.png";
 import { UIContext } from "../../hooks/context/UIContext";
 
 export const Sidebar = () => {
-  const { theme, toggleTheme } = useContext(UIContext);
+  const { theme, toggleTheme, activePage } = useContext(UIContext);
   const links = [
     {
       title: "Home",
@@ -25,7 +25,7 @@ export const Sidebar = () => {
       icon: ClockIcon,
     },
     {
-      title: "Schedules",
+      title: "Schedule",
       path: "/meetings/new",
       icon: DateIcon,
     },
@@ -55,34 +55,32 @@ export const Sidebar = () => {
       <ul className="w-full px-4">
         {links.map((link) => (
           <li key={link.title} className="mb-4">
-            <NavLink
+            <Link
               to={link.path}
               title={link.title}
-              className={({ isActive }) =>
-                `flex items-center p-1.5 rounded-md gap-x-2 ${
-                  theme === "dark"
-                    ? `${
-                        isActive
-                          ? "bg-blue-100 text-white-100"
-                          : "text-white-500 border border-transparent-0 hover:bg-gray-900  hover:border-blue-400 hover:text-white-300 "
-                      }`
-                    : `${
-                        isActive
-                          ? "bg-blue-100 text-white-100"
-                          : "text-black-400 border border-transparent-0 hover:bg-white-700 hover:border-gray-800 hover:text-blue-700"
-                      }`
-                }`
-              }
+              className={`flex items-center p-1.5 rounded-md gap-x-2 ${
+                theme === "dark"
+                  ? `${
+                      activePage === link.title
+                        ? "bg-blue-100 text-white-100"
+                        : "text-white-500 border border-transparent-0 hover:bg-gray-900  hover:border-blue-400 hover:text-white-300 "
+                    }`
+                  : `${
+                      activePage === link.title
+                        ? "bg-blue-100 text-white-100"
+                        : "text-black-400 border border-transparent-0 hover:bg-white-700 hover:border-gray-800 hover:text-blue-700"
+                    }`
+              }`}
             >
               {link.icon}
               <p className="text-xs hidden lg:flex font-semibold">{link.title}</p>
-            </NavLink>
+            </Link>
           </li>
         ))}
       </ul>
       <div className="mt-auto mb-4  w-full px-4 flex flex-col justify-center space-y-4">
         {otherLinks.map((link) => (
-          <NavLink
+          <Link
             key={link.title}
             to={link.path}
             title={link.title}
@@ -95,7 +93,7 @@ export const Sidebar = () => {
           >
             {link.icon}
             <p className="text-xs hidden lg:flex font-semibold">{link.title}</p>
-          </NavLink>
+          </Link>
         ))}
       </div>
     </div>

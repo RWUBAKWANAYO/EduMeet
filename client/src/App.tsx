@@ -6,6 +6,7 @@ import { Layout } from "./components/Layout";
 import { UIProvider } from "./hooks/context/UIContext";
 import { NewMeeting } from "./pages/NewMeeting";
 import Meetings from "./pages/Meetings";
+import { Analytics } from "./pages/Analytics";
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
               }
             />
             <Route path="/meetings/:meetingId/room" element={<NewMeeting />} />
+            <Route path="meetings/:meetingId/analytics" element={<Analytics />} />
             <Route path="/meetings/new" element={<NewMeeting />} />
           </Route>
         </Routes>
