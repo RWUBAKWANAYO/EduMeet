@@ -5,6 +5,7 @@ import { UsersIcon } from "../../assets/icons";
 import { meetings } from "../../mock_data/meetings";
 import { IMeetingData } from "../../types/meetings.interface";
 import { meetingDisplayTime } from "../../utils";
+import { CommonClipboard } from "../shared/buttons/CommonClipboard";
 
 export const MeetingsList: React.FC = () => {
   const { theme } = useContext(UIContext);
@@ -54,7 +55,7 @@ export const MeetingsList: React.FC = () => {
             {meeting.participants.length + 1}
           </div>
           <div className=" h-fit flex space-x-2">
-            <CommonButton type="button" children="ID" />
+            <CommonClipboard inputData={meeting.session_id} displayData="id" tostData="ID" />
 
             <CommonButton
               hasUniqueColor="bg-blue-100 border-transparent-0 text-white-100"

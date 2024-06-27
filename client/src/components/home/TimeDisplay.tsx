@@ -1,6 +1,6 @@
 import React from "react";
 import background from "../../assets/images/background.png";
-import { useCurrentTime } from "../../hooks/custom/useCurrentTime";
+import { useCurrentTime } from "../../hooks/custom";
 
 export const TimeDisplay: React.FC = () => {
   return (
