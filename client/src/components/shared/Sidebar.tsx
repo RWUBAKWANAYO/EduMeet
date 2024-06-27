@@ -1,9 +1,7 @@
 import React, { useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
 import {
-  ChatIcon,
   ClockIcon,
-  ContactIcon,
   DarkIcon,
   DateIcon,
   HomeIcon,
@@ -22,23 +20,13 @@ export const Sidebar = () => {
       icon: HomeIcon,
     },
     {
-      title: "Chats",
-      path: "/chats",
-      icon: ChatIcon,
-    },
-    {
       title: "Meetings",
       path: "/meetings",
       icon: ClockIcon,
     },
     {
-      title: "Contacts",
-      path: "/contacts",
-      icon: ContactIcon,
-    },
-    {
       title: "Schedules",
-      path: "/schedules",
+      path: "/meetings/new",
       icon: DateIcon,
     },
   ];
