@@ -7,6 +7,7 @@ import { UIProvider } from "./hooks/context/UIContext";
 import { NewMeeting } from "./pages/NewMeeting";
 import Meetings from "./pages/Meetings";
 import { Analytics } from "./pages/Analytics";
+import JoinMeeting from "./pages/JoinMeeting";
 
 const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const App: React.FC = () => {
             <Route path="meetings/:meetingId/analytics" element={<Analytics />} />
             <Route path="/meetings/new" element={<NewMeeting />} />
           </Route>
+          <Route path="join-meeting" element={<JoinMeeting />} />
         </Routes>
       </UIProvider>
     </BrowserRouter>
