@@ -40,7 +40,7 @@ exports.getSingleMeeting = (0, utils_1.asyncErrorHandler)((req, res, next) => __
     return res.status(200).json({ status: "success", data: meeting });
 }));
 exports.updateMeeting = (0, utils_1.asyncErrorHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const _a = req.body, { _id, meeting_id } = _a, rest = __rest(_a, ["_id", "meeting_id"]);
+    const _a = req.body, { _id, session_id, host } = _a, rest = __rest(_a, ["_id", "session_id", "host"]);
     const meeting = yield meeting_model_1.default.findByIdAndUpdate(req.params.id, rest, {
         new: true,
         runValidators: true,
