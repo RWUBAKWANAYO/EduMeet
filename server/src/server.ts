@@ -20,7 +20,7 @@ const io = new Server(server, {
   cors: { origin: "*" },
 });
 
-io.on("connection", (socket) => {
+io.on("connection", (_socket) => {
   console.log("Client connected");
 });
 const PORT = process.env.PORT || 8080;

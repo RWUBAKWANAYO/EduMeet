@@ -10,7 +10,9 @@
     "quotemark": [true, "double"],
     "no-unused-expression": {
       "severity": "warning"
-    }
+    },
+    "only-arrow-functions": false,
+    "no-shadowed-variable": false
   }
 }
 
