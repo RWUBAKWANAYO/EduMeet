@@ -22,7 +22,7 @@ export const getUser = asyncErrorHandler(
 
 export const getUsersWithInvitationStatus = asyncErrorHandler(
   async (req: Request, res: Response, _next: NextFunction) => {
-    const { type, typeId } = req.params;
+    const { meetingId } = req.params;
     const senderId = req.user?._id || "";
 
     const users = await User.aggregate([
@@ -37,14 +37,7 @@ export const getUsersWithInvitationStatus = asyncErrorHandler(
                   $and: [
                     { $eq: ["$receiver_email", "$$email"] },
                     { $eq: ["$sender_id", senderId] },
-                    { $eq: ["$invitation_type", type] },
-                    {
-                      $cond: {
-                        if: { $eq: ["$invitation_type", "meeting"] },
-                        then: { $eq: ["$meeting_id", new mongoose.Types.ObjectId(typeId)] },
-                        else: { $eq: ["$chat_id", new mongoose.Types.ObjectId(typeId)] },
-                      },
-                    },
+                    { $eq: ["$meeting_id", new mongoose.Types.ObjectId(meetingId)] },
                   ],
                 },
               },

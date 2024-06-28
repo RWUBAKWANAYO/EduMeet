@@ -29,7 +29,7 @@ exports.getUser = (0, utils_1.asyncErrorHandler)((req, res, next) => __awaiter(v
 }));
 exports.getUsersWithInvitationStatus = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const { type, typeId } = req.params;
+    const { meetingId } = req.params;
     const senderId = ((_a = req.user) === null || _a === void 0 ? void 0 : _a._id) || "";
     const users = yield user_model_1.default.aggregate([
         {
@@ -43,14 +43,7 @@ exports.getUsersWithInvitationStatus = (0, utils_1.asyncErrorHandler)((req, res,
                                 $and: [
                                     { $eq: ["$receiver_email", "$$email"] },
                                     { $eq: ["$sender_id", senderId] },
-                                    { $eq: ["$invitation_type", type] },
-                                    {
-                                        $cond: {
-                                            if: { $eq: ["$invitation_type", "meeting"] },
-                                            then: { $eq: ["$meeting_id", new mongoose_1.default.Types.ObjectId(typeId)] },
-                                            else: { $eq: ["$chat_id", new mongoose_1.default.Types.ObjectId(typeId)] },
-                                        },
-                                    },
+                                    { $eq: ["$meeting_id", new mongoose_1.default.Types.ObjectId(meetingId)] },
                                 ],
                             },
                         },

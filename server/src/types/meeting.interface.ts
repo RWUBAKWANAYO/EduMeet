@@ -14,7 +14,7 @@ export interface IMeeting extends Document {
   waiting_room: boolean;
   require_confirm: boolean;
   passcode: string;
-  participants: mongoose.Schema.Types.ObjectId[] | string[];
+  participants: mongoose.Schema.Types.ObjectId[];
   video: {
     host: string;
     participants: string;

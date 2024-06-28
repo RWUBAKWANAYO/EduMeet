@@ -15,17 +15,9 @@ export interface IMeetingEmailOptions {
   confirmationLink?: string;
 }
 
-export interface IChatEmailOptions {
-  full_name: string;
-  chat_name: string;
-  confirmationLink?: string;
-}
-
 export interface ISendInvitationEmails {
   createdInvitations: any[];
   tokens: Record<string, string | undefined>;
   meeting?: any;
-  chat?: any;
   full_name: string;
-  invitation_type: string;
 }
