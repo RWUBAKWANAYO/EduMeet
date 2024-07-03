@@ -20,3 +20,25 @@ export interface IMeeting extends Document {
     participants: string;
   };
 }
+export interface IMeetingRoom extends Document {
+  meeting_type: "instant" | "scheduled";
+  session_id: number | string;
+  attendees: mongoose.Schema.Types.ObjectId[];
+  meeting?: mongoose.Schema.Types.ObjectId;
+}
+
+export interface IMeetingChat extends Document {
+  room_id: mongoose.Schema.Types.ObjectId | string;
+  chat_type: "group" | "single";
+  members?: mongoose.Schema.Types.ObjectId[];
+  latestMessage: {
+    sender: mongoose.Schema.Types.ObjectId;
+    content: string;
+  };
+}
+
+export interface IMeetingMessage {
+  chat: mongoose.Schema.Types.ObjectId;
+  sender: mongoose.Schema.Types.ObjectId;
+  content: string;
+}
