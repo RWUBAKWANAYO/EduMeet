@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { MeetingsProvider } from "./hooks/context/MeetingsContext";
 import Home from "./pages/Home";
 import { Layout } from "./components/Layout";
@@ -9,29 +10,37 @@ import Meetings from "./pages/Meetings";
 import { Analytics } from "./pages/Analytics";
 import JoinMeeting from "./pages/JoinMeeting";
 import { MeetingRoom } from "./pages/MeetingRoom";
+import { Auth } from "./pages/Auth";
+import { UserProvider } from "./hooks/context/UserContext";
 
 const App: React.FC = () => {
+  const queryClient = new QueryClient();
   return (
     <BrowserRouter>
       <UIProvider>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route
-              path="meetings"
-              element={
-                <MeetingsProvider>
-                  <Meetings />
-                </MeetingsProvider>
-              }
-            />
-            <Route path="/meetings/:meetingId/room" element={<NewMeeting />} />
-            <Route path="meetings/:meetingId/analytics" element={<Analytics />} />
-            <Route path="/meetings/new" element={<NewMeeting />} />
-          </Route>
-          <Route path="rooms/:meetingId" element={<MeetingRoom />} />
-          <Route path="join-meeting" element={<JoinMeeting />} />
-        </Routes>
+        <QueryClientProvider client={queryClient}>
+          <UserProvider>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route
+                  path="meetings"
+                  element={
+                    <MeetingsProvider>
+                      <Meetings />
+                    </MeetingsProvider>
+                  }
+                />
+                <Route path="/meetings/:meetingId/room" element={<NewMeeting />} />
+                <Route path="meetings/:meetingId/analytics" element={<Analytics />} />
+                <Route path="/meetings/new" element={<NewMeeting />} />
+              </Route>
+              <Route path="rooms/:meetingId" element={<MeetingRoom />} />
+              <Route path="join-meeting" element={<JoinMeeting />} />
+              <Route path="/auth" element={<Auth />} />
+            </Routes>
+          </UserProvider>
+        </QueryClientProvider>
       </UIProvider>
     </BrowserRouter>
   );
