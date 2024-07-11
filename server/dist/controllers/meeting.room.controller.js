@@ -97,9 +97,9 @@ exports.createMeetingRoom = (0, utils_1.asyncErrorHandler)((req, res, next) => _
         data: meetingRoom,
     });
 }));
-const joinMeetingRoom = (sessionId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+const joinMeetingRoom = (roomId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const meetingRoom = yield meeting_room_model_1.default.findOne({ session_id: +sessionId }).populate({
+        const meetingRoom = yield meeting_room_model_1.default.findById(roomId).populate({
             path: "meeting",
             populate: [
                 {
@@ -113,7 +113,7 @@ const joinMeetingRoom = (sessionId, userId) => __awaiter(void 0, void 0, void 0,
             ],
         });
         if (!meetingRoom)
-            throw new Error(`Meeting room with id ${sessionId} not found`);
+            throw new Error(`Meeting room with id ${roomId} not found`);
         const existUser = yield user_model_1.default.findById(userId);
         if (!existUser)
             throw new Error(`User with id ${userId} not found`);

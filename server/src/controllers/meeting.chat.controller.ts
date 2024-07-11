@@ -5,7 +5,7 @@ import { ErrorFormat } from "../utils";
 import mongoose from "mongoose";
 
 interface IMeetingChatArg {
-  roomId: mongoose.Types.ObjectId;
+  roomId: mongoose.Types.ObjectId | string;
   chatType: "single" | "group";
   members?: string[];
 }
@@ -24,7 +24,7 @@ export const createMeetingChat = async ({ roomId, chatType, members }: IMeetingC
     }
 
     let chatQuery: IChatQuery = {
-      room_id: roomId,
+      room_id: new mongoose.Types.ObjectId(roomId),
       chat_type: chatType,
     };
 

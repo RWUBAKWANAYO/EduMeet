@@ -93,9 +93,9 @@ export const createMeetingRoom = asyncErrorHandler(
   }
 );
 
-export const joinMeetingRoom = async (sessionId: number, userId: string) => {
+export const joinMeetingRoom = async (roomId: string, userId: string) => {
   try {
-    const meetingRoom = await MeetingRoom.findOne({ session_id: +sessionId }).populate({
+    const meetingRoom = await MeetingRoom.findById(roomId).populate({
       path: "meeting",
       populate: [
         {
@@ -109,7 +109,7 @@ export const joinMeetingRoom = async (sessionId: number, userId: string) => {
       ],
     });
 
-    if (!meetingRoom) throw new Error(`Meeting room with id ${sessionId} not found`);
+    if (!meetingRoom) throw new Error(`Meeting room with id ${roomId} not found`);
 
     const existUser = await User.findById(userId);
     if (!existUser) throw new Error(`User with id ${userId} not found`);
@@ -137,7 +137,7 @@ export const joinMeetingRoom = async (sessionId: number, userId: string) => {
   }
 };
 
-export const removeAttendee = async (roomId: number, userId: string) => {
+export const removeAttendee = async (roomId: string, userId: string) => {
   try {
     const meetingRoom = await MeetingRoom.findById(roomId);
     if (!meetingRoom) {

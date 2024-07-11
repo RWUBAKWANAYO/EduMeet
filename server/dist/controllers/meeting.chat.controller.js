@@ -16,6 +16,7 @@ exports.updateLatestMessage = exports.createMeetingChat = void 0;
 const meeting_chat_model_1 = __importDefault(require("../models/meeting.chat.model"));
 const meeting_room_model_1 = __importDefault(require("../models/meeting.room.model"));
 const utils_1 = require("../utils");
+const mongoose_1 = __importDefault(require("mongoose"));
 const createMeetingChat = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, chatType, members }) {
     try {
         const meetingRoom = yield meeting_room_model_1.default.findById(roomId);
@@ -24,7 +25,7 @@ const createMeetingChat = (_a) => __awaiter(void 0, [_a], void 0, function* ({ r
             return;
         }
         let chatQuery = {
-            room_id: roomId,
+            room_id: new mongoose_1.default.Types.ObjectId(roomId),
             chat_type: chatType,
         };
         if (chatType === "single")
