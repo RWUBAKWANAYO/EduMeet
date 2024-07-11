@@ -1,11 +1,15 @@
 import { useContext } from "react";
-import { MeetingsContext } from "../../../hooks/context/MeetingsContext";
+import { UserContext } from "../../../hooks/context/UserContext";
+import { useCreateInvitation, usePeopleToInvite } from "../../../hooks/custom";
+import { MeetingsContext } from "../../../hooks/context/meetings/MeetingsContext";
 import { v4 as uuidv4 } from "uuid";
+import { IUser } from "../../../types/users.interface";
 import { useNavigate } from "react-router-dom";
 
 export const useMeetingDetails = (meetingId: string) => {
-  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
   const { selectedMeeting: meeting } = useContext(MeetingsContext);
+  const navigate = useNavigate();
 
   const meetingControls = () => [
     {
@@ -28,10 +32,27 @@ export const useMeetingDetails = (meetingId: string) => {
     },
   ];
 
+  const { data, error, isLoading } = usePeopleToInvite(meeting?._id);
+  const peopleToInvite = data?.data?.filter((member: IUser) => member._id !== user?._id) || [];
+
+  const { mutate: createInvitation } = useCreateInvitation();
+
+  const inviteHandler = (receivers: IUser[]) => {
+    createInvitation({
+      receivers: receivers,
+      invitation_type: "meeting",
+      meeting_id: meetingId,
+      sender_id: user?._id || "",
+    });
+  };
   const navigateToanalytics = () => navigate(`/meetings/${meetingId}/analytics`);
 
   return {
     meetingControls,
+    data: peopleToInvite,
+    error,
+    isLoading,
+    inviteHandler,
     navigateToanalytics,
   };
 };

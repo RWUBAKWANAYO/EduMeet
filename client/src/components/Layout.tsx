@@ -3,6 +3,7 @@ import { Navbar } from "./shared/Navbar";
 import { Sidebar } from "./shared/Sidebar";
 import { Outlet } from "react-router-dom";
 import { UIContext } from "../hooks/context/UIContext";
+import { Modal } from "./shared/modal/Modal";
 
 export const Layout: React.FC = () => {
   const { theme } = useContext(UIContext);
@@ -36,6 +37,7 @@ export const Layout: React.FC = () => {
           <Outlet />
         </div>
       </div>
+      <Modal />
     </div>
   );
 };

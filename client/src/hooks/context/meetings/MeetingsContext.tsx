@@ -1,6 +1,5 @@
-import { createContext, useEffect, useState } from "react";
-import { IMeetingData, IMeetingsResponse } from "../../types/meetings.interface";
-import { meetings as mockMeetings } from "../../mock_data/meetings";
+import { createContext, useState } from "react";
+import { IMeetingData, IMeetingsResponse } from "../../../types/meetings.interface";
 
 export const MeetingsContext = createContext<any>(null);
 
@@ -16,15 +15,6 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
     setMeetings(data);
     setSelectedMeeting(data.data[0]);
   };
-
-  useEffect(() => {
-    setMeetings({
-      count: mockMeetings.length,
-      data: mockMeetings,
-      status: "success",
-    });
-    setSelectedMeeting(mockMeetings[0]);
-  }, []);
 
   const selectMeetingHandler = (meeting: IMeetingData) => {
     setSelectedMeeting(meeting);

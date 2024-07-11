@@ -10,22 +10,28 @@ import {
   XMark,
 } from "../../../assets/icons";
 import { CommonCard } from "../../shared/cards/CommonCard";
-import { MeetingsContext } from "../../../hooks/context/MeetingsContext";
+import { MeetingsContext } from "../../../hooks/context/meetings/MeetingsContext";
 import { meetingDisplayTime } from "../../../utils";
 
-import { AddParticipants } from "../add_participants/AddParticipants";
+import AddParticipants from "../add_participants/AddParticipants";
 import { MessageCard } from "../../shared/cards/MessageCard";
 import { BadgeCard } from "../../shared/cards";
 import { useMeetingDetails } from "./useMeetingDetails";
-import { IUser } from "../../../types/users.interface";
+import { useDeleteMeeting, useEditMeeting, useMeetings } from "../useMeetings";
+import { EditMeeting } from "../EditMeeting";
+import { UserContext } from "../../../hooks/context/UserContext";
 
 export const MeetingDetails: React.FC = () => {
   const { theme, openModal, closeModal } = useContext(UIContext);
   const { selectedMeeting: meeting } = useContext(MeetingsContext);
   const meetingLink = `${process.env.REACT_APP_PROJECT_HOST}/rooms/${meeting?.session_id}`;
 
-  const { meetingControls, navigateToanalytics } = useMeetingDetails(meeting?._id || "");
-
+  const { meetingControls, data, error, isLoading, inviteHandler, navigateToanalytics } =
+    useMeetingDetails(meeting?._id || "");
+  const { mutate: deleteMeeting } = useDeleteMeeting();
+  const { mutate: editMeeting } = useEditMeeting();
+  const { allParticipants } = useMeetings();
+  const { user } = useContext(UserContext);
   return (
     <div className="w-full">
       {meeting ? (
@@ -55,19 +61,23 @@ export const MeetingDetails: React.FC = () => {
               theme === "dark" ? " border-transparent-400" : "border-gray-800"
             }`}
           >
-            <CommonButton
-              hasUniqueColor="bg-blue-100 border-transparent-0 text-white-100"
-              children="Join Room"
-              type="button"
-              extraClass=" h-8 px-4 text-xs font-semi-bold "
-            />
-            <CommonButton
-              hasUniqueColor="bg-blue-100 border-transparent-0 text-white-100"
-              children="View Analytics"
-              type="button"
-              extraClass=" h-8 px-4 text-xs font-semi-bold "
-              onClickHandler={() => navigateToanalytics()}
-            />
+            {meeting.status !== "ended" && (
+              <CommonButton
+                hasUniqueColor="bg-blue-100 border-transparent-0 text-white-100"
+                children="Join Room"
+                type="button"
+                extraClass=" h-8 px-4 text-xs font-semi-bold "
+              />
+            )}
+            {meeting.status == "ended" && (
+              <CommonButton
+                hasUniqueColor="bg-blue-100 border-transparent-0 text-white-100"
+                children="View Analytics"
+                type="button"
+                extraClass=" h-8 px-4 text-xs font-semi-bold "
+                onClickHandler={() => navigateToanalytics()}
+              />
+            )}
 
             <CommonClipboard
               inputData={meetingLink}
@@ -81,37 +91,49 @@ export const MeetingDetails: React.FC = () => {
               tostData="Link"
             />
 
-            <CommonButton
-              children={PencilIcon}
-              type="button"
-              hasUniqueColor={` ${
-                theme === "dark"
-                  ? "text-white-500 bg-transparent-400  border-transparent-100"
-                  : "border-gray-800 b text-black-400 bg-white-100 "
-              }`}
-              extraClass="w-8 h-8 text-xs font-semi-bold "
-              onClickHandler={() => console.log("edit")}
-            />
-            <CommonButton
-              children={TrashIcon}
-              type="button"
-              hasUniqueColor={` ${
-                theme === "dark"
-                  ? "text-white-500 bg-transparent-400  border-transparent-100"
-                  : "border-gray-800 b text-black-400 bg-white-100 "
-              }`}
-              extraClass="w-8 h-8 text-xs font-semi-bold "
-              onClickHandler={() =>
-                openModal(
-                  <MessageCard
-                    title="Delete Meeting"
-                    message="Are you sure you want to delete this meeting? This action is irreversible, and all associated details will be permanently removed. This cannot be undone."
-                    cancelButtonHandler={() => closeModal()}
-                    actionButtonHandler={() => console.log("delete")}
-                  />
-                )
-              }
-            />
+            {meeting.status === "upcoming" && meeting.host === user?._id && (
+              <>
+                <CommonButton
+                  children={PencilIcon}
+                  type="button"
+                  hasUniqueColor={` ${
+                    theme === "dark"
+                      ? "text-white-500 bg-transparent-400  border-transparent-100"
+                      : "border-gray-800 b text-black-400 bg-white-100 "
+                  }`}
+                  extraClass="w-8 h-8 text-xs font-semi-bold "
+                  onClickHandler={() =>
+                    openModal(
+                      <EditMeeting
+                        meeting={meeting}
+                        cancelHandler={() => closeModal()}
+                        editHandler={(data) => editMeeting(data)}
+                      />
+                    )
+                  }
+                />
+                <CommonButton
+                  children={TrashIcon}
+                  type="button"
+                  hasUniqueColor={` ${
+                    theme === "dark"
+                      ? "text-white-500 bg-transparent-400  border-transparent-100"
+                      : "border-gray-800 b text-black-400 bg-white-100 "
+                  }`}
+                  extraClass="w-8 h-8 text-xs font-semi-bold "
+                  onClickHandler={() =>
+                    openModal(
+                      <MessageCard
+                        title="Delete Meeting"
+                        message="Are you sure you want to delete this meeting? This action is irreversible, and all associated details will be permanently removed. This cannot be undone."
+                        cancelButtonHandler={() => closeModal()}
+                        actionButtonHandler={() => deleteMeeting(meeting._id)}
+                      />
+                    )
+                  }
+                />
+              </>
+            )}
           </div>
           <div
             className={`mt-0 border-b py-6 ${
@@ -164,6 +186,7 @@ export const MeetingDetails: React.FC = () => {
               </h3>
             </div>
           </div>
+
           <div className={`mt-0 py-6 }`}>
             <div
               className={`flex items-center gap-x-1 pb-6 text-sm font-normal ${
@@ -173,7 +196,7 @@ export const MeetingDetails: React.FC = () => {
               {ContactIcon} <p>Participants</p>
             </div>
             <div className=" w-full h-fit  flex flex-wrap   gap-2 ">
-              {meeting.participants.map((participant: IUser) => (
+              {allParticipants(meeting.participants).map((participant) => (
                 <div className="w-[100px]" key={participant._id}>
                   <CommonCard
                     card={{
@@ -184,16 +207,30 @@ export const MeetingDetails: React.FC = () => {
                   />
                 </div>
               ))}
-              <div className="w-[100px]" onClick={() => openModal(<AddParticipants />)}>
-                <CommonCard
-                  card={{
-                    title: "Invite Member",
-                    icon: PlusCircleIcon,
-                    hasImage: false,
-                    hasUniqueColor: `bg-blue-100 text-white-100`,
-                  }}
-                />
-              </div>
+              {meeting.status !== "ended" && (
+                <div
+                  className="w-[100px]"
+                  onClick={() =>
+                    openModal(
+                      <AddParticipants
+                        data={data}
+                        error={error}
+                        isLoading={isLoading}
+                        onSubmitHandler={inviteHandler}
+                      />
+                    )
+                  }
+                >
+                  <CommonCard
+                    card={{
+                      title: "Invite Member",
+                      icon: PlusCircleIcon,
+                      hasImage: false,
+                      hasUniqueColor: `bg-blue-100 text-white-100`,
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </>

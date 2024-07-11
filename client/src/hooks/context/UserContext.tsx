@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
-import { IUser, IUserContext } from "./types";
+import { IUserContext } from "./types";
+import { IUser } from "../../types/users.interface";
 
 export const UserContext = createContext<IUserContext>({
   user: null,

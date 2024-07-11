@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MeetingsProvider } from "./hooks/context/MeetingsContext";
+import { MeetingsProvider } from "./hooks/context/meetings/MeetingsContext";
 import Home from "./pages/Home";
 import { Layout } from "./components/Layout";
 import { UIProvider } from "./hooks/context/UIContext";

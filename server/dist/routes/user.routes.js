@@ -10,6 +10,6 @@ const userRouter = express_1.default.Router();
 userRouter.route("/").get(middlewares_1.protectRoute, user_controller_1.getUsers);
 userRouter.route("/:id").get(user_controller_1.getUser);
 userRouter
-    .route("/with-invitation-status/:type/:typeId")
+    .route("/with-invitation-status/:meetingId")
     .get(middlewares_1.protectRoute, user_controller_1.getUsersWithInvitationStatus);
 exports.default = userRouter;

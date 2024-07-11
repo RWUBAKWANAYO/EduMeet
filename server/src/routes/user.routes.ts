@@ -7,7 +7,7 @@ const userRouter = express.Router();
 userRouter.route("/").get(protectRoute, getUsers);
 userRouter.route("/:id").get(getUser);
 userRouter
-  .route("/with-invitation-status/:type/:typeId")
+  .route("/with-invitation-status/:meetingId")
   .get(protectRoute, getUsersWithInvitationStatus);
 
 export default userRouter;

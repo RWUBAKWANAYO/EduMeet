@@ -9,7 +9,7 @@ export interface IMeetingData {
   start_time?: Date | string;
   end_time?: Date | string;
   isInstant?: boolean;
-  host: string;
+  host?: string;
   passcode_required?: boolean;
   waiting_room?: boolean;
   require_confirm?: boolean;
