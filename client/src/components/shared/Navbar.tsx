@@ -2,13 +2,16 @@ import React, { ReactNode, useContext } from "react";
 import { UIContext } from "../../hooks/context/UIContext";
 import { textSlice } from "../../utils";
 import { CommonButton } from "./buttons";
+import { UserContext } from "../../hooks/context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { RenderAvatar } from "../../utils/RenderAvatar";
 
 export const Navbar: React.FC<{ meetingHeadLine?: ReactNode }> = ({ meetingHeadLine }) => {
+  const { removeUser, user } = useContext(UserContext);
   const { activePage, theme } = useContext(UIContext);
   const navigate = useNavigate();
   const handleLogout = () => {
+    removeUser();
     navigate("/auth");
   };
   return (
@@ -38,8 +41,8 @@ export const Navbar: React.FC<{ meetingHeadLine?: ReactNode }> = ({ meetingHeadL
         >
           <div className="flex items-center space-x-2 ">
             <RenderAvatar
-              photo={""}
-              fullName={"Olivier Rwubakwanayo"}
+              photo={user?.photo}
+              fullName={user!.full_name}
               hasExtraClass="h-6 w-6 rounded-full"
             />
             <h3
@@ -47,7 +50,7 @@ export const Navbar: React.FC<{ meetingHeadLine?: ReactNode }> = ({ meetingHeadL
                 theme === "dark" ? "text-white-800" : "text-black-600"
               }`}
             >
-              {textSlice("Olivier Rwubakwanayo", 15)}
+              {textSlice(user!.full_name, 15)}
             </h3>
           </div>
 

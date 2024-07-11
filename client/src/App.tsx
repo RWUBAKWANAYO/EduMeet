@@ -12,6 +12,7 @@ import JoinMeeting from "./pages/JoinMeeting";
 import { MeetingRoom } from "./pages/MeetingRoom";
 import { Auth } from "./pages/Auth";
 import { UserProvider } from "./hooks/context/UserContext";
+import { RequireAuth, RequireNoAuth } from "./hooks/custom/protectRoute";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();
@@ -21,23 +22,27 @@ const App: React.FC = () => {
         <QueryClientProvider client={queryClient}>
           <UserProvider>
             <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<Home />} />
-                <Route
-                  path="meetings"
-                  element={
-                    <MeetingsProvider>
-                      <Meetings />
-                    </MeetingsProvider>
-                  }
-                />
-                <Route path="/meetings/:meetingId/room" element={<NewMeeting />} />
-                <Route path="meetings/:meetingId/analytics" element={<Analytics />} />
-                <Route path="/meetings/new" element={<NewMeeting />} />
+              <Route element={<RequireAuth />}>
+                <Route path="/" element={<Layout />}>
+                  <Route index element={<Home />} />
+                  <Route
+                    path="meetings"
+                    element={
+                      <MeetingsProvider>
+                        <Meetings />
+                      </MeetingsProvider>
+                    }
+                  />
+                  <Route path="/meetings/:meetingId/room" element={<NewMeeting />} />
+                  <Route path="meetings/:meetingId/analytics" element={<Analytics />} />
+                  <Route path="/meetings/new" element={<NewMeeting />} />
+                </Route>
+                <Route path="rooms/:meetingId" element={<MeetingRoom />} />
+                <Route path="join-meeting" element={<JoinMeeting />} />
               </Route>
-              <Route path="rooms/:meetingId" element={<MeetingRoom />} />
-              <Route path="join-meeting" element={<JoinMeeting />} />
-              <Route path="/auth" element={<Auth />} />
+              <Route element={<RequireNoAuth />}>
+                <Route path="/auth" element={<Auth />} />
+              </Route>
             </Routes>
           </UserProvider>
         </QueryClientProvider>
