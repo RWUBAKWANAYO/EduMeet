@@ -32,11 +32,9 @@ const MeetingChatSchema = new mongoose.Schema<IMeetingChat>(
       sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: [true, "Sender ID is required"],
       },
       content: {
         type: String,
-        required: [true, "Message content is required"],
       },
     },
   },

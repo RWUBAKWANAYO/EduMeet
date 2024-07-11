@@ -44,7 +44,7 @@ export const updateLatestMessage = async (message: IMeetingMessage) => {
   try {
     const updatedChat = await MeetingChat.findById(message.chat);
 
-    if (!updatedChat) return;
+    if (!updatedChat) throw new Error(`Chat with id ${message.chat} not found`);
 
     updatedChat.latestMessage = {
       sender: message.sender,
@@ -52,7 +52,7 @@ export const updateLatestMessage = async (message: IMeetingMessage) => {
     };
     await updatedChat.save();
     return updatedChat;
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 };

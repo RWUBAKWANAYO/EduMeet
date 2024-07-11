@@ -7,7 +7,7 @@ import { IMeetingRoom } from "../types/meeting.interface";
 
 export const checkExistMeetingRoom = async (sessionId: number) => {
   try {
-    const meetingRoom = await MeetingRoom.findOne({ room_id: sessionId }).populate("meeting");
+    const meetingRoom = await MeetingRoom.findOne({ session_id: +sessionId }).populate("meeting");
     if (meetingRoom) return meetingRoom;
   } catch (error) {
     console.log(error);
@@ -93,36 +93,45 @@ export const createMeetingRoom = asyncErrorHandler(
   }
 );
 
-export const joinMeetingRoom = async (roomId: number, userId: string) => {
+export const joinMeetingRoom = async (sessionId: number, userId: string) => {
   try {
-    const meetingRoom = await MeetingRoom.findOne({ session_id: roomId }).populate({
+    const meetingRoom = await MeetingRoom.findOne({ session_id: +sessionId }).populate({
       path: "meeting",
       populate: [
         {
           path: "participants",
-          select: "email full_name photo",
+          select: " full_name photo",
         },
         {
-          path: "attendees",
-          select: "full_name photo",
+          path: "host",
+          select: " full_name photo",
         },
       ],
     });
-    if (!meetingRoom) throw new Error(`Meeting room with id ${roomId} not found`);
+
+    if (!meetingRoom) throw new Error(`Meeting room with id ${sessionId} not found`);
 
     const existUser = await User.findById(userId);
     if (!existUser) throw new Error(`User with id ${userId} not found`);
 
-    const isAttendeeExist = meetingRoom.attendees.find(
-      (attendee) => attendee.toString() === userId
-    );
-    if (isAttendeeExist) return meetingRoom;
+    const isAttendeeExist = meetingRoom.attendees.find((attendee) => {
+      return attendee.toString() === userId;
+    });
+
+    if (isAttendeeExist)
+      return await meetingRoom.populate({
+        path: "attendees",
+        select: " full_name photo",
+      });
 
     meetingRoom.attendees.push(existUser._id);
 
     await meetingRoom.save();
 
-    return meetingRoom;
+    return await meetingRoom.populate({
+      path: "attendees",
+      select: " full_name photo",
+    });
   } catch (error) {
     console.log(error);
   }
