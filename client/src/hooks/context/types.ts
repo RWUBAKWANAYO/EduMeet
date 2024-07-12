@@ -59,8 +59,6 @@ export interface IMeetingRoomContext {
   toggleTrack: (type: "video" | "audio") => void;
   streamTrack: IStreamTrack;
   meetingInfo: MutableRefObject<IMeetingData | null>;
-  acceptUserJoinRequest: (user: IUser) => void;
-  rejecttUserJoinRequest: (user: IUser) => void;
   inviteUsersToMeetingRoom: (users: IUser[]) => void;
 }
 

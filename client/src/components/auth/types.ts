@@ -1,4 +1,4 @@
-import { IUser } from "../../types/context.interface";
+import { IUser } from "../../types/users.interface";
 
 export interface ILoginData {
   email: string;

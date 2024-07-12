@@ -32,7 +32,7 @@ export const MeetingRoomContext = createContext<IMeetingRoomContext>({} as IMeet
 export const MeetingRoomProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useContext(UserContext);
   const meetingInfo = useRef<IMeetingData | null>(null);
-  const { setAccessRoom, setRequestedUsers, removeRequestedUser } = useContext(MeetingsContext);
+  const { setAccessRoom, setRequestToJoinData } = useContext(MeetingsContext);
   const [meetingRoomId, setMeetingRoomId] = useState<string>("");
   const [currentPeer, setCurrentPeer] = useState<Peer>();
   const [stream, setStream] = useState<MediaStream>();
@@ -224,16 +224,17 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
   );
 
   const requestTojoinRoomHandler = useCallback(
-    ({ reqUser, meeting }: { reqUser: IUser; meeting: IMeetingData }) => {
+    ({ reqUser, meeting, roomId }: { reqUser: IUser; meeting: IMeetingData; roomId: string }) => {
+      console.log(roomId, "roomId======");
       if (meeting.host === user?._id) {
-        setRequestedUsers((prev: IMeetingInvite[]) => [
+        setRequestToJoinData((prev: IMeetingInvite[]) => [
           ...prev,
           {
             title: "Join Request",
             message: `${reqUser.full_name} requested to join this meeting.`,
             user: reqUser,
             sender: "participant",
-            meetingRoomId,
+            meetingRoomId: roomId,
           },
         ]);
       }
@@ -241,18 +242,10 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
     []
   );
 
-  const acceptUserJoinRequest = (requestedUser: IMeetingInvite["user"]) => {
-    socket.emit("accept-user-join-request", { meetingId: meetingRoomId, user: requestedUser });
-    removeRequestedUser(requestedUser);
-  };
-  const rejecttUserJoinRequest = (requestedUser: IMeetingInvite["user"]) => {
-    socket.emit("reject-user-join-request", { meetingId: meetingRoomId, user: requestedUser });
-    removeRequestedUser(requestedUser);
-  };
-
   const inviteUsersToMeetingRoom = (receivers: IUser[]) => {
+    console.log(receivers, "received...");
     socket.emit("invite-users-to-meeting-room", {
-      meetingRoomId,
+      roomId: meetingRoomId,
       sender: user,
       users: receivers,
     });
@@ -332,8 +325,6 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
       toggleTrack,
       streamTrack,
       meetingInfo,
-      acceptUserJoinRequest,
-      rejecttUserJoinRequest,
       inviteUsersToMeetingRoom,
     }),
     [
@@ -348,8 +339,6 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
       toggleTrack,
       streamTrack,
       meetingInfo,
-      acceptUserJoinRequest,
-      rejecttUserJoinRequest,
       inviteUsersToMeetingRoom,
     ]
   );

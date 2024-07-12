@@ -1,5 +1,9 @@
 import { Server, Socket } from "socket.io";
-import { joinMeetingRoom, removeAttendee } from "../../controllers/meeting.room.controller";
+import {
+  checkExistMeetingRoom,
+  joinMeetingRoom,
+  removeAttendee,
+} from "../../controllers/meeting.room.controller";
 import { IUser } from "../../types/user.interface";
 import { meeitngChatsHandler } from "./meeting.chat";
 import { IMeeting } from "../../types/meeting.interface";
@@ -17,21 +21,28 @@ export interface IMeetingRoom {
 }
 export const meetingRoomHandler = (io: Server, socket: Socket) => {
   const requestJoinMeetingHandler = async ({ meeting, user }: IMeetingRoom) => {
-    const meetingId = meeting?.session_id ? meeting.session_id.toString() : "";
-    const userId = user?._id.toString();
+    if (!meeting || !user) return;
+    const room = await checkExistMeetingRoom(+meeting.session_id);
+    console.log(room, "room....");
+    if (!room) return;
+    const userId = user._id.toString();
     socket.join(userId);
-    socket
-      .to(meetingId.toString())
-      .emit("user-request-to-join-room", { reqUser: user, meeting: meeting });
+    socket.to(`${room._id}`).emit("user-request-to-join-room", {
+      reqUser: user,
+      meeting: meeting,
+      roomId: `${room._id}`,
+    });
   };
 
   const acceptJoinRequestHandler = async ({ roomId, user }: IMeetingRoom) => {
+    if (!roomId || !user) return;
     const userId = user?._id.toString();
     socket.to(userId).emit("join-request-accepted", { user, roomId });
   };
-  const rejecttJoinRequestHandler = async ({ roomId, user }: IMeetingRoom) => {
+  const rejecttJoinRequestHandler = async ({ user }: IMeetingRoom) => {
+    if (!user) return;
     const userId = user?._id.toString();
-    socket.to(userId).emit("join-request-rejected", { user, roomId });
+    socket.to(userId).emit("join-request-rejected");
   };
 
   const joinRoomHandler = async ({ roomId, user }: IMeetingRoom) => {
@@ -74,7 +85,9 @@ export const meetingRoomHandler = (io: Server, socket: Socket) => {
   const inviteUsersHandler = ({ roomId, sender, users }: IMeetingRoom) => {
     if (!roomId || !sender || !users) return;
     users.forEach((user: IUser) => {
-      socket.to(user._id.toString()).emit("invited-to-meeting-room", { roomId, sender });
+      socket
+        .to(user._id.toString())
+        .emit("invited-to-meeting-room", { meetingRoomId: roomId, sender });
     });
   };
 

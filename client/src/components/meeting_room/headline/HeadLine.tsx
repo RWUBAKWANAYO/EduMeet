@@ -38,6 +38,7 @@ export const HeadLine: React.FC = () => {
             <div className="w-36 relative h-10 flex">
               {meetingData.participants.list.map((participant, index: number) => (
                 <RenderAvatar
+                  key={participant._id}
                   photo={participant.photo || ""}
                   fullName={participant.full_name}
                   hasExtraClass={`w-10 h-10 rounded-full absolute top-0`}

@@ -2,14 +2,14 @@ import React, { useContext } from "react";
 import { UIContext } from "../../hooks/context/UIContext";
 import { CommonButton } from "../shared/buttons";
 import { UsersIcon } from "../../assets/icons";
-import { meetings } from "../../mock_data/meetings";
 import { IMeetingData } from "../../types/meetings.interface";
 import { meetingDisplayTime } from "../../utils";
 import { CommonClipboard } from "../shared/buttons";
+import { useMeetings } from "./useHome";
 
 export const MeetingsList: React.FC = () => {
   const { theme } = useContext(UIContext);
-  const meetingData = meetings.slice(0, 5);
+  const { meetingsData } = useMeetings();
 
   return (
     <div className="w-full h-fit space-y-2">
@@ -20,7 +20,7 @@ export const MeetingsList: React.FC = () => {
       >
         Meetings
       </h3>
-      {meetingData.map((meeting: IMeetingData) => (
+      {meetingsData.map((meeting: IMeetingData) => (
         <div
           key={meeting?._id}
           className={`flex justify-between items-center p-4 w-full h-fit rounded-md border
@@ -43,7 +43,12 @@ export const MeetingsList: React.FC = () => {
                 theme === "dark" ? "text-transparent-300" : "text-white-500"
               }`}
             >
-              ⏰ {meetingDisplayTime(meeting.start_time, meeting.end_time, meeting.status)}
+              ⏰{" "}
+              {meetingDisplayTime(
+                meeting.start_time as Date,
+                meeting.end_time as Date,
+                meeting.status!
+              )}
             </p>
           </div>
           <div
@@ -52,10 +57,10 @@ export const MeetingsList: React.FC = () => {
             }`}
           >
             {UsersIcon} &nbsp;
-            {meeting.participants.length + 1}
+            {meeting.participants && meeting.participants.length + 1}
           </div>
           <div className=" h-fit flex space-x-2">
-            <CommonClipboard inputData={meeting.session_id} displayData="id" tostData="ID" />
+            <CommonClipboard inputData={meeting._id as string} displayData="id" tostData="ID" />
 
             <CommonButton
               hasUniqueColor="bg-blue-100 border-transparent-0 text-white-100"

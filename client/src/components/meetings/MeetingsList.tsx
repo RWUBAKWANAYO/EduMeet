@@ -10,7 +10,7 @@ import { useMeetings } from "./useMeetings";
 export const MeetingsList: React.FC = () => {
   const { theme, activePage } = useContext(UIContext);
   const { meetings, selectedMeeting, selectMeetingHandler } = useContext(MeetingsContext);
-  const meetingData = activePage === "Home" ? meetings.data.slice(0, 5) : meetings.data;
+  const meetingData = meetings.data;
   const { allParticipants } = useMeetings();
 
   return (
@@ -18,7 +18,7 @@ export const MeetingsList: React.FC = () => {
       {meetingData.map((meeting: IMeetingData) => (
         <div
           key={meeting._id}
-          onClick={() => (activePage === "Home" ? null : selectMeetingHandler(meeting))}
+          onClick={() => selectMeetingHandler(meeting)}
           className={`cursor-pointer p-4 border w-full h-fit rounded-lg space-y-6
     ${
       theme === "dark"

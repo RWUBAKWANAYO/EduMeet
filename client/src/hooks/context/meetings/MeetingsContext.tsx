@@ -21,7 +21,7 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
   });
   const [selectedMeeting, setSelectedMeeting] = useState<IMeetingsResponse["data"][0] | null>(null);
   const [accessRoom, setAccessRoom] = useState<ICreateMeetingRoomResponse | null>(null);
-  const [requestedUsers, setRequestedUsers] = useState<IMeetingInvite[]>([]);
+  const [requestToJoinData, setRequestToJoinData] = useState<IMeetingInvite[]>([]);
   const navigate = useNavigate();
 
   const updateMeetings = (data: IMeetingsResponse) => {
@@ -37,8 +37,9 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
     socket.emit("request-join-meeting-room", { meeting, user });
   };
 
-  const acceptJoinRequestHandler = ({ meetingId }: { meetingId: number }) => {
-    navigate(`/meeting-rooms/${meetingId}`);
+  const acceptJoinRequestHandler = ({ roomId }: { roomId: string }) => {
+    if (!roomId) return;
+    navigate(`/meeting-rooms/${roomId}`);
   };
 
   const rejectJoinRequestHandler = () => {
@@ -55,7 +56,8 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
     user: IUser;
     sender: IUser;
   }) => {
-    setRequestedUsers((prev) => {
+    console.log(user, sender, meetingRoomId, "invited..");
+    setRequestToJoinData((prev) => {
       return [
         ...prev,
         {
@@ -70,7 +72,7 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   const removeRequestedUser = (requestedUser: IMeetingInvite["user"]) => {
-    setRequestedUsers((prev: IMeetingInvite[]) =>
+    setRequestToJoinData((prev: IMeetingInvite[]) =>
       prev.filter((req) => req.user._id !== requestedUser._id)
     );
   };
@@ -84,6 +86,16 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
   const userRejectHostInvitation = (invitation: IMeetingInvite) => {
     removeRequestedUser(invitation.user);
     setAccessRoom(null);
+  };
+
+  const hostAcceptUserJoinRequest = (requestedUser: IMeetingInvite["user"], roomId: string) => {
+    console.log("gotcha..");
+    socket.emit("accept-user-join-request", { roomId, user: requestedUser });
+    removeRequestedUser(requestedUser);
+  };
+  const hostRejecttUserJoinRequest = (requestedUser: IMeetingInvite["user"]) => {
+    socket.emit("reject-user-join-request", { user: requestedUser });
+    removeRequestedUser(requestedUser);
   };
 
   useEffect(() => {
@@ -114,11 +126,13 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
         accessRoom,
         setAccessRoom,
         requestJoinMeeting,
-        requestedUsers,
-        setRequestedUsers,
+        requestToJoinData,
+        setRequestToJoinData,
         removeRequestedUser,
         userAcceptHostInvitation,
         userRejectHostInvitation,
+        hostAcceptUserJoinRequest,
+        hostRejecttUserJoinRequest,
       }}
     >
       {children}

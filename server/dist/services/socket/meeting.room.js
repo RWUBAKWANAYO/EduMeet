@@ -15,20 +15,31 @@ const meeting_chat_1 = require("./meeting.chat");
 const meeting_chat_controller_1 = require("../../controllers/meeting.chat.controller");
 const meetingRoomHandler = (io, socket) => {
     const requestJoinMeetingHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ meeting, user }) {
-        const meetingId = (meeting === null || meeting === void 0 ? void 0 : meeting.session_id) ? meeting.session_id.toString() : "";
-        const userId = user === null || user === void 0 ? void 0 : user._id.toString();
+        if (!meeting || !user)
+            return;
+        const room = yield (0, meeting_room_controller_1.checkExistMeetingRoom)(+meeting.session_id);
+        console.log(room, "room....");
+        if (!room)
+            return;
+        const userId = user._id.toString();
         socket.join(userId);
-        socket
-            .to(meetingId.toString())
-            .emit("user-request-to-join-room", { reqUser: user, meeting: meeting });
+        socket.to(`${room._id}`).emit("user-request-to-join-room", {
+            reqUser: user,
+            meeting: meeting,
+            roomId: `${room._id}`,
+        });
     });
     const acceptJoinRequestHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, user }) {
+        if (!roomId || !user)
+            return;
         const userId = user === null || user === void 0 ? void 0 : user._id.toString();
         socket.to(userId).emit("join-request-accepted", { user, roomId });
     });
-    const rejecttJoinRequestHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, user }) {
+    const rejecttJoinRequestHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ user }) {
+        if (!user)
+            return;
         const userId = user === null || user === void 0 ? void 0 : user._id.toString();
-        socket.to(userId).emit("join-request-rejected", { user, roomId });
+        socket.to(userId).emit("join-request-rejected");
     });
     const joinRoomHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, user }) {
         if (!roomId || !user)
@@ -72,7 +83,9 @@ const meetingRoomHandler = (io, socket) => {
         if (!roomId || !sender || !users)
             return;
         users.forEach((user) => {
-            socket.to(user._id.toString()).emit("invited-to-meeting-room", { roomId, sender });
+            socket
+                .to(user._id.toString())
+                .emit("invited-to-meeting-room", { meetingRoomId: roomId, sender });
         });
     };
     socket.on("request-join-meeting-room", requestJoinMeetingHandler);

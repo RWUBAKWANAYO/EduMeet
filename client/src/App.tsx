@@ -14,6 +14,7 @@ import { Auth } from "./pages/Auth";
 import { UserProvider } from "./hooks/context/UserContext";
 import { RequireAuth, RequireNoAuth } from "./hooks/custom/protectRoute";
 import { MeetingRoomProvider } from "./hooks/context/meetings/MeetingRoomContext";
+import { GlobalComponents } from "./components/GlobalComponents";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App: React.FC = () => {
                   <Route path="/auth" element={<Auth />} />
                 </Route>
               </Routes>
+              <GlobalComponents />
             </MeetingsProvider>
           </UserProvider>
         </QueryClientProvider>

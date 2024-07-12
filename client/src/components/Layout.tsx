@@ -37,7 +37,6 @@ export const Layout: React.FC = () => {
           <Outlet />
         </div>
       </div>
-      <Modal />
     </div>
   );
 };
