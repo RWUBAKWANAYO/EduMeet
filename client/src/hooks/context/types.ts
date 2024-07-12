@@ -11,6 +11,7 @@ export interface ITheme {
   openModal: (content: React.ReactNode) => void;
   closeModal: () => void;
   modalContent: React.ReactNode | null;
+  isDesktop: () => boolean;
 }
 
 export interface IUserContext {
@@ -40,6 +41,12 @@ export interface PeerInterface {
   path: string;
 }
 
+export interface IPeer {
+  stream?: MediaStream;
+  user: IUser;
+  streamTrack: IStreamTrack;
+}
+
 export interface IMeetingRoomContext {
   meetingRoomId: string;
   setMeetingRoomId: React.Dispatch<React.SetStateAction<string>>;
@@ -55,4 +62,11 @@ export interface IMeetingRoomContext {
   acceptUserJoinRequest: (user: IUser) => void;
   rejecttUserJoinRequest: (user: IUser) => void;
   inviteUsersToMeetingRoom: (users: IUser[]) => void;
+}
+
+export interface IScreenRecorder {
+  startTime?: moment.Moment | null;
+  elapsedTime?: string;
+  startRecording?: () => void;
+  stopRecording?: () => void;
 }

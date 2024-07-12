@@ -41,6 +41,11 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     setModalContent(null);
   };
 
+  // window size helpers
+  const isDesktop = () => {
+    return window.innerWidth > 992;
+  };
+
   return (
     <UIContext.Provider
       value={{
@@ -51,6 +56,7 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         openModal,
         closeModal,
         modalContent,
+        isDesktop,
       }}
     >
       {children}

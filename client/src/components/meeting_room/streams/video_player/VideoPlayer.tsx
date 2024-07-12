@@ -25,7 +25,11 @@ export const VideoPlayer: React.FC<{
           hasExtraClass={`${avatarSize} rounded-full`}
         />
       </div>
-      <video autoPlay className={`w-full h-auto absolute ${streamTrack?.video ? "z-10" : "z-0"}`} />
+      <video
+        autoPlay
+        ref={videoRef}
+        className={`w-full h-auto absolute ${streamTrack?.video ? "z-10" : "z-0"}`}
+      />
     </div>
   );
 };
