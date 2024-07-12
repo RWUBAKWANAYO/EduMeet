@@ -26,3 +26,19 @@ export interface IMeetingsResponse {
   data: IMeetingData[];
   status: string;
 }
+
+export interface IMeetingRoom  {
+  meeting_type: "instant" | "scheduled";
+  session_id: number | string;
+  attendees: IUser[];
+  meeting?: IMeetingData;
+}
+
+export interface ICreateMeetingRoomResponse {
+  data?: IMeetingRoom;
+  status?: string;
+  waiting_room?: boolean;
+  require_confirm?: boolean;
+  meeting?: IMeetingData;
+  join_request_rejected?: boolean;
+}

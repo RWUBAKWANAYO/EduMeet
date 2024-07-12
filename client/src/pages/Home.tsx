@@ -13,6 +13,7 @@ import { UIContext } from "../hooks/context/UIContext";
 import { NayoCalendar } from "../components/shared/NayoCalendar";
 import { StatisticsCard } from "../components/shared/cards/StatisticsCard";
 import { LinkButtons } from "../components/home/LinkButtons";
+import { withJoinMeetingConditions } from "../components/JoinMeetingConditions";
 
 const Home: React.FC = () => {
   const { theme } = useContext(UIContext);
@@ -81,4 +82,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default withJoinMeetingConditions(Home);

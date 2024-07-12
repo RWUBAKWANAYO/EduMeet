@@ -21,29 +21,24 @@ const App: React.FC = () => {
       <UIProvider>
         <QueryClientProvider client={queryClient}>
           <UserProvider>
-            <Routes>
-              <Route element={<RequireAuth />}>
-                <Route path="/" element={<Layout />}>
-                  <Route index element={<Home />} />
-                  <Route
-                    path="meetings"
-                    element={
-                      <MeetingsProvider>
-                        <Meetings />
-                      </MeetingsProvider>
-                    }
-                  />
-                  <Route path="/meetings/:meetingId/room" element={<NewMeeting />} />
-                  <Route path="meetings/:meetingId/analytics" element={<Analytics />} />
-                  <Route path="/meetings/new" element={<NewMeeting />} />
+            <MeetingsProvider>
+              <Routes>
+                <Route element={<RequireAuth />}>
+                  <Route path="/" element={<Layout />}>
+                    <Route index element={<Home />} />
+                    <Route path="meetings" element={<Meetings />} />
+                    <Route path="/meetings/:meetingId/room" element={<NewMeeting />} />
+                    <Route path="meetings/:meetingId/analytics" element={<Analytics />} />
+                    <Route path="/meetings/new" element={<NewMeeting />} />
+                  </Route>
+                  <Route path="rooms/:meetingId" element={<MeetingRoom />} />
+                  <Route path="join-meeting" element={<JoinMeeting />} />
                 </Route>
-                <Route path="rooms/:meetingId" element={<MeetingRoom />} />
-                <Route path="join-meeting" element={<JoinMeeting />} />
-              </Route>
-              <Route element={<RequireNoAuth />}>
-                <Route path="/auth" element={<Auth />} />
-              </Route>
-            </Routes>
+                <Route element={<RequireNoAuth />}>
+                  <Route path="/auth" element={<Auth />} />
+                </Route>
+              </Routes>
+            </MeetingsProvider>
           </UserProvider>
         </QueryClientProvider>
       </UIProvider>

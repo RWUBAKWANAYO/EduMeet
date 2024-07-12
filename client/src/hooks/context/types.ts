@@ -16,3 +16,11 @@ export interface IUserContext {
   saveUser: (data: { user: IUser; token?: string }) => void;
   removeUser: () => void;
 }
+
+export interface IMeetingInvite {
+  title?: string;
+  message?: string;
+  user: IUser;
+  sender: "host" | "participant";
+  meetingRoomId: string;
+}

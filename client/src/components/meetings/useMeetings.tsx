@@ -5,7 +5,8 @@ import { UserContext } from "../../hooks/context/UserContext";
 import { MeetingsContext } from "../../hooks/context/meetings/MeetingsContext";
 import { UIContext } from "../../hooks/context/UIContext";
 import { IUser } from "../../types/users.interface";
-import { IMeetingData } from "../../types/meetings.interface";
+import { ICreateMeetingRoomResponse, IMeetingData } from "../../types/meetings.interface";
+import { useCreateMeetingRoom } from "../meeting_room/useMeetingRoom";
 
 export interface IMeetingsResponse {
   count: number;
@@ -91,6 +92,7 @@ export const useEditMeeting = () => {
 
 export const useMeetings = () => {
   const { user } = useContext(UserContext);
+  const { setAccessRoom } = useContext(MeetingsContext);
   const allParticipants = (participansts: IUser[]) => [
     {
       _id: user?._id,
@@ -100,5 +102,32 @@ export const useMeetings = () => {
     ...participansts,
   ];
 
-  return { allParticipants };
+  const useCreateCallback = (res: ICreateMeetingRoomResponse) => setAccessRoom(res);
+  const { mutate: createMeetingRoom } = useCreateMeetingRoom(useCreateCallback);
+
+  const clickHandler = ({
+    meetingType,
+    meeting,
+  }: {
+    meetingType: "instant" | "scheduled";
+    meeting?: IMeetingsResponse["data"][0];
+  }) => {
+    const data = {
+      meetingType,
+      userId: user?._id ? user._id : "",
+    };
+    if (meetingType === "instant") {
+      if (!user?.pmi) return;
+      return createMeetingRoom({ ...data, sessionId: user?.pmi });
+    } else {
+      if (!meeting || !meeting.session_id) return;
+      createMeetingRoom({
+        ...data,
+        sessionId: +meeting.session_id,
+        passcode: meeting?.passcode,
+      });
+    }
+  };
+
+  return { allParticipants, clickHandler };
 };

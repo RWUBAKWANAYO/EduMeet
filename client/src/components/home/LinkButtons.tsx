@@ -3,10 +3,12 @@ import { CommonButton } from "../shared/buttons";
 import { useNavigate } from "react-router-dom";
 import { CameraIcon, DateIcon, PlusCircleIcon } from "../../assets/icons";
 import { UIContext } from "../../hooks/context/UIContext";
+import { useMeetings } from "../meetings/useMeetings";
 
 export const LinkButtons = () => {
   const { theme } = useContext(UIContext);
   const navigate = useNavigate();
+  const { clickHandler } = useMeetings();
 
   const cardsData = [
     {
@@ -14,7 +16,7 @@ export const LinkButtons = () => {
       description: "Setup new meeting",
       bgcolor: "bg-orange-400",
       icon: CameraIcon,
-      onClick: () => () => {},
+      onClick: () => clickHandler({ meetingType: "instant" }),
     },
     {
       title: "Join Meeting",
