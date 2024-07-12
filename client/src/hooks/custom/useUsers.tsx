@@ -32,3 +32,21 @@ export const usePeopleToInvite = (meetingId: string) => {
     }
   );
 };
+
+const fetchUsers = async (token: string) => {
+  const response = await AxiosInstance({
+    url: `/users`,
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  return response.data;
+};
+
+export const useFetchUsers = () => {
+  const { token } = useContext(UserContext);
+
+  return useQuery<IPeopleToInviteResponse, Error>(["users"], () => fetchUsers(token!), {
+    refetchOnWindowFocus: false,
+  });
+};

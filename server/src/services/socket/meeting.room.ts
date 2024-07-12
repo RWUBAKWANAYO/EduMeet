@@ -35,6 +35,7 @@ export const meetingRoomHandler = (io: Server, socket: Socket) => {
   };
 
   const joinRoomHandler = async ({ roomId, user }: IMeetingRoom) => {
+    if (!roomId || !user) return;
     const room = await joinMeetingRoom(roomId, user._id.toString());
     if (!room) return;
     const groupChats = await createMeetingChat({
@@ -50,23 +51,28 @@ export const meetingRoomHandler = (io: Server, socket: Socket) => {
   };
 
   const leaveRoomHandler = async ({ roomId, peerId }: IMeetingRoom) => {
+    if (!roomId || !peerId) return;
     await removeAttendee(roomId, peerId);
     socket.to(roomId.toString()).emit("user-left-meeting-room", peerId);
   };
 
   const startSharingHandler = ({ roomId, peerId }: IMeetingRoom) => {
+    if (!roomId || !peerId) return;
     socket.to(roomId.toString()).emit("user-start-sharing", peerId);
   };
 
   const stopSharingHandler = ({ roomId, peerId }: IMeetingRoom) => {
+    if (!roomId || !peerId) return;
     socket.to(roomId.toString()).emit("user-stop-sharing", peerId);
   };
 
   const streamTrackHandler = ({ roomId, peerId, streamTrack }: IMeetingRoom) => {
+    if (!roomId || !peerId || !streamTrack) return;
     socket.to(roomId.toString()).emit("user-change-stream-track", { peerId, streamTrack });
   };
 
   const inviteUsersHandler = ({ roomId, sender, users }: IMeetingRoom) => {
+    if (!roomId || !sender || !users) return;
     users.forEach((user: IUser) => {
       socket.to(user._id.toString()).emit("invited-to-meeting-room", { roomId, sender });
     });

@@ -12,7 +12,8 @@ import { UIContext } from "../../../hooks/context/UIContext";
 import { textSlice } from "../../../utils";
 import { useParticipants } from "./useParticipants";
 import { RenderAvatar } from "../../../utils/RenderAvatar";
-import { IUser } from "../../../types/users.interface";
+import AddParticipants from "../../meetings/add_participants/AddParticipants";
+import { IPeer } from "../../../hooks/context/types";
 
 interface ParticipantsPropsI {
   chatSizeHandler: () => void;
@@ -22,8 +23,9 @@ export const Participants: React.FC<ParticipantsPropsI> = ({
   chatSizeHandler,
   enlargeParticipantsSize,
 }) => {
-  const { theme } = useContext(UIContext);
-  const { expanded, expandHandler, attendees } = useParticipants(chatSizeHandler);
+  const { theme, openModal } = useContext(UIContext);
+  const { expanded, expandHandler, attendees, data, error, isLoading, inviteToMeetingHandler } =
+    useParticipants(chatSizeHandler);
   return (
     <div className="w-full flex flex-col">
       <div
@@ -51,6 +53,16 @@ export const Participants: React.FC<ParticipantsPropsI> = ({
                 : " bg-white-600 border-blue-50"
             }`}
             extraClass=" h-8 px-4 text-xs rounded-2xl "
+            onClickHandler={() =>
+              openModal(
+                <AddParticipants
+                  data={data}
+                  error={error}
+                  isLoading={isLoading}
+                  onSubmitHandler={inviteToMeetingHandler}
+                />
+              )
+            }
           />
         </div>{" "}
         <button
@@ -68,9 +80,9 @@ export const Participants: React.FC<ParticipantsPropsI> = ({
           style={{ height: enlargeParticipantsSize ? "calc(100vh - 250px)" : "calc(50vh - 125px)" }}
         >
           <div className={`w-full h-full px-4 space-y-2  overflow-auto  `}>
-            {attendees.map((attendee: IUser) => (
+            {attendees().map((attendee: IPeer) => (
               <div
-                key={attendee._id}
+                key={attendee.user._id}
                 className={` py-2 pl-2 pr-4 rounded-full flex items-center justify-between ${
                   theme === "dark"
                     ? "bg-blue-800 text-white-800"
@@ -78,20 +90,27 @@ export const Participants: React.FC<ParticipantsPropsI> = ({
                 }`}
               >
                 <div className="flex items-center space-x-2 ">
-                  <RenderAvatar photo={attendee.photo} fullName={attendee.full_name} />
+                  <RenderAvatar photo={attendee.user.photo} fullName={attendee.user.full_name} />
                   <h3
                     className={` lg:flex text-xs ${
                       theme === "dark" ? "text-white-800" : "text-black-600"
                     }`}
                   >
-                    {textSlice(`${attendee.full_name}`, 15)}
+                    {textSlice(`${attendee.user.full_name}`, 15)}
                   </h3>
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <button className="text-blue-100">{MicOnIcon}</button>
-
-                  <button className="text-red-500">{CameraOffIcon}</button>
+                  {attendee.streamTrack.audio ? (
+                    <button className="text-blue-100">{MicOnIcon}</button>
+                  ) : (
+                    <button className="text-red-500">{MicOffIcon}</button>
+                  )}
+                  {attendee.streamTrack.video ? (
+                    <button className="text-blue-100">{CameraOnIcon}</button>
+                  ) : (
+                    <button className="text-red-500">{CameraOffIcon}</button>
+                  )}
                 </div>
               </div>
             ))}

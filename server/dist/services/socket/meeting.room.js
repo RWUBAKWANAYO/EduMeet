@@ -31,6 +31,8 @@ const meetingRoomHandler = (io, socket) => {
         socket.to(userId).emit("join-request-rejected", { user, roomId });
     });
     const joinRoomHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, user }) {
+        if (!roomId || !user)
+            return;
         const room = yield (0, meeting_room_controller_1.joinMeetingRoom)(roomId, user._id.toString());
         if (!room)
             return;
@@ -46,19 +48,29 @@ const meetingRoomHandler = (io, socket) => {
         socket.emit("get-meeting-group-chats", groupChats);
     });
     const leaveRoomHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, peerId }) {
+        if (!roomId || !peerId)
+            return;
         yield (0, meeting_room_controller_1.removeAttendee)(roomId, peerId);
         socket.to(roomId.toString()).emit("user-left-meeting-room", peerId);
     });
     const startSharingHandler = ({ roomId, peerId }) => {
+        if (!roomId || !peerId)
+            return;
         socket.to(roomId.toString()).emit("user-start-sharing", peerId);
     };
     const stopSharingHandler = ({ roomId, peerId }) => {
+        if (!roomId || !peerId)
+            return;
         socket.to(roomId.toString()).emit("user-stop-sharing", peerId);
     };
     const streamTrackHandler = ({ roomId, peerId, streamTrack }) => {
+        if (!roomId || !peerId || !streamTrack)
+            return;
         socket.to(roomId.toString()).emit("user-change-stream-track", { peerId, streamTrack });
     };
     const inviteUsersHandler = ({ roomId, sender, users }) => {
+        if (!roomId || !sender || !users)
+            return;
         users.forEach((user) => {
             socket.to(user._id.toString()).emit("invited-to-meeting-room", { roomId, sender });
         });

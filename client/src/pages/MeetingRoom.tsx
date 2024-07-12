@@ -11,11 +11,13 @@ import {
   HeadLine,
 } from "../components/meeting_room";
 import { useMeetingRoom } from "../components/meeting_room/useMeetingRoom";
+import { useScreenRecorder } from "../hooks/custom";
 
 export const MeetingRoom = () => {
   const { theme } = useContext(UIContext);
   const { chatSizeHandler, participantsSizeHandler, enlargeChatSize, enlargeParticipantsSize } =
     useMeetingRoom();
+  const { startTime, elapsedTime, startRecording, stopRecording } = useScreenRecorder();
 
   return (
     <div
@@ -35,10 +37,15 @@ export const MeetingRoom = () => {
             className="w-full flex flex-col px-6 pt-4 pb-1 space-y-4 stream-container"
             style={{ height: "calc(100vh - 130px)" }}
           >
-            <SelfStream />
+            <SelfStream startTime={startTime} elapsedTime={elapsedTime} />
             <PeersStream />
           </div>
-          <Preferences />
+          <Preferences
+            startTime={startTime}
+            elapsedTime={elapsedTime}
+            startRecording={startRecording}
+            stopRecording={stopRecording}
+          />
         </div>
         <div
           className={` w-[300px] h-full border-l flex flex-col justify-start ${

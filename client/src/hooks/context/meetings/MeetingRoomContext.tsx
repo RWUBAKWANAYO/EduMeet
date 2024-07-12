@@ -123,7 +123,7 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
     if (screenStream) {
       screenStream.getTracks().forEach((track) => track.stop());
     }
-    socket.emit("leave-meeting-room", { meetingRoomId, peerId: user?._id });
+    socket.emit("leave-meeting-room", { roomId: meetingRoomId, peerId: user?._id });
     currentPeer?.disconnect();
     navigate("/");
   }, [stream, screenStream, currentPeer, meetingRoomId, user, navigate]);
