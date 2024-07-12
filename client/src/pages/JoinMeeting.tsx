@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { JoinMeetingForm } from "../components/join_meeting/JoinMeetingForm";
 import { ThemeButton } from "../components/shared/buttons";
 import { UIContext } from "../hooks/context/UIContext";
+import { withJoinMeetingConditions } from "../components/JoinMeetingConditions";
 
 const JoinMeeting: React.FC = () => {
   const { theme } = useContext(UIContext);
@@ -20,4 +21,4 @@ const JoinMeeting: React.FC = () => {
   );
 };
 
-export default JoinMeeting;
+export default withJoinMeetingConditions(JoinMeeting);

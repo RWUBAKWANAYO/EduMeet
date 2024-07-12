@@ -2,8 +2,8 @@ import { IUser } from "./users.interface";
 
 export interface IMeetingData {
   _id?: string;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   session_id?: number | string;
   status?: string;
   start_time?: Date | string;
@@ -27,7 +27,7 @@ export interface IMeetingsResponse {
   status: string;
 }
 
-export interface IMeetingRoom  {
+export interface IMeetingRoom {
   meeting_type: "instant" | "scheduled";
   session_id: number | string;
   attendees: IUser[];

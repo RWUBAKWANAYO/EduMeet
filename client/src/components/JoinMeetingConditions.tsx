@@ -15,7 +15,7 @@ export const withJoinMeetingConditions = (Component: React.FC) => {
 
     useEffect(() => {
       if (accessRoom && accessRoom.status === "success" && accessRoom.data?._id) {
-        navigate(`/rooms/${accessRoom.data._id}`);
+        navigate(`/meeting-rooms/${accessRoom.data._id}`);
       }
     }, [accessRoom, navigate, setAccessRoom]);
 
@@ -38,7 +38,7 @@ export const withJoinMeetingConditions = (Component: React.FC) => {
       );
     }
 
-    if (accessRoom && accessRoom.waiting_room === false) {
+    if (accessRoom && accessRoom.meeting && accessRoom.waiting_room === false) {
       return (
         <div
           className={`w-full min-h-screen flex flex-col justify-center items-center relative ${
@@ -46,7 +46,9 @@ export const withJoinMeetingConditions = (Component: React.FC) => {
           }`}
         >
           <MessageCard
-            title={`${meetingDurationUntilStart(accessRoom.start_time)} until the meeting starts`}
+            title={`${meetingDurationUntilStart(
+              accessRoom.meeting.start_time
+            )} until the meeting starts`}
             message="This meeting has no waiting room. Please wait for the scheduled start time."
             iconColor="text-indigo-700"
             iconBg="bg-indigo-200"

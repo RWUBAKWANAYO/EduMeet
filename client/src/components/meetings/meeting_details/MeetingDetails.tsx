@@ -24,10 +24,16 @@ import { UserContext } from "../../../hooks/context/UserContext";
 export const MeetingDetails: React.FC = () => {
   const { theme, openModal, closeModal } = useContext(UIContext);
   const { selectedMeeting: meeting } = useContext(MeetingsContext);
-  const meetingLink = `${process.env.REACT_APP_PROJECT_HOST}/rooms/${meeting?.session_id}`;
 
-  const { meetingControls, data, error, isLoading, inviteHandler, navigateToanalytics } =
-    useMeetingDetails(meeting?._id || "");
+  const {
+    meetingControls,
+    data,
+    error,
+    isLoading,
+    inviteHandler,
+    navigateToanalytics,
+    joinMeetingHandler,
+  } = useMeetingDetails();
   const { mutate: deleteMeeting } = useDeleteMeeting();
   const { mutate: editMeeting } = useEditMeeting();
   const { allParticipants } = useMeetings();
@@ -67,6 +73,7 @@ export const MeetingDetails: React.FC = () => {
                 children="Join Room"
                 type="button"
                 extraClass=" h-8 px-4 text-xs font-semi-bold "
+                onClickHandler={() => joinMeetingHandler()}
               />
             )}
             {meeting.status == "ended" && (
@@ -80,7 +87,7 @@ export const MeetingDetails: React.FC = () => {
             )}
 
             <CommonClipboard
-              inputData={meetingLink}
+              inputData={`${process.env.REACT_APP_PROJECT_HOST}/join-meeting/${meeting.session_id}`}
               displayData="Link"
               extraClass={`w-[90px]`}
               hasUniqueColor={`${

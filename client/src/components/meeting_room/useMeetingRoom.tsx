@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import AxiosInstance from "../../lib/axiosInstance";
 import { ICreateMeetingRoomResponse } from "../../types/meetings.interface";
+import { useParams } from "react-router-dom";
+import { UserContext } from "../../hooks/context/UserContext";
+import { MeetingRoomContext } from "../../hooks/context/meetings/MeetingRoomContext";
+import { socket } from "../../lib/socket";
 
 type IMeetingRoomData = {
   sessionId: number;
@@ -41,6 +45,18 @@ export const useMeetingRoom = () => {
   const chatSizeHandler = () => setEnlargeChatSize(!enlargeChatSize);
   const participantsSizeHandler = () => setEnlargeParticipantsSize(!enlargeParticipantsSize);
 
+  const { roomId } = useParams();
+  const { user } = useContext(UserContext);
+  const { setMeetingRoomId } = useContext(MeetingRoomContext);
+
+  useEffect(() => {
+    if (!roomId || !user) return;
+    socket.emit("join-meeting-room", { roomId, user });
+  }, [roomId, user]);
+
+  useEffect(() => {
+    setMeetingRoomId(roomId || "");
+  }, [roomId, setMeetingRoomId]);
   return {
     chatSizeHandler,
     participantsSizeHandler,

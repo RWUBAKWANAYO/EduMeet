@@ -7,6 +7,7 @@ import connectMongoDB from "./config/mongodb";
 import { globalErrorHandler } from "./middlewares";
 import { ErrorFormat } from "./utils";
 import { NextFunction, Request, Response } from "express";
+import { meetingRoomHandler } from "./services/socket/meeting.room";
 
 const server = http.createServer(app);
 
@@ -20,8 +21,9 @@ const io = new Server(server, {
   cors: { origin: "*" },
 });
 
-io.on("connection", (_socket) => {
+io.on("connection", (socket) => {
   console.log("Client connected");
+  meetingRoomHandler(io, socket);
 });
 const PORT = process.env.PORT || 8080;
 

@@ -5,11 +5,13 @@ import { MeetingsContext } from "../../../hooks/context/meetings/MeetingsContext
 import { v4 as uuidv4 } from "uuid";
 import { IUser } from "../../../types/users.interface";
 import { useNavigate } from "react-router-dom";
+import { useMeetings } from "../useMeetings";
 
-export const useMeetingDetails = (meetingId: string) => {
+export const useMeetingDetails = () => {
   const { user } = useContext(UserContext);
   const { selectedMeeting: meeting } = useContext(MeetingsContext);
   const navigate = useNavigate();
+  const { clickHandler } = useMeetings();
 
   const meetingControls = () => [
     {
@@ -41,11 +43,16 @@ export const useMeetingDetails = (meetingId: string) => {
     createInvitation({
       receivers: receivers,
       invitation_type: "meeting",
-      meeting_id: meetingId,
+      meeting_id: meeting._id,
       sender_id: user?._id || "",
     });
   };
-  const navigateToanalytics = () => navigate(`/meetings/${meetingId}/analytics`);
+  const navigateToanalytics = () => navigate(`/meetings/${meeting._id}/analytics`);
+  const joinMeetingHandler = () =>
+    clickHandler({
+      meetingType: "scheduled",
+      meeting,
+    });
 
   return {
     meetingControls,
@@ -54,5 +61,6 @@ export const useMeetingDetails = (meetingId: string) => {
     isLoading,
     inviteHandler,
     navigateToanalytics,
+    joinMeetingHandler,
   };
 };

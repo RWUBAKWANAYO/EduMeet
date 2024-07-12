@@ -38,7 +38,7 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   const acceptJoinRequestHandler = ({ meetingId }: { meetingId: number }) => {
-    navigate(`/rooms/${meetingId}`);
+    navigate(`/meeting-rooms/${meetingId}`);
   };
 
   const rejectJoinRequestHandler = () => {
@@ -77,7 +77,7 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
 
   const userAcceptHostInvitation = (invitation: IMeetingInvite) => {
     removeRequestedUser(invitation.user);
-    navigate(`/rooms/${invitation.meetingRoomId}`);
+    navigate(`/meeting-rooms/${invitation.meetingRoomId}`);
     setAccessRoom(null);
   };
 

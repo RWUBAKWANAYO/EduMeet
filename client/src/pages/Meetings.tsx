@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { UIContext } from "../hooks/context/UIContext";
 import { MeetingDetails, MeetingsFilters, MeetingsList } from "../components/meetings";
+import { withJoinMeetingConditions } from "../components/JoinMeetingConditions";
 
 const Meetings: React.FC = () => {
   const { theme } = useContext(UIContext);
@@ -23,4 +24,4 @@ const Meetings: React.FC = () => {
   );
 };
 
-export default Meetings;
+export default withJoinMeetingConditions(Meetings);

@@ -1,4 +1,7 @@
+import { MutableRefObject } from "react";
+import { IMeetingData } from "../../types/meetings.interface";
 import { IUser } from "../../types/users.interface";
+import { PeerStateType } from "../reducers/meeting/peer";
 
 export interface ITheme {
   theme: string;
@@ -23,4 +26,33 @@ export interface IMeetingInvite {
   user: IUser;
   sender: "host" | "participant";
   meetingRoomId: string;
+}
+
+export interface IStreamTrack {
+  audio: boolean;
+  video: boolean;
+}
+
+export interface PeerInterface {
+  host: string;
+  port: number | undefined;
+  secure: boolean;
+  path: string;
+}
+
+export interface IMeetingRoomContext {
+  meetingRoomId: string;
+  setMeetingRoomId: React.Dispatch<React.SetStateAction<string>>;
+  stream: MediaStream | undefined;
+  peers: PeerStateType;
+  leaveRoomHandler: () => void;
+  screenStream: MediaStream | undefined;
+  screenSharingId: string;
+  shareScreenHandler: () => void;
+  toggleTrack: (type: "video" | "audio") => void;
+  streamTrack: IStreamTrack;
+  meetingInfo: MutableRefObject<IMeetingData | null>;
+  acceptUserJoinRequest: (user: IUser) => void;
+  rejecttUserJoinRequest: (user: IUser) => void;
+  inviteUsersToMeetingRoom: (users: IUser[]) => void;
 }

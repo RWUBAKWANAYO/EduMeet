@@ -1,6 +1,7 @@
 import moment from "moment";
 
 export const meetingDurationUntilStart = (time: Date) => {
+  console.log(time, "---", moment(time));
   return moment.duration(moment(time).diff(moment())).humanize();
 };
 export const meetingDisplayTime = (

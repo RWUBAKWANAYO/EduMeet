@@ -11,6 +11,7 @@ const peer_1 = require("peer");
 const mongodb_1 = __importDefault(require("./config/mongodb"));
 const middlewares_1 = require("./middlewares");
 const utils_1 = require("./utils");
+const meeting_room_1 = require("./services/socket/meeting.room");
 const server = http_1.default.createServer(app_1.default);
 (0, mongodb_1.default)(process.env.MONGODB_URL || "");
 const peerServer = (0, peer_1.ExpressPeerServer)(server, { path: "/" });
@@ -18,8 +19,9 @@ app_1.default.use("/peerjs", peerServer);
 const io = new socket_io_1.Server(server, {
     cors: { origin: "*" },
 });
-io.on("connection", (_socket) => {
+io.on("connection", (socket) => {
     console.log("Client connected");
+    (0, meeting_room_1.meetingRoomHandler)(io, socket);
 });
 const PORT = process.env.PORT || 8080;
 app_1.default.use("*", (_req, _res, next) => {

@@ -13,6 +13,7 @@ import { MeetingRoom } from "./pages/MeetingRoom";
 import { Auth } from "./pages/Auth";
 import { UserProvider } from "./hooks/context/UserContext";
 import { RequireAuth, RequireNoAuth } from "./hooks/custom/protectRoute";
+import { MeetingRoomProvider } from "./hooks/context/meetings/MeetingRoomContext";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();
@@ -31,8 +32,15 @@ const App: React.FC = () => {
                     <Route path="meetings/:meetingId/analytics" element={<Analytics />} />
                     <Route path="/meetings/new" element={<NewMeeting />} />
                   </Route>
-                  <Route path="rooms/:meetingId" element={<MeetingRoom />} />
-                  <Route path="join-meeting" element={<JoinMeeting />} />
+                  <Route
+                    path="meeting-rooms/:roomId"
+                    element={
+                      <MeetingRoomProvider>
+                        <MeetingRoom />
+                      </MeetingRoomProvider>
+                    }
+                  />
+                  <Route path="join-meeting/:sessionId?" element={<JoinMeeting />} />
                 </Route>
                 <Route element={<RequireNoAuth />}>
                   <Route path="/auth" element={<Auth />} />
