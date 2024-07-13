@@ -63,7 +63,6 @@ export const MeetingCallCards = () => {
                 </div>
               </div>
               <div className="w-full grid grid-cols-2 gap-x-4 px-6">
-                <>{console.log(item.meetingRoomId, "item---")}</>
                 <CommonButton
                   type="button"
                   children="Accept"

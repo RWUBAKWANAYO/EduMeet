@@ -1,4 +1,5 @@
-import { IMeetingRoomParticipant, IStreamTrack } from "../../../../types/context.interface";
+import { IUser } from "../../../../types/users.interface";
+import { IStreamTrack } from "../../../context/types";
 
 export const ADD_ALL_PEERS = "ADD_ALL_PEERS" as const;
 export const ADD_SINGLE_PEER = "ADD_SINGLE_PEER" as const;
@@ -10,7 +11,7 @@ export type PeerStateType = Record<
   string,
   {
     stream?: MediaStream;
-    user: IMeetingRoomParticipant;
+    user: IUser;
     streamTrack: IStreamTrack;
   }
 >;
@@ -22,7 +23,7 @@ export type PeerActionType =
     }
   | {
       type: typeof ADD_SINGLE_PEER;
-      payload: { peer: IMeetingRoomParticipant };
+      payload: { peer: IUser };
     }
   | {
       type: typeof ADD_PEER_STREAM;

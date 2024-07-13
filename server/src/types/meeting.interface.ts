@@ -41,4 +41,5 @@ export interface IMeetingMessage {
   chat: mongoose.Schema.Types.ObjectId;
   sender: mongoose.Schema.Types.ObjectId;
   content: string;
+  timestamp: Date;
 }

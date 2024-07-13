@@ -12,13 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.meetingRoomHandler = void 0;
 const meeting_room_controller_1 = require("../../controllers/meeting.room.controller");
 const meeting_chat_1 = require("./meeting.chat");
-const meeting_chat_controller_1 = require("../../controllers/meeting.chat.controller");
 const meetingRoomHandler = (io, socket) => {
     const requestJoinMeetingHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ meeting, user }) {
         if (!meeting || !user)
             return;
         const room = yield (0, meeting_room_controller_1.checkExistMeetingRoom)(+meeting.session_id);
-        console.log(room, "room....");
         if (!room)
             return;
         const userId = user._id.toString();
@@ -47,16 +45,9 @@ const meetingRoomHandler = (io, socket) => {
         const room = yield (0, meeting_room_controller_1.joinMeetingRoom)(roomId, user._id.toString());
         if (!room)
             return;
-        const groupChats = yield (0, meeting_chat_controller_1.createMeetingChat)({
-            roomId,
-            chatType: "group",
-        });
-        if (!groupChats)
-            return;
         socket.join(roomId);
         socket.to(roomId).emit("user-joined-meeting-room", user);
         socket.emit("get-meeting-room", room);
-        socket.emit("get-meeting-group-chats", groupChats);
     });
     const leaveRoomHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, peerId }) {
         if (!roomId || !peerId)

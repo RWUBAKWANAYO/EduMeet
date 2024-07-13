@@ -15,6 +15,7 @@ import { UserProvider } from "./hooks/context/UserContext";
 import { RequireAuth, RequireNoAuth } from "./hooks/custom/protectRoute";
 import { MeetingRoomProvider } from "./hooks/context/meetings/MeetingRoomContext";
 import { GlobalComponents } from "./components/GlobalComponents";
+import { MeetingChatProvider } from "./hooks/context/meetings/MeetingChatContext";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();
@@ -37,7 +38,9 @@ const App: React.FC = () => {
                     path="meeting-rooms/:roomId"
                     element={
                       <MeetingRoomProvider>
-                        <MeetingRoom />
+                        <MeetingChatProvider>
+                          <MeetingRoom />
+                        </MeetingChatProvider>
                       </MeetingRoomProvider>
                     }
                   />

@@ -3,15 +3,19 @@ import { CommonButton } from "../../shared/buttons";
 import { UIContext } from "../../../hooks/context/UIContext";
 import { ChevronRightIcon } from "../../../assets/icons";
 import { useMeetingChats } from "./useMeetingChats";
+import { MeetingChatContext } from "../../../hooks/context/meetings/MeetingChatContext";
 import { ChatBubble } from "./ChatBubble";
-import { chats } from "../../../mock_data/chats";
+import { PeersToChatWith } from "./PeersToChatWith";
+import { MessageDisplay } from "../../shared/MessageDisplay";
 
 export const MeetingChats: React.FC<{
   enlargeChatSize: boolean;
   participantsSizeHandler: () => void;
 }> = ({ enlargeChatSize, participantsSizeHandler }) => {
   const { theme } = useContext(UIContext);
-  const { expanded, expandHandler } = useMeetingChats(participantsSizeHandler);
+  const { meetingChat, fetchMeetingChat } = useContext(MeetingChatContext);
+  const { expanded, expandHandler, peersList, getChatMember } =
+    useMeetingChats(participantsSizeHandler);
 
   return (
     <div className="w-full">
@@ -33,14 +37,24 @@ export const MeetingChats: React.FC<{
           <CommonButton
             children="Group"
             type="button"
-            hasUniqueColor={` text-white-100`}
-            extraClass={`border-none h-6 px-4 text-xs rounded-2xl bg-blue-100`}
+            hasUniqueColor={`${
+              meetingChat.chatType === "group" ? "text-white-100 " : "text-blue-100"
+            }`}
+            extraClass={`border-none h-6 px-4 text-xs ${
+              meetingChat.chatType === "group" ? "rounded-2xl bg-blue-100" : ""
+            }`}
+            onClickHandler={() => fetchMeetingChat({ chatType: "group" })}
           />
           <CommonButton
             children="Personal"
             type="button"
-            hasUniqueColor={`text-blue-100`}
-            extraClass={`border-none h-6 px-4 text-xs`}
+            hasUniqueColor={`${
+              meetingChat.chatType === "single" ? "text-white-100 " : "text-blue-100"
+            }`}
+            extraClass={`border-none h-6 px-4 text-xs ${
+              meetingChat.chatType === "single" ? "rounded-2xl bg-blue-100" : ""
+            }`}
+            onClickHandler={() => fetchMeetingChat({ chatType: "single", chatTab: "peers" })}
           />
         </div>
         <button
@@ -58,9 +72,42 @@ export const MeetingChats: React.FC<{
           className={`w-full  py-4 ${theme === "dark" ? "bg-blue-600" : "bg-white-700"}`}
           style={{ height: enlargeChatSize ? "calc(100vh - 250px)" : "calc(50vh - 125px)" }}
         >
-          <div className={`w-full h-full px-4 space-y-2  overflow-auto  `}>
-            <ChatBubble chats={chats} />
-          </div>
+          {meetingChat.loading ? (
+            <MessageDisplay message="Loading...." />
+          ) : (
+            <div className={`w-full h-full px-4 space-y-2  overflow-auto  `}>
+              {meetingChat.chatType === "group" && (
+                <>
+                  {meetingChat.messages.length === 0 ? (
+                    <MessageDisplay message="No group chats yet!" />
+                  ) : (
+                    <ChatBubble messages={meetingChat.messages} />
+                  )}
+                </>
+              )}
+              {meetingChat.chatType === "single" && meetingChat.chatTab === "peers" ? (
+                peersList.length === 0 ? (
+                  <MessageDisplay message="No Peers to chat with" />
+                ) : (
+                  <PeersToChatWith peersList={peersList} />
+                )
+              ) : meetingChat.messages.length === 0 ? (
+                <MessageDisplay
+                  message={
+                    <span>
+                      Start conversation between you and{" "}
+                      <b>
+                        {meetingChat.members.length > 0 &&
+                          getChatMember(meetingChat.members).full_name}
+                      </b>
+                    </span>
+                  }
+                />
+              ) : (
+                <ChatBubble messages={meetingChat.messages} />
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

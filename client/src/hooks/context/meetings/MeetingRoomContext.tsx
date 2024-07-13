@@ -81,7 +81,6 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 
   const handleMeetingRoom = useCallback(
     (room: IMeetingRoom) => {
-      console.log(room, "---room");
       meetingInfo.current = room.meeting!;
       dispatch(addAllPeersAction(room.attendees));
     },
@@ -225,7 +224,6 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 
   const requestTojoinRoomHandler = useCallback(
     ({ reqUser, meeting, roomId }: { reqUser: IUser; meeting: IMeetingData; roomId: string }) => {
-      console.log(roomId, "roomId======");
       if (meeting.host === user?._id) {
         setRequestToJoinData((prev: IMeetingInvite[]) => [
           ...prev,
@@ -243,7 +241,6 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
   );
 
   const inviteUsersToMeetingRoom = (receivers: IUser[]) => {
-    console.log(receivers, "received...");
     socket.emit("invite-users-to-meeting-room", {
       roomId: meetingRoomId,
       sender: user,

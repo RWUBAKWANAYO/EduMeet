@@ -1,40 +1,73 @@
 import { IMeetingMessage } from "../types/meeting.interface";
 import MeetingChat from "../models/meeting.chat.model";
 import MeetingRoom from "../models/meeting.room.model";
-import { ErrorFormat } from "../utils";
+import { asyncErrorHandler, ErrorFormat } from "../utils";
 import mongoose from "mongoose";
+import { Request, Response, NextFunction } from "express";
 
 interface IMeetingChatArg {
   roomId: mongoose.Types.ObjectId | string;
-  chatType: "single" | "group";
+  chatType?: "single" | "group";
   members?: string[];
 }
-interface IChatQuery {
-  room_id: mongoose.Types.ObjectId;
-  chat_type: "group" | "single";
-  members?: any;
-}
 
-export const createMeetingChat = async ({ roomId, chatType, members }: IMeetingChatArg) => {
+const newSingleChat = async ({ roomId, members }: IMeetingChatArg) => {
+  if (!members || members.length !== 2) {
+    throw new ErrorFormat(`A single chat must have exactly 2 members`, 400);
+  }
+
+  const memberIds = members.map((member) => new mongoose.Types.ObjectId(member));
+  const chatQuery = {
+    room_id: new mongoose.Types.ObjectId(roomId),
+    chat_type: "single",
+    members: { $all: memberIds },
+  };
+
   try {
-    const meetingRoom = await MeetingRoom.findById(roomId);
-    if (!meetingRoom) {
-      new ErrorFormat(`Meeting room with id ${roomId} not found`, 404);
-      return;
-    }
+    const existingChat = await MeetingChat.findOne(chatQuery).populate({
+      path: "members",
+      select: " full_name photo",
+    });
+    if (existingChat) return existingChat;
 
-    let chatQuery: IChatQuery = {
-      room_id: new mongoose.Types.ObjectId(roomId),
-      chat_type: chatType,
-    };
+    const newChat = await MeetingChat.create(chatQuery);
+    return await newChat.populate({
+      path: "members",
+      select: " full_name photo",
+    });
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
 
-    if (chatType === "single") chatQuery["members"] = { $all: members };
+const newGroupChat = async (roomId: string) => {
+  const chatQuery = {
+    room_id: new mongoose.Types.ObjectId(roomId),
+    chat_type: "group",
+  };
 
-    const existingChat = await MeetingChat.findOne(chatQuery);
+  try {
+    const existingChat = await MeetingChat.findOne(chatQuery).populate({
+      path: "members",
+      select: " full_name photo",
+    });
     if (existingChat) return existingChat;
 
     const newChat = await MeetingChat.create(chatQuery);
     return newChat;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+export const createMeetingChat = async ({ roomId, chatType, members }: IMeetingChatArg) => {
+  try {
+    const meetingRoom = await MeetingRoom.findById(roomId);
+    if (!meetingRoom) throw new ErrorFormat(`Meeting room with id ${roomId} not found`, 404);
+
+    if (chatType === "single") return newSingleChat({ roomId, members });
+
+    return newGroupChat(roomId as string);
   } catch (error: any) {
     throw new Error(error.message);
   }
@@ -56,3 +89,11 @@ export const updateLatestMessage = async (message: IMeetingMessage) => {
     throw new Error(error.message);
   }
 };
+
+export const testChat = asyncErrorHandler(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const { roomId, chatType, members } = req.body;
+    const chats = await createMeetingChat({ roomId, chatType, members });
+    return res.status(200).json({ data: chats });
+  }
+);

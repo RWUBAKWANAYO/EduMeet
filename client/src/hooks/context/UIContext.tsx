@@ -20,7 +20,7 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const location = useLocation();
   useEffect(() => {
     const path = location.pathname;
-    console.log(path.includes("meetings/new"));
+
     if (path.includes("meetings/new")) return setActivePage("Schedule");
     let title = path.split("/")[1];
     title = title ? capitalizeText(title) : capitalizeText("Home");

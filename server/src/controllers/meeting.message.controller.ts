@@ -10,7 +10,19 @@ export const sendMeetingMessage = async (message: IMeetingMessage) => {
 
     const newMessage = await MeetingMessage.create(message);
     return newMessage;
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+export const getAllMeetingMessages = async (chatId: string) => {
+  try {
+    const messages = await MeetingMessage.find({ chat: chatId }).populate({
+      path: "sender",
+      select: " full_name email photo",
+    });
+    return messages;
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 };

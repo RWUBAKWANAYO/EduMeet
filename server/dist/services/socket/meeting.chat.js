@@ -13,24 +13,25 @@ exports.meeitngChatsHandler = void 0;
 const meeting_chat_controller_1 = require("../../controllers/meeting.chat.controller");
 const meeting_message_controller_1 = require("../../controllers/meeting.message.controller");
 const meeitngChatsHandler = (_io, socket) => {
-    const messageHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, message, chatType }) {
+    const messageHandler = (message) => __awaiter(void 0, void 0, void 0, function* () {
         const newMessage = yield (0, meeting_message_controller_1.sendMeetingMessage)(message);
         if (!newMessage)
             return;
-        if (chatType === "group") {
-            return socket.to(roomId.toString()).emit("meeting-group-message-received", message);
-        }
-        return socket.to(roomId.toString()).emit("meeting-single-chat-message-received", message);
+        return socket.to(`${message.chat}`).emit("meeting-message-received", message);
     });
-    const joinSingleRoomHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, participants }) {
-        const chat = yield (0, meeting_chat_controller_1.createMeetingChat)({ roomId, chatType: "single", members: participants });
+    const joinMeetingChatHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, chatType, participants }) {
+        const chat = yield (0, meeting_chat_controller_1.createMeetingChat)({ roomId, chatType, members: participants });
         if (!chat || !chat._id)
             return;
         const chatId = chat._id.toString();
+        const messages = yield (0, meeting_message_controller_1.getAllMeetingMessages)(chatId);
         socket.join(chatId);
-        socket.emit("meeting-single-room-joined", chat);
+        socket.emit("meeting-chat-joined", {
+            chat,
+            messages,
+        });
     });
     socket.on("send-meeting-message", messageHandler);
-    socket.on("join-meeting-chat-single-room", joinSingleRoomHandler);
+    socket.on("join-meeting-chat", joinMeetingChatHandler);
 };
 exports.meeitngChatsHandler = meeitngChatsHandler;

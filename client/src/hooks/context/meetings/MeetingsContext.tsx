@@ -56,7 +56,6 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
     user: IUser;
     sender: IUser;
   }) => {
-    console.log(user, sender, meetingRoomId, "invited..");
     setRequestToJoinData((prev) => {
       return [
         ...prev,
@@ -89,7 +88,6 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   const hostAcceptUserJoinRequest = (requestedUser: IMeetingInvite["user"], roomId: string) => {
-    console.log("gotcha..");
     socket.emit("accept-user-join-request", { roomId, user: requestedUser });
     removeRequestedUser(requestedUser);
   };

@@ -68,3 +68,18 @@ export interface IScreenRecorder {
   startRecording?: () => void;
   stopRecording?: () => void;
 }
+
+export interface IMeetingRoomMessage {
+  _id?: string;
+  user: IUser;
+  content: string;
+  timestamp: Date;
+}
+
+export interface IFetchChatData {
+  chatType: "single" | "group";
+  roomId?: string;
+  participants?: string[];
+  chatTab?: "peers" | "chat";
+  memberId?: string;
+}

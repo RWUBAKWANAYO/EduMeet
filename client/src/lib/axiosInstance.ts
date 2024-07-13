@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IAxiosConfig } from "../types/lib.interfaces";
+import { IAxiosConfig } from "./types";
 
 const AxiosInstance = (config: IAxiosConfig) =>
   axios({

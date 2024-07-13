@@ -1,10 +1,10 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { UIContext } from "../../../hooks/context/UIContext";
 import { SendIcon, TypeIcon } from "../../../assets/icons";
 import { CommonButton } from "../../shared/buttons";
 import { useMessageComposer } from "./useMessageComposer";
 
-export const MessageComposer = () => {
+export const MessageComposer: React.FC = () => {
   const { theme } = useContext(UIContext);
   const { messageRef, handleSubmit } = useMessageComposer();
   return (

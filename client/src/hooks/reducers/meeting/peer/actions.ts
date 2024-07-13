@@ -1,4 +1,5 @@
-import { IMeetingRoomParticipant, IStreamTrack } from "../../../../types/context.interface";
+import { IUser } from "../../../../types/users.interface";
+import { IStreamTrack } from "../../../context/types";
 import {
   ADD_ALL_PEERS,
   ADD_PEER_STREAM,
@@ -8,9 +9,9 @@ import {
   REMOVE_PEER,
 } from "./types";
 
-export const addAllPeersAction = (participants: IMeetingRoomParticipant[]) => {
+export const addAllPeersAction = (participants: IUser[]) => {
   let hash: PeerStateType = {};
-  participants.forEach((participant: IMeetingRoomParticipant) => {
+  participants.forEach((participant: IUser) => {
     hash[participant._id] = {
       user: participant,
       streamTrack: {
@@ -25,7 +26,7 @@ export const addAllPeersAction = (participants: IMeetingRoomParticipant[]) => {
   };
 };
 
-export const addSinglePeerAction = (peer: IMeetingRoomParticipant) => ({
+export const addSinglePeerAction = (peer: IUser) => ({
   type: ADD_SINGLE_PEER,
   payload: { peer },
 });

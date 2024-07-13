@@ -7,7 +7,6 @@ import {
 import { IUser } from "../../types/user.interface";
 import { meeitngChatsHandler } from "./meeting.chat";
 import { IMeeting } from "../../types/meeting.interface";
-import { createMeetingChat } from "../../controllers/meeting.chat.controller";
 
 export interface IMeetingRoom {
   peerId: string;
@@ -23,7 +22,6 @@ export const meetingRoomHandler = (io: Server, socket: Socket) => {
   const requestJoinMeetingHandler = async ({ meeting, user }: IMeetingRoom) => {
     if (!meeting || !user) return;
     const room = await checkExistMeetingRoom(+meeting.session_id);
-    console.log(room, "room....");
     if (!room) return;
     const userId = user._id.toString();
     socket.join(userId);
@@ -49,16 +47,10 @@ export const meetingRoomHandler = (io: Server, socket: Socket) => {
     if (!roomId || !user) return;
     const room = await joinMeetingRoom(roomId, user._id.toString());
     if (!room) return;
-    const groupChats = await createMeetingChat({
-      roomId,
-      chatType: "group",
-    });
-    if (!groupChats) return;
 
     socket.join(roomId);
     socket.to(roomId).emit("user-joined-meeting-room", user);
     socket.emit("get-meeting-room", room);
-    socket.emit("get-meeting-group-chats", groupChats);
   };
 
   const leaveRoomHandler = async ({ roomId, peerId }: IMeetingRoom) => {

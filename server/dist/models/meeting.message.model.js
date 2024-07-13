@@ -19,8 +19,10 @@ const MeetingMessageSchema = new mongoose_1.default.Schema({
         type: String,
         required: [true, "Message content is required"],
     },
-}, {
-    timestamps: true,
+    timestamp: {
+        type: Date,
+        required: [true, "Message timestamp is required"],
+    },
 });
 const MeetingMessage = mongoose_1.default.model("MeetingMessage", MeetingMessageSchema);
 exports.default = MeetingMessage;
