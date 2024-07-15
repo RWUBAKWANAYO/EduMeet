@@ -1,9 +1,7 @@
 "use strict";
-var __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
 const http_1 = __importDefault(require("http"));
@@ -20,19 +18,19 @@ const server = http_1.default.createServer(app_1.default);
 const peerServer = (0, peer_1.ExpressPeerServer)(server, { path: "/" });
 app_1.default.use("/peerjs", peerServer);
 const io = new socket_io_1.Server(server, {
-  cors: { origin: "*" },
+    cors: { origin: "*" },
 });
 io.on("connection", (socket) => {
-  (0, meeting_room_1.meetingRoomHandler)(io, socket);
-  (0, user_1.userSocketHandler)(io, socket);
+    console.log("Client connected");
+    (0, meeting_room_1.meetingRoomHandler)(io, socket);
+    (0, user_1.userSocketHandler)(io, socket);
 });
 const PORT = process.env.PORT || 8080;
 app_1.default.use("*", (_req, _res, next) => {
-  const err = new utils_1.ErrorFormat(`Can't find ${_req.originalUrl} on this server!`, 404);
-  next(err);
+    const err = new utils_1.ErrorFormat(`Can't find ${_req.originalUrl} on this server!`, 404);
+    next(err);
 });
 app_1.default.use(middlewares_1.globalErrorHandler);
 server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
-
