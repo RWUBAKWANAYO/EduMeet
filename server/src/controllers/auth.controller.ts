@@ -10,7 +10,8 @@ interface CustomRequest extends Request {
 
 export const signup = asyncErrorHandler(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const { file, photo, ...rest } = req.body;
+    const {...rest } = req.body;
+    console.log(req.file, 'file...')
     const user = await User.create(rest);
     if (req.file?.path) {
       const url = await uploadFile(req.file.path, "profile", next);

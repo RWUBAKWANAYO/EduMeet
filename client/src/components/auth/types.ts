@@ -1,11 +1,12 @@
 import { IUser } from "../../types/users.interface";
 
-export interface ILoginData {
+export interface IAuthData {
+  full_name?:string;
   email: string;
   password: string;
 }
 
-export interface ILoginResponse {
+export interface IAuthResponse {
   token: string;
   user: IUser;
 }

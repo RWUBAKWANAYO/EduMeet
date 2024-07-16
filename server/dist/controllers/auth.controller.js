@@ -29,7 +29,8 @@ const utils_1 = require("../utils");
 const cloudinary_1 = require("../services/cloudinary");
 exports.signup = (0, utils_1.asyncErrorHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const _b = req.body, { file, photo } = _b, rest = __rest(_b, ["file", "photo"]);
+    const rest = __rest(req.body, []);
+    console.log(req.file, 'file...');
     const user = yield user_model_1.default.create(rest);
     if ((_a = req.file) === null || _a === void 0 ? void 0 : _a.path) {
         const url = yield (0, cloudinary_1.uploadFile)(req.file.path, "profile", next);
