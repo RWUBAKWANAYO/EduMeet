@@ -3,7 +3,7 @@ import { useSignup } from './useSignup';
 import { UIContext } from '../../../hooks/context/UIContext';
 import { CommonButton } from '../../shared/buttons';
 import { ContactIcon } from '../../../assets/icons';
-import { errorFormat } from '../../../utils';
+import { errorFormat, textSlice } from '../../../utils';
 import { SubmittingSpinner } from '../../shared/spinners/Spinners';
 
 export const Signup: React.FC<{ pageHandler: (status: boolean) => void }> = ({ pageHandler }) => {
@@ -120,7 +120,7 @@ export const Signup: React.FC<{ pageHandler: (status: boolean) => void }> = ({ p
 								theme === 'dark' ? (!photo ? 'text-white-500' : 'text-white-800') : ''
 							}`}
 						>
-							{photo ? photo.name : 'Upload your profile picture'}
+							{photo ? textSlice(photo.name, 33) : 'Upload your profile picture'}
 						</small>
 					</div>
 				</div>

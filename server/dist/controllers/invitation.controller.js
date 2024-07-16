@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.filterInvitations = exports.confirmInvitation = exports.sendInvitation = void 0;
+exports.filterInvitations = exports.confirmInvitationWithEmail = exports.confirmInvitation = exports.sendInvitation = void 0;
 const utils_1 = require("../utils");
 const invitation_model_1 = __importDefault(require("../models/invitation.model"));
 const meeting_model_1 = __importDefault(require("../models/meeting.model"));
+const meeting_controller_1 = require("./meeting.controller");
 exports.sendInvitation = (0, utils_1.asyncErrorHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { receivers, meeting_id, sender_id, message, status } = req.body;
@@ -41,38 +42,62 @@ exports.sendInvitation = (0, utils_1.asyncErrorHandler)((req, res, next) => __aw
     return res.status(201).json({ status: "success", data: createdInvitations });
 }));
 exports.confirmInvitation = (0, utils_1.asyncErrorHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const invitation = yield invitation_model_1.default.findById(id);
+    if (!invitation) {
+        return next(new utils_1.ErrorFormat("Invalid invitation id", 400));
+    }
+    console.log(invitation);
+    const updatedMeeting = yield (0, meeting_controller_1.updateMeetingStatus)(invitation.meeting_id, invitation.receiver_id, next);
+    if (!updatedMeeting) {
+        return next(new utils_1.ErrorFormat("Fail to update meeting status", 400));
+    }
+    invitation.status = "accepted";
+    yield invitation.save();
+    return res.status(200).json({ status: "success", data: invitation });
+}));
+exports.confirmInvitationWithEmail = (0, utils_1.asyncErrorHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { token } = req.params;
     const hashedToken = (0, utils_1.hashToken)(token);
     const invitation = yield invitation_model_1.default.findOne({ confirmationToken: hashedToken });
     if (!invitation) {
         return next(new utils_1.ErrorFormat("Invalid confirmation token", 400));
     }
-    const meeting = yield meeting_model_1.default.findById(invitation.meeting_id);
-    if (!meeting) {
-        return next(new utils_1.ErrorFormat("Meeting not found", 404));
-    }
-    if (!invitation.receiver_id)
-        return next(new utils_1.ErrorFormat("Receiver not found", 404));
-    const receiverId = invitation.receiver_id;
-    if (!meeting.participants.includes(receiverId)) {
-        meeting.participants.push(receiverId);
-        yield meeting.save();
-    }
+    yield (0, meeting_controller_1.updateMeetingStatus)(invitation.meeting_id, invitation.receiver_id, next);
     invitation.status = "accepted";
     yield invitation.save();
     return res.status(200).json({ status: "success", data: invitation });
 }));
-exports.filterInvitations = (0, utils_1.asyncErrorHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.filterInvitations = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
-    const { status, meeting_id } = req.query;
+    const { status, meeting_id, role } = req.query;
     const userId = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString();
-    const filter = {
-        $or: [{ sender_id: userId }, { receiver_id: userId }],
-    };
+    let filter = {};
     if (status)
         filter.status = status;
     if (meeting_id)
         filter.meeting_id = meeting_id;
-    const invitations = yield invitation_model_1.default.find(filter);
-    return res.status(200).json({ status: "success", count: invitations.length, data: invitations });
+    if (role) {
+        role === "sender" ? (filter.sender_id = userId) : (filter.receiver_id = userId);
+    }
+    else {
+        filter = Object.assign(Object.assign({}, filter), { $or: [{ sender_id: userId }, { receiver_id: userId }] });
+    }
+    console.log(filter);
+    const invitations = yield invitation_model_1.default.find(filter)
+        .populate({
+        path: "meeting_id",
+        select: "title start_time end_time status",
+    })
+        .populate({
+        path: "sender_id",
+        select: "full_name email photo",
+    })
+        .populate({
+        path: "receiver_id",
+        select: "full_name email photo",
+    });
+    return res
+        .status(200)
+        .json({ status: "success", count: invitations.length, data: invitations });
 }));

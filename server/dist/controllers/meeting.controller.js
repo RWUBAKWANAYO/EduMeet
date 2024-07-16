@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.filterMeetings = exports.deleteMeeting = exports.updateMeeting = exports.getSingleMeeting = exports.createMeeting = void 0;
+exports.updateMeetingStatus = exports.filterMeetings = exports.deleteMeeting = exports.updateMeeting = exports.getSingleMeeting = exports.createMeeting = void 0;
 const meeting_model_1 = __importDefault(require("../models/meeting.model"));
 const utils_1 = require("../utils");
 exports.createMeeting = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -74,3 +74,23 @@ exports.filterMeetings = (0, utils_1.asyncErrorHandler)((req, res, _next) => __a
     });
     return res.status(200).json({ status: "success", count: meetings.length, data: meetings });
 }));
+const updateMeetingStatus = (meetingId, receiver, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(receiver, meetingId, "0.....");
+    try {
+        const meeting = yield meeting_model_1.default.findById(meetingId.toString());
+        if (!meeting) {
+            throw new Error("Meeting not found");
+        }
+        console.log(receiver, "1......");
+        if (!meeting.participants.includes(receiver)) {
+            meeting.participants.push(receiver);
+            yield meeting.save();
+        }
+        console.log(receiver, "2......");
+        return meeting;
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+});
+exports.updateMeetingStatus = updateMeetingStatus;

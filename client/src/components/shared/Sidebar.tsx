@@ -29,6 +29,11 @@ export const Sidebar = () => {
       path: "/meetings/new",
       icon: DateIcon,
     },
+    {
+      title: "Invitations",
+      path: "/invitations",
+      icon: DateIcon,
+    },
   ];
 
   const otherLinks = [
