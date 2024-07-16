@@ -8,6 +8,7 @@ import meetingRoomRouter from "./routes/meeting.room.routes";
 
 import invitationRouter from "./routes/invitation.routes";
 import { testChat } from "./controllers/meeting.chat.controller";
+import updateMeetingStatuses from "./jobs/scheduler/updateMeetingStatuses";
 
 const app = express();
 app.use(cors());
@@ -21,5 +22,8 @@ app.use("/api/v1/invitations", invitationRouter);
 const router = express.Router();
 router.route("/").post(testChat);
 app.use("/api/v1/chat-test", router);
+
+//jobs
+updateMeetingStatuses();
 
 export default app;

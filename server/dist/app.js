@@ -12,6 +12,7 @@ const meeting_routes_1 = __importDefault(require("./routes/meeting.routes"));
 const meeting_room_routes_1 = __importDefault(require("./routes/meeting.room.routes"));
 const invitation_routes_1 = __importDefault(require("./routes/invitation.routes"));
 const meeting_chat_controller_1 = require("./controllers/meeting.chat.controller");
+const updateMeetingStatuses_1 = __importDefault(require("./jobs/scheduler/updateMeetingStatuses"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
@@ -23,4 +24,6 @@ app.use("/api/v1/invitations", invitation_routes_1.default);
 const router = express_1.default.Router();
 router.route("/").post(meeting_chat_controller_1.testChat);
 app.use("/api/v1/chat-test", router);
+//jobs
+(0, updateMeetingStatuses_1.default)();
 exports.default = app;
