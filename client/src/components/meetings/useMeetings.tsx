@@ -7,28 +7,7 @@ import { UIContext } from "../../hooks/context/UIContext";
 import { IUser } from "../../types/users.interface";
 import { ICreateMeetingRoomResponse, IMeetingData } from "../../types/meetings.interface";
 import { useCreateMeetingRoom } from "../meeting_room/useMeetingRoom";
-
-export interface IMeetingsResponse {
-	count: number;
-	data: IMeetingData[];
-	status: string;
-}
-
-export interface IMeetingsData {
-	status?: string;
-	startDate?: Date;
-}
-
-export interface IMeetingCountResponse {
-	status: string;
-	data: {
-		hosted: number;
-		upcoming: number;
-		ongoing: number;
-		ended: number;
-		total: number;
-	};
-}
+import { IMeetingCountResponse, IMeetingsData, IMeetingsResponse } from "./types";
 
 // fetch meetings
 const fetchMeetings = async (token: string, data: IMeetingsData) => {

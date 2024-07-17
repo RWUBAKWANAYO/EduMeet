@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateMeetingStats = exports.createMeetingStats = void 0;
+exports.userMeetingStatsCount = exports.updateMeetingStats = exports.createMeetingStats = void 0;
+const utils_1 = require("../utils");
 const meeting_stats_model_1 = __importDefault(require("../models/meeting.stats.model"));
-const createMeetingStats = (roomId, participants) => __awaiter(void 0, void 0, void 0, function* () {
+const createMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, participants }) {
     try {
         const stats = participants.map((participant) => ({
             room: roomId,
@@ -32,7 +33,7 @@ const updateMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
     try {
         const stats = yield meeting_stats_model_1.default.findOne({ room: roomId, user: userId });
         if (!stats)
-            return;
+            throw new Error("Stats not found");
         stats.presence = true;
         switch (action) {
             case "join_meeting":
@@ -76,3 +77,24 @@ const updateMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
     }
 });
 exports.updateMeetingStats = updateMeetingStats;
+exports.userMeetingStatsCount = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const userId = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString();
+    const counts = yield Promise.all([
+        meeting_stats_model_1.default.countDocuments({ user: userId, presence: true }),
+        meeting_stats_model_1.default.countDocuments({ user: userId, presence: false }),
+        meeting_stats_model_1.default.countDocuments({
+            user: userId,
+            "recordings.0": { $exists: true },
+        }),
+    ]);
+    const [attendedCount, missedCount, recordingsCount] = counts;
+    return res.status(200).json({
+        status: "success",
+        data: {
+            attended: attendedCount,
+            missed: missedCount,
+            recordings: recordingsCount,
+        },
+    });
+}));

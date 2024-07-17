@@ -14,13 +14,6 @@ type IMeetingRoomData = {
 	userId: string | null | undefined;
 };
 
-interface IMessageCountResponse {
-	status: string;
-	data: {
-		total: number;
-	};
-}
-
 // create meeting room
 const CreateMeetingRoom = async (data: IMeetingRoomData) => {
 	const response = await AxiosInstance({
@@ -43,30 +36,6 @@ export const useCreateMeetingRoom = (
 				queryClient.invalidateQueries("meetingRooms");
 				onSuccessCallback(data);
 			},
-		}
-	);
-};
-
-// count meeting room messages
-
-const countMeetingMessages = async (token: string) => {
-	const response = await AxiosInstance({
-		url: `/meeting-messages/count`,
-		method: "GET",
-		headers: { Authorization: `Bearer ${token}` },
-	});
-	return response.data;
-};
-
-export const useCountMeetingMessages = () => {
-	const { token } = useContext(UserContext);
-
-	return useQuery<IMessageCountResponse, Error>(
-		["countMeetingMessages", token],
-		() => countMeetingMessages(token!),
-		{
-			keepPreviousData: true,
-			refetchOnWindowFocus: false,
 		}
 	);
 };

@@ -1,9 +1,12 @@
+import { Request, Response, NextFunction } from "express";
+import { asyncErrorHandler } from "../utils";
 import MeetingStats from "../models/meeting.stats.model";
 import mongoose from "mongoose";
 
 interface IUpdateStats {
-	roomId: string;
+	roomId: string | mongoose.Types.ObjectId;
 	userId: string;
+	participants: mongoose.Types.ObjectId[];
 	action:
 		| "join_meeting"
 		| "leave_meeting"
@@ -16,10 +19,7 @@ interface IUpdateStats {
 		| "start_recording"
 		| "stop_recording";
 }
-export const createMeetingStats = async (
-	roomId: mongoose.Types.ObjectId,
-	participants: mongoose.Types.ObjectId[]
-) => {
+export const createMeetingStats = async ({ roomId, participants }: IUpdateStats) => {
 	try {
 		const stats = participants.map((participant) => ({
 			room: roomId,
@@ -36,7 +36,7 @@ export const createMeetingStats = async (
 export const updateMeetingStats = async ({ action, roomId, userId }: IUpdateStats) => {
 	try {
 		const stats = await MeetingStats.findOne({ room: roomId, user: userId });
-		if (!stats) return;
+		if (!stats) throw new Error("Stats not found");
 
 		stats.presence = true;
 
@@ -80,3 +80,29 @@ export const updateMeetingStats = async ({ action, roomId, userId }: IUpdateStat
 		throw new Error(error.message);
 	}
 };
+
+export const userMeetingStatsCount = asyncErrorHandler(
+	async (req: Request, res: Response, _next: NextFunction) => {
+		const userId = req.user?._id?.toString();
+
+		const counts = await Promise.all([
+			MeetingStats.countDocuments({ user: userId, presence: true }),
+			MeetingStats.countDocuments({ user: userId, presence: false }),
+			MeetingStats.countDocuments({
+				user: userId,
+				"recordings.0": { $exists: true },
+			}),
+		]);
+
+		const [attendedCount, missedCount, recordingsCount] = counts;
+
+		return res.status(200).json({
+			status: "success",
+			data: {
+				attended: attendedCount,
+				missed: missedCount,
+				recordings: recordingsCount,
+			},
+		});
+	}
+);

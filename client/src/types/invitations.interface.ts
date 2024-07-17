@@ -9,4 +9,6 @@ export interface IInvitaion extends Document {
 	receiver_email: string;
 	receiver_id?: IUser;
 	status: "accepted" | "pending";
+	createdAt?: Date;
+	updatedAt?: Date;
 }
