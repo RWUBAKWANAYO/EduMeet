@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.filterInvitations = exports.confirmInvitationWithEmail = exports.confirmInvitation = exports.sendInvitation = void 0;
+exports.countInvitations = exports.filterInvitations = exports.confirmInvitationWithEmail = exports.confirmInvitation = exports.sendInvitation = void 0;
 const utils_1 = require("../utils");
 const invitation_model_1 = __importDefault(require("../models/invitation.model"));
 const meeting_model_1 = __importDefault(require("../models/meeting.model"));
@@ -98,4 +98,28 @@ exports.filterInvitations = (0, utils_1.asyncErrorHandler)((req, res, _next) => 
     return res
         .status(200)
         .json({ status: "success", count: invitations.length, data: invitations });
+}));
+exports.countInvitations = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const userId = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString();
+    const counts = yield Promise.all([
+        invitation_model_1.default.countDocuments({ sender_id: userId }),
+        invitation_model_1.default.countDocuments({ receiver_id: userId }),
+        invitation_model_1.default.countDocuments({ sender_id: userId, status: "pending" }),
+        invitation_model_1.default.countDocuments({ sender_id: userId, status: "accepted" }),
+        invitation_model_1.default.countDocuments({ receiver_id: userId, status: "pending" }),
+        invitation_model_1.default.countDocuments({ receiver_id: userId, status: "accepted" }),
+    ]);
+    const [sentCount, receivedCount, sentPendingCount, sentAcceptedCount, receivedPendingCount, receivedAcceptedCount,] = counts;
+    return res.status(200).json({
+        status: "success",
+        data: {
+            sent: sentCount,
+            received: receivedCount,
+            sentPending: sentPendingCount,
+            sentAccepted: sentAcceptedCount,
+            ReceivedPending: receivedPendingCount,
+            ReceivedAccepted: receivedAcceptedCount,
+        },
+    });
 }));

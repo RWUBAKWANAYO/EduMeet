@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllMeetingMessages = exports.sendMeetingMessage = void 0;
+exports.countUserMessages = exports.getAllMeetingMessages = exports.sendMeetingMessage = void 0;
 const utils_1 = require("../utils");
 const meeting_message_model_1 = __importDefault(require("../models/meeting.message.model"));
 const meeting_chat_controller_1 = require("./meeting.chat.controller");
@@ -42,3 +42,14 @@ const getAllMeetingMessages = (chatId) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.getAllMeetingMessages = getAllMeetingMessages;
+exports.countUserMessages = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const userId = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString();
+    const messagesCount = yield meeting_message_model_1.default.countDocuments({ sender: userId });
+    return res.status(200).json({
+        status: "success",
+        data: {
+            total: messagesCount,
+        },
+    });
+}));

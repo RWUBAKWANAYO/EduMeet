@@ -102,16 +102,18 @@ export const countMeetings = asyncErrorHandler(
 		};
 
 		const counts = await Promise.all([
+			Meeting.countDocuments({ host: userId }),
 			Meeting.countDocuments({ ...query, status: "upcoming" }),
 			Meeting.countDocuments({ ...query, status: "ongoing" }),
 			Meeting.countDocuments({ ...query, status: "ended" }),
 		]);
 
-		const [upcomingCount, ongoingCount, endedCount] = counts;
+		const [hostedCount, upcomingCount, ongoingCount, endedCount] = counts;
 
 		return res.status(200).json({
 			status: "success",
 			data: {
+				hosted: hostedCount,
 				upcoming: upcomingCount,
 				ongoing: ongoingCount,
 				ended: endedCount,

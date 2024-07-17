@@ -22,6 +22,7 @@ export interface IMeetingsData {
 export interface IMeetingCountResponse {
 	status: string;
 	data: {
+		hosted: number;
 		upcoming: number;
 		ongoing: number;
 		ended: number;

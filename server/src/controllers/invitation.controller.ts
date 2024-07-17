@@ -108,3 +108,38 @@ export const filterInvitations = asyncErrorHandler(
 			.json({ status: "success", count: invitations.length, data: invitations });
 	}
 );
+
+export const countInvitations = asyncErrorHandler(
+	async (req: Request, res: Response, _next: NextFunction) => {
+		const userId = req.user?._id?.toString();
+		const counts = await Promise.all([
+			Invitation.countDocuments({ sender_id: userId }),
+			Invitation.countDocuments({ receiver_id: userId }),
+			Invitation.countDocuments({ sender_id: userId, status: "pending" }),
+			Invitation.countDocuments({ sender_id: userId, status: "accepted" }),
+			Invitation.countDocuments({ receiver_id: userId, status: "pending" }),
+			Invitation.countDocuments({ receiver_id: userId, status: "accepted" }),
+		]);
+
+		const [
+			sentCount,
+			receivedCount,
+			sentPendingCount,
+			sentAcceptedCount,
+			receivedPendingCount,
+			receivedAcceptedCount,
+		] = counts;
+
+		return res.status(200).json({
+			status: "success",
+			data: {
+				sent: sentCount,
+				received: receivedCount,
+				sentPending: sentPendingCount,
+				sentAccepted: sentAcceptedCount,
+				ReceivedPending: receivedPendingCount,
+				ReceivedAccepted: receivedAcceptedCount,
+			},
+		});
+	}
+);

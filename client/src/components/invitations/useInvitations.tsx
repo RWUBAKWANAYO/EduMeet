@@ -24,6 +24,18 @@ export interface IInvitationResponse {
 	data: IInvitaion[];
 }
 
+export interface InvitationsCountResponse {
+	status: string;
+	data: {
+		sent: number;
+		received: number;
+		sentPending: number;
+		sentAccepted: number;
+		ReceivedPending: number;
+		ReceivedAccepted: number;
+	};
+}
+
 const createInvitation = async (token: string, data: IInvitationData) => {
 	const response = await AxiosInstance({
 		url: `/invitations/send`,
@@ -68,6 +80,29 @@ export const useFilterInvitations = (data: IFilterInvitationData) => {
 		["meetingInvitations", data],
 		() => filterInvitation(token!, data),
 		{ enabled: !!data, keepPreviousData: true, refetchOnWindowFocus: false }
+	);
+};
+
+// count invitations
+const countInvitations = async (token: string) => {
+	const response = await AxiosInstance({
+		url: `/invitations/count`,
+		method: "GET",
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	return response.data;
+};
+
+export const useCountInvitations = () => {
+	const { token } = useContext(UserContext);
+
+	return useQuery<InvitationsCountResponse, Error>(
+		["countInvitations", token],
+		() => countInvitations(token!),
+		{
+			keepPreviousData: true,
+			refetchOnWindowFocus: false,
+		}
 	);
 };
 

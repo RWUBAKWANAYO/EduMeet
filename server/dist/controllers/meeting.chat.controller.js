@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testChat = exports.updateLatestMessage = exports.createMeetingChat = void 0;
+exports.updateLatestMessage = exports.createMeetingChat = void 0;
 const meeting_chat_model_1 = __importDefault(require("../models/meeting.chat.model"));
 const meeting_room_model_1 = __importDefault(require("../models/meeting.room.model"));
 const utils_1 = require("../utils");
@@ -94,8 +94,3 @@ const updateLatestMessage = (message) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.updateLatestMessage = updateLatestMessage;
-exports.testChat = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { roomId, chatType, members } = req.body;
-    const chats = yield (0, exports.createMeetingChat)({ roomId, chatType, members });
-    return res.status(200).json({ data: chats });
-}));

@@ -108,14 +108,16 @@ exports.countMeetings = (0, utils_1.asyncErrorHandler)((req, res, _next) => __aw
         $or: [{ host: userId }, { participants: userId }],
     };
     const counts = yield Promise.all([
+        meeting_model_1.default.countDocuments({ host: userId }),
         meeting_model_1.default.countDocuments(Object.assign(Object.assign({}, query), { status: "upcoming" })),
         meeting_model_1.default.countDocuments(Object.assign(Object.assign({}, query), { status: "ongoing" })),
         meeting_model_1.default.countDocuments(Object.assign(Object.assign({}, query), { status: "ended" })),
     ]);
-    const [upcomingCount, ongoingCount, endedCount] = counts;
+    const [hostedCount, upcomingCount, ongoingCount, endedCount] = counts;
     return res.status(200).json({
         status: "success",
         data: {
+            hosted: hostedCount,
             upcoming: upcomingCount,
             ongoing: ongoingCount,
             ended: endedCount,

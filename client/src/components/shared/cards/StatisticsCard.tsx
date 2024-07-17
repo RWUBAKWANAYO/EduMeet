@@ -32,7 +32,7 @@ export const StatisticsCard: React.FC<IStatisticsCard> = ({
 			</div>
 			<div className={`w-full flex justify-between items-center`}>
 				<h1
-					className={`text-md font-semibold ${
+					className={`text-lg font-semibold ${
 						theme === "dark" ? "text-white-800" : "text-black-600"
 					}`}
 				>
