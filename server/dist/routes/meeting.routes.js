@@ -14,4 +14,5 @@ meetingRouter
     .patch(middlewares_1.protectRoute, meeting_controller_1.updateMeeting)
     .delete(middlewares_1.protectRoute, meeting_controller_1.deleteMeeting);
 meetingRouter.route("/user/filter").get(middlewares_1.protectRoute, meeting_controller_1.filterMeetings);
+meetingRouter.route("/user/count").get(middlewares_1.protectRoute, meeting_controller_1.countMeetings);
 exports.default = meetingRouter;

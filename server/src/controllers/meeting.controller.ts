@@ -2,6 +2,7 @@ import Meeting from "../models/meeting.model";
 import { Request, Response, NextFunction } from "express";
 import { ErrorFormat, asyncErrorHandler, generateMeetingId } from "../utils";
 import { IMeeting } from "../types/meeting.interface";
+import moment from "moment";
 export const createMeeting = asyncErrorHandler(
 	async (req: Request, res: Response, _next: NextFunction) => {
 		const { session_id, ...rest } = req.body;
@@ -49,13 +50,25 @@ export const deleteMeeting = asyncErrorHandler(
 export const filterMeetings = asyncErrorHandler(
 	async (req: Request, res: Response, _next: NextFunction) => {
 		const userId = req.user?._id?.toString();
-		const { status, session_id } = req.query;
+		const { status, session_id, startDate } = req.query;
 
 		const query: any = {
 			$or: [{ host: userId }, { participants: userId }],
 		};
 		if (status) query.status = status;
 		if (session_id) query.session_id = session_id;
+
+		if (startDate) {
+			const date = new Date(startDate as any);
+			const startOfDayDate = moment(date).startOf("day").toDate();
+			const endOfDayDate = moment(date).endOf("day").toDate();
+
+			query.start_time = {
+				$gte: startOfDayDate,
+				$lt: endOfDayDate,
+			};
+		}
+
 		const meetings = await Meeting.find(query).populate({
 			path: "participants",
 			select: "full_name photo",
@@ -64,22 +77,47 @@ export const filterMeetings = asyncErrorHandler(
 	}
 );
 
-export const updateMeetingStatus = async (meetingId: any, receiver: any, next: NextFunction) => {
-	console.log(receiver, meetingId, "0.....");
+export const updateMeetingStatus = async (meetingId: any, receiver: any, _next: NextFunction) => {
 	try {
 		const meeting = await Meeting.findById(meetingId.toString());
 		if (!meeting) {
 			throw new Error("Meeting not found");
 		}
-		console.log(receiver, "1......");
 
 		if (!meeting.participants.includes(receiver)) {
 			meeting.participants.push(receiver);
 			await meeting.save();
 		}
-		console.log(receiver, "2......");
 		return meeting;
 	} catch (error: any) {
 		throw new Error(error.message);
 	}
 };
+
+export const countMeetings = asyncErrorHandler(
+	async (req: Request, res: Response, _next: NextFunction) => {
+		const userId = req.user?._id?.toString();
+		console.log(userId, "user,,");
+		const query: any = {
+			$or: [{ host: userId }, { participants: userId }],
+		};
+
+		const counts = await Promise.all([
+			Meeting.countDocuments({ ...query, status: "upcoming" }),
+			Meeting.countDocuments({ ...query, status: "ongoing" }),
+			Meeting.countDocuments({ ...query, status: "ended" }),
+		]);
+
+		const [upcomingCount, ongoingCount, endedCount] = counts;
+
+		return res.status(200).json({
+			status: "success",
+			data: {
+				upcoming: upcomingCount,
+				ongoing: ongoingCount,
+				ended: endedCount,
+				total: upcomingCount + ongoingCount + endedCount,
+			},
+		});
+	}
+);

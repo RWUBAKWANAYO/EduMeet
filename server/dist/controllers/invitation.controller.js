@@ -47,7 +47,6 @@ exports.confirmInvitation = (0, utils_1.asyncErrorHandler)((req, res, next) => _
     if (!invitation) {
         return next(new utils_1.ErrorFormat("Invalid invitation id", 400));
     }
-    console.log(invitation);
     const updatedMeeting = yield (0, meeting_controller_1.updateMeetingStatus)(invitation.meeting_id, invitation.receiver_id, next);
     if (!updatedMeeting) {
         return next(new utils_1.ErrorFormat("Fail to update meeting status", 400));
@@ -83,7 +82,6 @@ exports.filterInvitations = (0, utils_1.asyncErrorHandler)((req, res, _next) => 
     else {
         filter = Object.assign(Object.assign({}, filter), { $or: [{ sender_id: userId }, { receiver_id: userId }] });
     }
-    console.log(filter);
     const invitations = yield invitation_model_1.default.find(filter)
         .populate({
         path: "meeting_id",

@@ -125,7 +125,7 @@ export const Invitations: React.FC = () => {
             `}
 								>
 									<div className="p-6 flex  space-x-3">
-										<p className="text-xs leading-6">
+										<p className="text-xs font-normal leading-6">
 											{user?._id === invite.sender_id._id
 												? `You have invited Humble to join the meeting "${
 														invite.meeting_id?.title

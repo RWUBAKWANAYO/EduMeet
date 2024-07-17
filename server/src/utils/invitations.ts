@@ -36,13 +36,13 @@ export const generateInvitations = ({
 
 export const sendInvitationEmails = async ({
 	createdInvitations,
-	tokens,
+	tokens: _,
 	meeting,
 	full_name,
 }: ISendInvitationEmails) => {
 	const emailPromises = createdInvitations.map((invitation) => {
 		const confirmationLink = invitation.receiver_id
-			? `${process.env.CLIENT_URL}/invitations/meeting/confirm/${tokens[invitation.receiver_email]}`
+			? `${process.env.CLIENT_URL}/invitations`
 			: undefined;
 
 		return sendMail({
@@ -55,7 +55,7 @@ export const sendInvitationEmails = async ({
 				scheduled_at: meeting.start_time,
 				passcodeRequired: meeting.passcode_required,
 				passcode: meeting.passcode,
-				client_url: `${process.env.CLIENT_URL}/meeting/${meeting.meeting_id}`,
+				client_url: `${process.env.CLIENT_URL}/join-meeting/${meeting.session_id}`,
 				confirmationLink,
 			}),
 		});

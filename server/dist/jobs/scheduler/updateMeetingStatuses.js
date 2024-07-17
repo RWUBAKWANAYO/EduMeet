@@ -17,12 +17,8 @@ const meeting_model_1 = __importDefault(require("../../models/meeting.model"));
 const updateMeetingStatuses = () => __awaiter(void 0, void 0, void 0, function* () {
     const now = new Date();
     try {
-        const ongoingUpdateResult = yield meeting_model_1.default.updateMany({ start_time: { $lte: now }, end_time: { $gt: now }, status: "upcoming" }, { status: "ongoing" });
-        const endedUpdateResult = yield meeting_model_1.default.updateMany({ end_time: { $lte: now }, status: { $in: ["upcoming", "ongoing"] } }, { status: "ended" });
-        console.log("Meeting statuses updated", {
-            ongoingUpdated: ongoingUpdateResult.modifiedCount,
-            endedUpdated: endedUpdateResult.modifiedCount,
-        });
+        yield meeting_model_1.default.updateMany({ start_time: { $lte: now }, end_time: { $gt: now }, status: "upcoming" }, { status: "ongoing" });
+        yield meeting_model_1.default.updateMany({ end_time: { $lte: now }, status: { $in: ["upcoming", "ongoing"] } }, { status: "ended" });
     }
     catch (error) {
         console.error("Error updating meeting statuses:", error);

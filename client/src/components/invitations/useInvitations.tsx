@@ -98,7 +98,6 @@ export const useInvitations = () => {
 
 	const filterChangeHandler = (filter: "sender" | "receiver" | "all") => {
 		setFilter(filter);
-		console.log("clicked..", filter);
 		refetch();
 	};
 

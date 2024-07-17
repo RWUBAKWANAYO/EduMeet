@@ -19,23 +19,22 @@ const peerServer = ExpressPeerServer(server, { path: "/" });
 app.use("/peerjs", peerServer);
 
 const io = new Server(server, {
-  cors: { origin: "*" },
+	cors: { origin: "*" },
 });
 
 io.on("connection", (socket) => {
-  console.log("Client connected");
-  meetingRoomHandler(io, socket);
-  userSocketHandler(io, socket);
+	meetingRoomHandler(io, socket);
+	userSocketHandler(io, socket);
 });
 const PORT = process.env.PORT || 8080;
 
 app.use("*", (_req: Request, _res: Response, next: NextFunction) => {
-  const err = new ErrorFormat(`Can't find ${_req.originalUrl} on this server!`, 404);
-  next(err);
+	const err = new ErrorFormat(`Can't find ${_req.originalUrl} on this server!`, 404);
+	next(err);
 });
 
 app.use(globalErrorHandler);
 
 server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+	console.log(`Server is running on port ${PORT}`);
 });

@@ -33,10 +33,10 @@ const generateInvitations = ({ receivers, meeting_id, sender_id, message, status
     return { invitations, tokens };
 };
 exports.generateInvitations = generateInvitations;
-const sendInvitationEmails = (_a) => __awaiter(void 0, [_a], void 0, function* ({ createdInvitations, tokens, meeting, full_name, }) {
+const sendInvitationEmails = (_a) => __awaiter(void 0, [_a], void 0, function* ({ createdInvitations, tokens: _, meeting, full_name, }) {
     const emailPromises = createdInvitations.map((invitation) => {
         const confirmationLink = invitation.receiver_id
-            ? `${process.env.CLIENT_URL}/invitations/meeting/confirm/${tokens[invitation.receiver_email]}`
+            ? `${process.env.CLIENT_URL}/invitations`
             : undefined;
         return (0, email_1.sendMail)({
             email: invitation.receiver_email,
@@ -48,7 +48,7 @@ const sendInvitationEmails = (_a) => __awaiter(void 0, [_a], void 0, function* (
                 scheduled_at: meeting.start_time,
                 passcodeRequired: meeting.passcode_required,
                 passcode: meeting.passcode,
-                client_url: `${process.env.CLIENT_URL}/meeting/${meeting.meeting_id}`,
+                client_url: `${process.env.CLIENT_URL}/join-meeting/${meeting.session_id}`,
                 confirmationLink,
             }),
         });

@@ -21,7 +21,6 @@ const io = new socket_io_1.Server(server, {
     cors: { origin: "*" },
 });
 io.on("connection", (socket) => {
-    console.log("Client connected");
     (0, meeting_room_1.meetingRoomHandler)(io, socket);
     (0, user_1.userSocketHandler)(io, socket);
 });

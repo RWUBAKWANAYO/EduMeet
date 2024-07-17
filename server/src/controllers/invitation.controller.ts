@@ -47,7 +47,6 @@ export const confirmInvitation = asyncErrorHandler(
 		if (!invitation) {
 			return next(new ErrorFormat("Invalid invitation id", 400));
 		}
-		console.log(invitation);
 		const updatedMeeting = await updateMeetingStatus(
 			invitation.meeting_id,
 			invitation.receiver_id,
@@ -91,7 +90,6 @@ export const filterInvitations = asyncErrorHandler(
 		} else {
 			filter = { ...filter, $or: [{ sender_id: userId }, { receiver_id: userId }] };
 		}
-		console.log(filter);
 		const invitations = await Invitation.find(filter)
 			.populate({
 				path: "meeting_id",
