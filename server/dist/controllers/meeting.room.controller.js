@@ -24,7 +24,7 @@ const checkExistMeetingRoom = (sessionId) => __awaiter(void 0, void 0, void 0, f
             return meetingRoom;
     }
     catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 });
 exports.checkExistMeetingRoom = checkExistMeetingRoom;
@@ -133,7 +133,7 @@ const joinMeetingRoom = (roomId, userId) => __awaiter(void 0, void 0, void 0, fu
         });
     }
     catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 });
 exports.joinMeetingRoom = joinMeetingRoom;
@@ -158,7 +158,7 @@ const removeAttendee = (roomId, userId) => __awaiter(void 0, void 0, void 0, fun
         return meetingRoom;
     }
     catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 });
 exports.removeAttendee = removeAttendee;

@@ -19,6 +19,16 @@ export interface IMeetingsData {
 	startDate?: Date;
 }
 
+export interface IMeetingCountResponse {
+	status: string;
+	data: {
+		upcoming: number;
+		ongoing: number;
+		ended: number;
+		total: number;
+	};
+}
+
 // fetch meetings
 const fetchMeetings = async (token: string, data: IMeetingsData) => {
 	const response = await AxiosInstance({
@@ -38,9 +48,31 @@ export const useFetchMeetings = (data: IMeetingsData = {}) => {
 		() => fetchMeetings(token!, data),
 		{
 			onSuccess: (data) => {
-				console.log(data, "...");
 				return updateMeetings(data);
 			},
+			keepPreviousData: true,
+			refetchOnWindowFocus: false,
+		}
+	);
+};
+
+// count meetings
+const countMeetings = async (token: string) => {
+	const response = await AxiosInstance({
+		url: `/meetings/user/count`,
+		method: "GET",
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	return response.data;
+};
+
+export const useCountMeetings = () => {
+	const { token } = useContext(UserContext);
+
+	return useQuery<IMeetingCountResponse, Error>(
+		["countMeetings", token],
+		() => countMeetings(token!),
+		{
 			keepPreviousData: true,
 			refetchOnWindowFocus: false,
 		}

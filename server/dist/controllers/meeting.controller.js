@@ -23,9 +23,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateMeetingStatus = exports.filterMeetings = exports.deleteMeeting = exports.updateMeeting = exports.getSingleMeeting = exports.createMeeting = void 0;
+exports.countMeetings = exports.updateMeetingStatus = exports.filterMeetings = exports.deleteMeeting = exports.updateMeeting = exports.getSingleMeeting = exports.createMeeting = void 0;
 const meeting_model_1 = __importDefault(require("../models/meeting.model"));
 const utils_1 = require("../utils");
+const moment_1 = __importDefault(require("moment"));
 exports.createMeeting = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     const _a = req.body, { session_id } = _a, rest = __rest(_a, ["session_id"]);
     const meetingId = yield (0, utils_1.generateMeetingId)(req.body.session_id);
@@ -60,7 +61,7 @@ exports.deleteMeeting = (0, utils_1.asyncErrorHandler)((req, res, next) => __awa
 exports.filterMeetings = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const userId = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString();
-    const { status, session_id } = req.query;
+    const { status, session_id, startDate } = req.query;
     const query = {
         $or: [{ host: userId }, { participants: userId }],
     };
@@ -68,25 +69,31 @@ exports.filterMeetings = (0, utils_1.asyncErrorHandler)((req, res, _next) => __a
         query.status = status;
     if (session_id)
         query.session_id = session_id;
+    if (startDate) {
+        const date = new Date(startDate);
+        const startOfDayDate = (0, moment_1.default)(date).startOf("day").toDate();
+        const endOfDayDate = (0, moment_1.default)(date).endOf("day").toDate();
+        query.start_time = {
+            $gte: startOfDayDate,
+            $lt: endOfDayDate,
+        };
+    }
     const meetings = yield meeting_model_1.default.find(query).populate({
         path: "participants",
         select: "full_name photo",
     });
     return res.status(200).json({ status: "success", count: meetings.length, data: meetings });
 }));
-const updateMeetingStatus = (meetingId, receiver, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(receiver, meetingId, "0.....");
+const updateMeetingStatus = (meetingId, receiver, _next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const meeting = yield meeting_model_1.default.findById(meetingId.toString());
         if (!meeting) {
             throw new Error("Meeting not found");
         }
-        console.log(receiver, "1......");
         if (!meeting.participants.includes(receiver)) {
             meeting.participants.push(receiver);
             yield meeting.save();
         }
-        console.log(receiver, "2......");
         return meeting;
     }
     catch (error) {
@@ -94,3 +101,25 @@ const updateMeetingStatus = (meetingId, receiver, next) => __awaiter(void 0, voi
     }
 });
 exports.updateMeetingStatus = updateMeetingStatus;
+exports.countMeetings = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const userId = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString();
+    const query = {
+        $or: [{ host: userId }, { participants: userId }],
+    };
+    const counts = yield Promise.all([
+        meeting_model_1.default.countDocuments(Object.assign(Object.assign({}, query), { status: "upcoming" })),
+        meeting_model_1.default.countDocuments(Object.assign(Object.assign({}, query), { status: "ongoing" })),
+        meeting_model_1.default.countDocuments(Object.assign(Object.assign({}, query), { status: "ended" })),
+    ]);
+    const [upcomingCount, ongoingCount, endedCount] = counts;
+    return res.status(200).json({
+        status: "success",
+        data: {
+            upcoming: upcomingCount,
+            ongoing: ongoingCount,
+            ended: endedCount,
+            total: upcomingCount + ongoingCount + endedCount,
+        },
+    });
+}));
