@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.meetingRoomHandler = void 0;
 const meeting_room_controller_1 = require("../../controllers/meeting.room.controller");
 const meeting_chat_1 = require("./meeting.chat");
+const meeting_stats_controller_1 = require("../../controllers/meeting.stats.controller");
 const meetingRoomHandler = (io, socket) => {
     const requestJoinMeetingHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ meeting, user }) {
         if (!meeting || !user)
@@ -45,6 +46,11 @@ const meetingRoomHandler = (io, socket) => {
         const room = yield (0, meeting_room_controller_1.joinMeetingRoom)(roomId, user._id.toString());
         if (!room)
             return;
+        yield (0, meeting_stats_controller_1.updateMeetingStats)({
+            action: "join_meeting",
+            roomId: `${room._id}`,
+            userId: `${user._id}`,
+        });
         socket.join(roomId);
         socket.to(roomId).emit("user-joined-meeting-room", user);
         socket.emit("get-meeting-room", room);
@@ -53,23 +59,58 @@ const meetingRoomHandler = (io, socket) => {
         if (!roomId || !peerId)
             return;
         yield (0, meeting_room_controller_1.removeAttendee)(roomId, peerId);
+        yield (0, meeting_stats_controller_1.updateMeetingStats)({
+            action: "leave_meeting",
+            roomId,
+            userId: peerId,
+        });
         socket.to(roomId.toString()).emit("user-left-meeting-room", peerId);
     });
-    const startSharingHandler = ({ roomId, peerId }) => {
+    const startSharingHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, peerId }) {
         if (!roomId || !peerId)
             return;
+        yield (0, meeting_stats_controller_1.updateMeetingStats)({
+            action: "start_sharing",
+            roomId,
+            userId: peerId,
+        });
         socket.to(roomId.toString()).emit("user-start-sharing", peerId);
-    };
-    const stopSharingHandler = ({ roomId, peerId }) => {
+    });
+    const stopSharingHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, peerId }) {
         if (!roomId || !peerId)
             return;
+        yield (0, meeting_stats_controller_1.updateMeetingStats)({
+            action: "stop_sharing",
+            roomId,
+            userId: peerId,
+        });
         socket.to(roomId.toString()).emit("user-stop-sharing", peerId);
-    };
-    const streamTrackHandler = ({ roomId, peerId, streamTrack }) => {
+    });
+    const streamTrackHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, streamType, peerId, streamTrack }) {
         if (!roomId || !peerId || !streamTrack)
             return;
+        const data = {
+            roomId,
+            userId: peerId,
+        };
+        if (streamType === "video") {
+            data.action = streamTrack["video"] === false ? "video_muted" : "video_unmuted";
+        }
+        else {
+            data.action = streamTrack["audio"] === false ? "audio_muted" : "audio_unmuted";
+        }
+        yield (0, meeting_stats_controller_1.updateMeetingStats)(data);
         socket.to(roomId.toString()).emit("user-change-stream-track", { peerId, streamTrack });
-    };
+    });
+    const screenRecordingHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, peerId, recordingAction }) {
+        if (!roomId || !peerId || !recordingAction)
+            return;
+        return yield (0, meeting_stats_controller_1.updateMeetingStats)({
+            action: recordingAction,
+            roomId,
+            userId: peerId,
+        });
+    });
     const inviteUsersHandler = ({ roomId, sender, users }) => {
         if (!roomId || !sender || !users)
             return;
@@ -87,6 +128,7 @@ const meetingRoomHandler = (io, socket) => {
     socket.on("stop-sharing", stopSharingHandler);
     socket.on("leave-meeting-room", leaveRoomHandler);
     socket.on("change-stream-track", streamTrackHandler);
+    socket.on("screen-recording", screenRecordingHandler);
     socket.on("invite-users-to-meeting-room", inviteUsersHandler);
     (0, meeting_chat_1.meeitngChatsHandler)(io, socket);
 };

@@ -15,10 +15,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userMeetingStatsCount = exports.updateMeetingStats = exports.createMeetingStats = void 0;
 const utils_1 = require("../utils");
 const meeting_stats_model_1 = __importDefault(require("../models/meeting.stats.model"));
-const createMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, participants }) {
+const createMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, meetingId, participants }) {
+    if (!participants || !roomId || !meetingId)
+        return;
     try {
+        const existingStats = yield meeting_stats_model_1.default.findOne({ room: roomId });
+        if (existingStats)
+            return existingStats;
         const stats = participants.map((participant) => ({
             room: roomId,
+            meeting: meetingId,
             user: participant,
         }));
         const meetingStats = yield meeting_stats_model_1.default.insertMany(stats);
@@ -30,10 +36,12 @@ const createMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
 });
 exports.createMeetingStats = createMeetingStats;
 const updateMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ action, roomId, userId }) {
+    if (!roomId || !action || !userId)
+        return;
     try {
         const stats = yield meeting_stats_model_1.default.findOne({ room: roomId, user: userId });
         if (!stats)
-            throw new Error("Stats not found");
+            return;
         stats.presence = true;
         switch (action) {
             case "join_meeting":
@@ -42,16 +50,16 @@ const updateMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
             case "leave_meeting":
                 stats.attendances[stats.attendances.length - 1].leave_time = new Date();
                 break;
-            case "audio_muted":
+            case "audio_unmuted":
                 stats.audio_muted.push({ start_time: new Date() });
                 break;
-            case "audio_unmuted":
+            case "audio_muted":
                 stats.audio_muted[stats.audio_muted.length - 1].end_time = new Date();
                 break;
-            case "video_muted":
+            case "video_unmuted":
                 stats.video_muted.push({ start_time: new Date() });
                 break;
-            case "video_unmuted":
+            case "video_muted":
                 stats.video_muted[stats.video_muted.length - 1].end_time = new Date();
                 break;
             case "start_sharing":

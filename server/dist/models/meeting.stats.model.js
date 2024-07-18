@@ -10,6 +10,11 @@ const meetingStatsSchema = new mongoose_1.default.Schema({
         ref: "MeetingRoom",
         required: [true, "Room ID is required"],
     },
+    meeting: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Meeting",
+        required: [true, "Meeting ID is required"],
+    },
     user: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",

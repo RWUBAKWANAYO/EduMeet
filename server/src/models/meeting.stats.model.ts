@@ -8,6 +8,11 @@ const meetingStatsSchema = new mongoose.Schema<IMeetingStats>(
 			ref: "MeetingRoom",
 			required: [true, "Room ID is required"],
 		},
+		meeting: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Meeting",
+			required: [true, "Meeting ID is required"],
+		},
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",

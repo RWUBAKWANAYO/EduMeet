@@ -44,8 +44,15 @@ export const AttendanceCard: React.FC<IAttendanceCardProps> = ({
 				</h3>
 			</div>
 			<div className={`w-full flex items-center space-x-4`}>
-				<div className={`w-full h-2  ${theme === "dark" ? "bg-transparent-100" : "bg-gray-800"}`}>
-					<div className={`h-full  ${bgColor}`} style={{ width: `${percentage}%` }}></div>
+				<div
+					className={`w-full h-2 rounded-full ${
+						theme === "dark" ? "bg-transparent-100" : "bg-gray-800"
+					}`}
+				>
+					<div
+						className={`h-full rounded-full ${bgColor}`}
+						style={{ width: `${percentage}%` }}
+					></div>
 				</div>
 			</div>
 		</div>

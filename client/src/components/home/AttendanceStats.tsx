@@ -39,7 +39,7 @@ export const AttendanceStats: React.FC<IActivitiesCountProps> = ({
 							count={statsData.data.attended}
 							percentage={calculatePercentage(
 								statsData.data.attended + statsData.data.missed,
-								statsData.data.missed
+								statsData.data.attended
 							)}
 						/>
 						<AttendanceCard
@@ -48,7 +48,7 @@ export const AttendanceStats: React.FC<IActivitiesCountProps> = ({
 							count={statsData.data.missed}
 							percentage={calculatePercentage(
 								statsData.data.attended + statsData.data.missed,
-								statsData.data.attended
+								statsData.data.missed
 							)}
 						/>
 					</div>

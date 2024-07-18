@@ -4,6 +4,8 @@ import User from "../models/user.model";
 import MeetingRoom from "../models/meeting.room.model";
 import { ErrorFormat, asyncErrorHandler, getMeetingStatus } from "../utils";
 import { IMeetingRoom } from "../types/meeting.interface";
+import moment from "moment";
+import { createMeetingStats } from "./meeting.stats.controller";
 
 export const checkExistMeetingRoom = async (sessionId: number) => {
 	try {
@@ -40,7 +42,6 @@ export const createMeetingRoom = asyncErrorHandler(
 		const { sessionId, passcode, userId, meetingType } = req.body;
 
 		if (meetingType === "instant") return await instantMeetingHandler(sessionId, res, next);
-
 		const meeting = await Meeting.findOne({ session_id: sessionId }).populate("participants");
 
 		if (!meeting) return next(new ErrorFormat(`Meeting with id ${sessionId} not found`, 404));
@@ -75,6 +76,12 @@ export const createMeetingRoom = asyncErrorHandler(
 
 		const existingRoom = await checkExistMeetingRoom(sessionId);
 		if (existingRoom) {
+			await createMeetingStats({
+				roomId: `${existingRoom._id}`,
+				meetingId: meeting._id as any,
+				userId: userId,
+				participants: [meeting.host, ...meeting.participants] as any,
+			});
 			return res.status(200).json({
 				status: "success",
 				data: existingRoom,
@@ -86,6 +93,14 @@ export const createMeetingRoom = asyncErrorHandler(
 			session_id: +sessionId,
 			meeting: meeting._id,
 		});
+		if (!meetingRoom) throw new Error("Fail to create meeting room");
+		await createMeetingStats({
+			roomId: `${meetingRoom._id}`,
+			meetingId: `${meeting._id}`,
+			userId: userId,
+			participants: [meeting.host, ...meeting.participants] as any,
+		});
+
 		return res.status(200).json({
 			status: "success",
 			data: meetingRoom,
@@ -145,9 +160,8 @@ export const removeAttendee = async (roomId: string, userId: string) => {
 		}
 		const newAttendees = meetingRoom.attendees.filter((attendee) => attendee.toString() !== userId);
 		if (newAttendees.length === 0) {
-			await MeetingRoom.findByIdAndDelete(roomId);
 			const updatedMeeting = await Meeting.findOne({ session_id: meetingRoom.session_id });
-			if (updatedMeeting) {
+			if (updatedMeeting && moment(updatedMeeting.end_time).isBefore(moment())) {
 				updatedMeeting.status = "ended";
 				await updatedMeeting.save();
 			}

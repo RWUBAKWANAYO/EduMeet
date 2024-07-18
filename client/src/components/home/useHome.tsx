@@ -61,11 +61,12 @@ export const useMeetings = () => {
 		refetch();
 	}, [selectedDate]);
 	const selectDateHandler = (date: Date) => setSelectedDate(date);
-	const joinMeetingHandler = (meeting: IMeetingData) =>
-		clickHandler({
+	const joinMeetingHandler = (meeting: IMeetingData) => {
+		return clickHandler({
 			meetingType: "scheduled",
 			meeting,
 		});
+	};
 	return {
 		selectedDate,
 		selectDateHandler,

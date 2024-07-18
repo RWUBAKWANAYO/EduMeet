@@ -63,7 +63,12 @@ export const MeetingsList: React.FC = () => {
 						{meeting.participants && meeting.participants.length + 1}
 					</div>
 					<div className=" h-fit flex space-x-2">
-						<CommonClipboard inputData={meeting._id as string} displayData="id" tostData="ID" />
+						<CommonClipboard
+							inputData={meeting._id as string}
+							displayData="id"
+							tostData="ID"
+							extraClass={`w-8`}
+						/>
 
 						{meeting.status !== "ended" && (
 							<CommonButton

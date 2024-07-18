@@ -4,7 +4,7 @@ import { UIContext } from "../../hooks/context/UIContext";
 import { CommonButton } from "../shared/buttons";
 import { ChevronRightIcon } from "../../assets/icons";
 import { Link } from "react-router-dom";
-import { useFilterInvitations } from "../invitations/useInvitations";
+import { useConfirmInvitation, useFilterInvitations } from "../invitations/useInvitations";
 import { MessageDisplay } from "../shared/MessageDisplay";
 import { errorFormat } from "../../utils";
 import moment from "moment";
@@ -15,6 +15,7 @@ export const Invitations = () => {
 		role: "receiver",
 		status: "pending",
 	});
+	const { mutate: acceptInviteHandler } = useConfirmInvitation();
 	return (
 		<div
 			className={`py-4 w-full rounded-lg border ${
@@ -79,6 +80,7 @@ export const Invitations = () => {
 									children="Accept"
 									type="button"
 									extraClass="h-8 px-4 text-xs font-semi-bold"
+									onClickHandler={() => acceptInviteHandler(invite._id!)}
 								/>
 							</div>
 						</div>

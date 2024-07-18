@@ -46,6 +46,7 @@ export interface IMeetingMessage {
 
 export interface IMeetingStats {
 	room: mongoose.Types.ObjectId;
+	meeting: mongoose.Types.ObjectId;
 	user: mongoose.Types.ObjectId;
 	presence: boolean;
 	attendances: {

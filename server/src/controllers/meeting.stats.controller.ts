@@ -3,11 +3,12 @@ import { asyncErrorHandler } from "../utils";
 import MeetingStats from "../models/meeting.stats.model";
 import mongoose from "mongoose";
 
-interface IUpdateStats {
+export interface IUpdateStats {
 	roomId: string | mongoose.Types.ObjectId;
 	userId: string;
-	participants: mongoose.Types.ObjectId[];
-	action:
+	meetingId?: string | mongoose.Types.ObjectId;
+	participants?: mongoose.Types.ObjectId[];
+	action?:
 		| "join_meeting"
 		| "leave_meeting"
 		| "audio_muted"
@@ -19,10 +20,15 @@ interface IUpdateStats {
 		| "start_recording"
 		| "stop_recording";
 }
-export const createMeetingStats = async ({ roomId, participants }: IUpdateStats) => {
+export const createMeetingStats = async ({ roomId, meetingId, participants }: IUpdateStats) => {
+	if (!participants || !roomId || !meetingId) return;
 	try {
+		const existingStats = await MeetingStats.findOne({ room: roomId });
+		if (existingStats) return existingStats;
+
 		const stats = participants.map((participant) => ({
 			room: roomId,
+			meeting: meetingId,
 			user: participant,
 		}));
 
@@ -34,12 +40,11 @@ export const createMeetingStats = async ({ roomId, participants }: IUpdateStats)
 };
 
 export const updateMeetingStats = async ({ action, roomId, userId }: IUpdateStats) => {
+	if (!roomId || !action || !userId) return;
 	try {
 		const stats = await MeetingStats.findOne({ room: roomId, user: userId });
-		if (!stats) throw new Error("Stats not found");
-
+		if (!stats) return;
 		stats.presence = true;
-
 		switch (action) {
 			case "join_meeting":
 				stats.attendances.push({ join_time: new Date() });
@@ -47,16 +52,16 @@ export const updateMeetingStats = async ({ action, roomId, userId }: IUpdateStat
 			case "leave_meeting":
 				stats.attendances[stats.attendances.length - 1].leave_time = new Date();
 				break;
-			case "audio_muted":
+			case "audio_unmuted":
 				stats.audio_muted.push({ start_time: new Date() });
 				break;
-			case "audio_unmuted":
+			case "audio_muted":
 				stats.audio_muted[stats.audio_muted.length - 1].end_time = new Date();
 				break;
-			case "video_muted":
+			case "video_unmuted":
 				stats.video_muted.push({ start_time: new Date() });
 				break;
-			case "video_unmuted":
+			case "video_muted":
 				stats.video_muted[stats.video_muted.length - 1].end_time = new Date();
 				break;
 			case "start_sharing":

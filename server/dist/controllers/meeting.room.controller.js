@@ -17,6 +17,8 @@ const meeting_model_1 = __importDefault(require("../models/meeting.model"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const meeting_room_model_1 = __importDefault(require("../models/meeting.room.model"));
 const utils_1 = require("../utils");
+const moment_1 = __importDefault(require("moment"));
+const meeting_stats_controller_1 = require("./meeting.stats.controller");
 const checkExistMeetingRoom = (sessionId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const meetingRoom = yield meeting_room_model_1.default.findOne({ session_id: +sessionId }).populate("meeting");
@@ -82,6 +84,12 @@ exports.createMeetingRoom = (0, utils_1.asyncErrorHandler)((req, res, next) => _
     }
     const existingRoom = yield (0, exports.checkExistMeetingRoom)(sessionId);
     if (existingRoom) {
+        yield (0, meeting_stats_controller_1.createMeetingStats)({
+            roomId: `${existingRoom._id}`,
+            meetingId: meeting._id,
+            userId: userId,
+            participants: [meeting.host, ...meeting.participants],
+        });
         return res.status(200).json({
             status: "success",
             data: existingRoom,
@@ -91,6 +99,14 @@ exports.createMeetingRoom = (0, utils_1.asyncErrorHandler)((req, res, next) => _
         meeting_type: "scheduled",
         session_id: +sessionId,
         meeting: meeting._id,
+    });
+    if (!meetingRoom)
+        throw new Error("Fail to create meeting room");
+    yield (0, meeting_stats_controller_1.createMeetingStats)({
+        roomId: `${meetingRoom._id}`,
+        meetingId: `${meeting._id}`,
+        userId: userId,
+        participants: [meeting.host, ...meeting.participants],
     });
     return res.status(200).json({
         status: "success",
@@ -145,9 +161,8 @@ const removeAttendee = (roomId, userId) => __awaiter(void 0, void 0, void 0, fun
         }
         const newAttendees = meetingRoom.attendees.filter((attendee) => attendee.toString() !== userId);
         if (newAttendees.length === 0) {
-            yield meeting_room_model_1.default.findByIdAndDelete(roomId);
             const updatedMeeting = yield meeting_model_1.default.findOne({ session_id: meetingRoom.session_id });
-            if (updatedMeeting) {
+            if (updatedMeeting && (0, moment_1.default)(updatedMeeting.end_time).isBefore((0, moment_1.default)())) {
                 updatedMeeting.status = "ended";
                 yield updatedMeeting.save();
             }
