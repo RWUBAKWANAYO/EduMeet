@@ -1,3 +1,3 @@
 export { Participants } from "./Participants";
 export { ActivitiesCount } from "./ActivitiesCount";
-export { MuteTime } from "./MuteTime";
+export { ActivitiesDetails } from "./ActivitiesDetails";

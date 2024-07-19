@@ -91,6 +91,7 @@ export const filterInvitations = asyncErrorHandler(
 			filter = { ...filter, $or: [{ sender_id: userId }, { receiver_id: userId }] };
 		}
 		const invitations = await Invitation.find(filter)
+			.sort({ createdAt: -1 })
 			.populate({
 				path: "meeting_id",
 				select: "title start_time end_time status",

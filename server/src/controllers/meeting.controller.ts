@@ -70,6 +70,7 @@ export const filterMeetings = asyncErrorHandler(
 		}
 
 		const meetings = await Meeting.find(query)
+			.sort({ createdAt: -1 })
 			.populate({
 				path: "participants",
 				select: "full_name photo",

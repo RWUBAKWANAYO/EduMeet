@@ -83,6 +83,7 @@ exports.filterInvitations = (0, utils_1.asyncErrorHandler)((req, res, _next) => 
         filter = Object.assign(Object.assign({}, filter), { $or: [{ sender_id: userId }, { receiver_id: userId }] });
     }
     const invitations = yield invitation_model_1.default.find(filter)
+        .sort({ createdAt: -1 })
         .populate({
         path: "meeting_id",
         select: "title start_time end_time status",

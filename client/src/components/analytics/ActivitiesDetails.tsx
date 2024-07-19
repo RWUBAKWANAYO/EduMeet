@@ -37,7 +37,7 @@ const actions = {
 	},
 };
 
-const MuteTimeSubCard = ({ color, name, time }: ISubCardProps) => {
+const ActivitiesDetailsSubCard = ({ color, name, time }: ISubCardProps) => {
 	const { theme } = useContext(UIContext);
 	return (
 		<div
@@ -55,7 +55,7 @@ const MuteTimeSubCard = ({ color, name, time }: ISubCardProps) => {
 	);
 };
 
-const MuteTimeCard = ({ title, stat, action }: ICardProps) => {
+const ActivitiesDetailsCard = ({ title, stat, action }: ICardProps) => {
 	const { theme } = useContext(UIContext);
 	return (
 		<div className={`py-4 w-full `}>
@@ -83,14 +83,14 @@ const MuteTimeCard = ({ title, stat, action }: ICardProps) => {
 				stat.map((item) => (
 					<>
 						{item.start_time && (
-							<MuteTimeSubCard
+							<ActivitiesDetailsSubCard
 								time={moment(item.start_time).format("hh:mm:ss A")}
 								color="text-green-500"
 								name={actions[action].start_time}
 							/>
 						)}
 						{item.end_time && (
-							<MuteTimeSubCard
+							<ActivitiesDetailsSubCard
 								time={moment(item.end_time).format("hh:mm:ss A")}
 								color="text-red-500"
 								name={actions[action].end_time}
@@ -101,7 +101,7 @@ const MuteTimeCard = ({ title, stat, action }: ICardProps) => {
 		</div>
 	);
 };
-export const MuteTime: React.FC<{ selectedStat: IStat }> = ({ selectedStat }) => {
+export const ActivitiesDetails: React.FC<{ selectedStat: IStat }> = ({ selectedStat }) => {
 	const { theme } = useContext(UIContext);
 
 	return (
@@ -111,7 +111,7 @@ export const MuteTime: React.FC<{ selectedStat: IStat }> = ({ selectedStat }) =>
 					theme === "dark" ? "bg-blue-800 border-transparent-90" : "bg-white-100 border-gray-800"
 				}`}
 			>
-				<MuteTimeCard
+				<ActivitiesDetailsCard
 					title="Attendance timestamp"
 					stat={selectedStat.attendances}
 					action="attendance"
@@ -122,21 +122,37 @@ export const MuteTime: React.FC<{ selectedStat: IStat }> = ({ selectedStat }) =>
 					theme === "dark" ? "bg-blue-800 border-transparent-90" : "bg-white-100 border-gray-800"
 				}`}
 			>
-				<MuteTimeCard title="Audio timestamp" stat={selectedStat.audio_muted} action="audio" />
+				<ActivitiesDetailsCard
+					title="Audio timestamp"
+					action="audio"
+					stat={
+						selectedStat.audio_muted.length > 0
+							? selectedStat.audio_muted
+							: ([{ end_time: selectedStat.meeting.start_time }] as IStat["audio_muted"])
+					}
+				/>
 			</div>
 			<div
 				className={`w-full rounded-lg overflow-auto h-[200px] border ${
 					theme === "dark" ? "bg-blue-800 border-transparent-90" : "bg-white-100 border-gray-800"
 				}`}
 			>
-				<MuteTimeCard title="Video timestamp" stat={selectedStat.video_muted} action="video" />
+				<ActivitiesDetailsCard
+					title="Video timestamp"
+					action="video"
+					stat={
+						selectedStat.video_muted.length > 0
+							? selectedStat.video_muted
+							: ([{ end_time: selectedStat.meeting.start_time }] as IStat["video_muted"])
+					}
+				/>
 			</div>
 			<div
 				className={`w-full rounded-lg overflow-auto h-[200px] border ${
 					theme === "dark" ? "bg-blue-800 border-transparent-90" : "bg-white-100 border-gray-800"
 				}`}
 			>
-				<MuteTimeCard
+				<ActivitiesDetailsCard
 					title="Screen Sharing timestamp"
 					stat={selectedStat.screen_sharing}
 					action="sharing"
@@ -147,7 +163,7 @@ export const MuteTime: React.FC<{ selectedStat: IStat }> = ({ selectedStat }) =>
 					theme === "dark" ? "bg-blue-800 border-transparent-90" : "bg-white-100 border-gray-800"
 				}`}
 			>
-				<MuteTimeCard
+				<ActivitiesDetailsCard
 					title="Recordings timestamp"
 					stat={selectedStat.recordings}
 					action="recording"

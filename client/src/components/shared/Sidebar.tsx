@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import {
+	ChartIcon,
 	ClockIcon,
 	DarkIcon,
 	DateIcon,
@@ -40,7 +41,7 @@ export const Sidebar: React.FC = () => {
 		{
 			title: "Analytics",
 			path: "#",
-			icon: InviteClose("size-5"),
+			icon: ChartIcon(),
 		},
 	];
 

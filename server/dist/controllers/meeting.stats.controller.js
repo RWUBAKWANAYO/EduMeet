@@ -142,6 +142,8 @@ exports.fiterMeetingStats = (0, utils_1.asyncErrorHandler)((req, res, next) => _
         path: "user",
         select: "full_name email photo",
     });
+    if (stats.length === 0)
+        return next(new utils_1.ErrorFormat("No stats found", 404));
     return res.status(200).json({
         status: "success",
         data: stats,

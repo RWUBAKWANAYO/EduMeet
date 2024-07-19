@@ -30,14 +30,17 @@ export const useFilterMeetingStats = (data: IFilterStatsData) => {
 
 export const useAnalytics = () => {
 	const { meetingId } = useParams();
-	const { isLoading, error, data } = useFilterMeetingStats({ meetingId });
+	const { isLoading, error, data, refetch } = useFilterMeetingStats({ meetingId });
 	const [selectedStat, setSelectedStat] = useState<IStat>({} as IStat);
 	useEffect(() => {
 		if (data && data.data.length > 0) {
 			setSelectedStat(data.data[0]);
 		}
 	}, [data]);
+	useEffect(() => {
+		refetch();
+	}, [meetingId]);
 	const selectStatHandler = (stat: IStat) => setSelectedStat(stat);
 
-	return { isLoading, error, data, selectedStat, selectStatHandler };
+	return { isLoading, refetch, error, data, selectedStat, selectStatHandler };
 };

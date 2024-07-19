@@ -148,6 +148,8 @@ export const fiterMeetingStats = asyncErrorHandler(
 				select: "full_name email photo",
 			});
 
+		if (stats.length === 0) return next(new ErrorFormat("No stats found", 404));
+
 		return res.status(200).json({
 			status: "success",
 			data: stats,

@@ -10,9 +10,9 @@ export const joinTimeHandler = (joinTime?: Date | string, startTime?: Date | str
 	let formattedDuration = "";
 
 	if (differenceInMillis > 0) {
-		formattedDuration = `${duration.humanize()} Late`;
+		formattedDuration = `${duration.humanize()} late`;
 	} else if (differenceInMillis < 0) {
-		formattedDuration = `${duration.humanize()} Early`;
+		formattedDuration = `${duration.humanize()} early`;
 	} else {
 		formattedDuration = "On time";
 	}
@@ -28,9 +28,9 @@ export const leftTimeHandler = (leftTime?: Date | string, endTime?: Date | strin
 	let formattedDuration = "";
 
 	if (differenceInMillis > 0) {
-		formattedDuration = `${duration.humanize()} Late`;
+		formattedDuration = `${duration.humanize()} late`;
 	} else if (differenceInMillis < 0) {
-		formattedDuration = `${duration.humanize()} Early`;
+		formattedDuration = `${duration.humanize()} early`;
 	} else {
 		formattedDuration = "On time";
 	}

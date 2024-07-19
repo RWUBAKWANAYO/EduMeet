@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
-import { useSignup } from './useSignup';
-import { UIContext } from '../../../hooks/context/UIContext';
-import { CommonButton } from '../../shared/buttons';
-import { ContactIcon } from '../../../assets/icons';
-import { errorFormat, textSlice } from '../../../utils';
-import { SubmittingSpinner } from '../../shared/spinners/Spinners';
+import React, { useContext } from "react";
+import { useSignup } from "./useSignup";
+import { UIContext } from "../../../hooks/context/UIContext";
+import { CommonButton } from "../../shared/buttons";
+import { ContactIcon } from "../../../assets/icons";
+import { errorFormat, textSlice } from "../../../utils";
+import { SubmittingSpinner } from "../../shared/spinners/Spinners";
 
 export const Signup: React.FC<{ pageHandler: (status: boolean) => void }> = ({ pageHandler }) => {
 	const { theme } = useContext(UIContext);
@@ -12,178 +12,174 @@ export const Signup: React.FC<{ pageHandler: (status: boolean) => void }> = ({ p
 		useSignup();
 
 	return (
-		<form className='space-y-3' onSubmit={handleSubmit}>
-			<div className='w-full flex flex-col space-y-3'>
+		<form className="space-y-3" onSubmit={handleSubmit}>
+			<div className="w-full flex flex-col space-y-3">
 				<label
-					htmlFor='name'
+					htmlFor="name"
 					className={`text-xs font-medium ${
-						theme === 'dark' ? 'text-white-800' : 'text-black-600'
+						theme === "dark" ? "text-white-800" : "text-black-600"
 					}`}
 				>
 					Full Name &nbsp;
-					<span className='text-red-500 text-lg leading-[0px] align-middle'>*</span>
+					<span className="text-red-500 text-lg leading-[0px] align-middle">*</span>
 				</label>
 				<input
-					type='name'
-					id='name'
+					type="name"
+					id="name"
 					ref={nameRef}
-					placeholder='Enter your Full Name'
+					placeholder="Enter your Full Name"
 					required
 					className={`w-full h-10 px-4 rounded-md  border outline-none text-xs mb-4  ${
-						theme === 'dark'
-							? 'bg-blue-600 text-white-800 border-transparent-100'
-							: 'border-gray-800'
+						theme === "dark"
+							? "bg-blue-600 text-white-800 border-transparent-100"
+							: "border-gray-800"
 					}`}
 				/>
 			</div>
-			<div className='w-full flex flex-col space-y-3'>
+			<div className="w-full flex flex-col space-y-3">
 				<label
-					htmlFor='email'
+					htmlFor="email"
 					className={`text-xs font-medium ${
-						theme === 'dark' ? 'text-white-800' : 'text-black-600'
+						theme === "dark" ? "text-white-800" : "text-black-600"
 					}`}
 				>
 					Email &nbsp;
-					<span className='text-red-500 text-lg leading-[0px] align-middle'>*</span>
+					<span className="text-red-500 text-lg leading-[0px] align-middle">*</span>
 				</label>
 				<input
-					type='email'
-					id='email'
+					type="email"
+					id="email"
 					ref={emailRef}
-					placeholder='Enter your Email'
+					placeholder="Enter your Email"
 					required
 					className={`w-full h-10 px-4 rounded-md  border outline-none text-xs mb-4  ${
-						theme === 'dark'
-							? 'bg-blue-600 text-white-800 border-transparent-100'
-							: 'border-gray-800'
+						theme === "dark"
+							? "bg-blue-600 text-white-800 border-transparent-100"
+							: "border-gray-800"
 					}`}
 				/>
 			</div>
-			<div className='w-full flex flex-col space-y-3'>
+			<div className="w-full flex flex-col space-y-3">
 				<label
-					htmlFor='password'
+					htmlFor="password"
 					className={`text-xs font-medium ${
-						theme === 'dark' ? 'text-white-800' : 'text-black-600'
+						theme === "dark" ? "text-white-800" : "text-black-600"
 					}`}
 				>
 					Password &nbsp;
-					<span className='text-red-500 text-lg leading-[0px] align-middle'>*</span>
+					<span className="text-red-500 text-lg leading-[0px] align-middle">*</span>
 				</label>
 				<input
-					type='password'
-					id='password'
+					type="password"
+					id="password"
 					ref={passwordRef}
-					placeholder='Enter your  Password'
+					placeholder="Enter your  Password"
 					required
 					className={`w-full h-10 px-4 rounded-md  border outline-none text-xs mb-4  ${
-						theme === 'dark'
-							? 'bg-blue-600 text-white-800 border-transparent-100'
-							: 'border-gray-800'
+						theme === "dark"
+							? "bg-blue-600 text-white-800 border-transparent-100"
+							: "border-gray-800"
 					}`}
 				/>
 			</div>
-			<div className='w-full flex flex-col space-y-3'>
+			<div className="w-full flex flex-col space-y-3">
 				<label
-					htmlFor='password'
+					htmlFor="password"
 					className={`text-xs font-medium ${
-						theme === 'dark' ? 'text-white-800' : 'text-black-600'
+						theme === "dark" ? "text-white-800" : "text-black-600"
 					}`}
 				>
 					Profile Image &nbsp;
 				</label>
 				<div
 					className={`w-full h-10 rounded-md  border outline-none text-xs mb-4 relative ${
-						theme === 'dark' ? 'border-transparent-100' : 'border-gray-800'
+						theme === "dark" ? "border-transparent-100" : "border-gray-800"
 					}`}
 				>
 					<input
-						type='file'
-						id='file'
-            accept='image/*'
+						type="file"
+						id="file"
+						accept="image/*"
 						onChange={photoHandler}
 						className={`w-full h-full absolute absolute top-0 left-0 opacity-0 z-10 px-4 rounded-md  border-none text-xs bg-transparent-0`}
 					/>
 					<div
 						className={`  w-full h-full rounded-md relative z-0 flex items-center ${
-							theme === 'dark' ? 'bg-blue-600' : 'bg-white-100'
+							theme === "dark" ? "bg-blue-600" : "bg-white-100"
 						}`}
 					>
 						{photo && (
-							<img
-								src={URL.createObjectURL(photo)}
-								alt='Preview'
-								className='h-10 rounded-l-md'
-							/>
+							<img src={URL.createObjectURL(photo)} alt="Preview" className="h-10 rounded-l-md" />
 						)}
 						<small
 							className={`ml-4 text-xs ${
-								theme === 'dark' ? (!photo ? 'text-white-500' : 'text-white-800') : ''
+								theme === "dark" ? (!photo ? "text-white-500" : "text-white-800") : ""
 							}`}
 						>
-							{photo ? textSlice(photo.name, 33) : 'Upload your profile picture'}
+							{photo ? textSlice(photo.name, 33) : "Upload your profile picture"}
 						</small>
 					</div>
 				</div>
 			</div>
-			<div className='h-2 flex flex-col justify-center'>
+			<div className="h-2 flex flex-col justify-center">
 				{error && (
 					<small className={`text-xs font-normal text-red-500`}>{errorFormat(error)}</small>
 				)}
 			</div>
-			<div className='w-full relative h-fit'>
+			<div className="w-full relative h-fit">
 				<CommonButton
-					hasUniqueColor='bg-blue-40 border-transparent-0 text-white-100'
-					children='Signup'
-					type='submit'
-					extraClass='w-full h-10 px-4 text-xs font-semibold mt-3'
+					hasUniqueColor="bg-blue-40 border-transparent-0 text-white-100"
+					children="Signup"
+					type="submit"
+					extraClass="w-full h-10 px-4 text-xs font-semibold mt-3"
 				/>
-				{isLoading && <SubmittingSpinner colors='bg-blue-40 text-white-100' size='w-8 h-8' />}
+				{isLoading && <SubmittingSpinner colors="bg-blue-40 text-white-100" size="w-8 h-8" />}
 			</div>
 
-			<div className='flex w-full items-center '>
+			<div className="flex w-full items-center ">
 				<hr
 					className={`flex-1 h-[1px] border-none ${
-						theme === 'dark' ? 'bg-transparent-200' : 'bg-gray-800'
+						theme === "dark" ? "bg-transparent-200" : "bg-gray-800"
 					}`}
 				/>
 				<span
 					className={`text-md font-2xl px-4 ${
-						theme === 'dark' ? 'text-transparent-200' : 'text-black-400'
+						theme === "dark" ? "text-transparent-200" : "text-black-400"
 					}`}
 				>
 					or
 				</span>
 				<hr
 					className={`flex-1 h-[1px] border-none ${
-						theme === 'dark' ? 'bg-transparent-200' : 'bg-gray-800'
+						theme === "dark" ? "bg-transparent-200" : "bg-gray-800"
 					}`}
 				/>
 			</div>
 			<div
 				className={`w-full relative h-fit mt-3 border rounded-md  ${
-					theme === 'dark' ? 'border-transparent-100' : 'border-gray-800'
+					theme === "dark" ? "border-transparent-100" : "border-gray-800"
 				}`}
 			>
 				<CommonButton
 					children={
-						<div className='flex items-center space-x-4'>
+						<div className="flex items-center space-x-4">
 							{ContactIcon}
 							<p>Use testing account</p>
 						</div>
 					}
-					type='button'
-					hasUniqueColor={`${theme === 'dark' ? 'bg-blue-800 ' : 'bg-white-700 '}`}
+					type="button"
+					hasUniqueColor={`${theme === "dark" ? "bg-blue-800 " : "bg-white-700 "}`}
 					extraClass={`border-none w-full h-10 px-4 text-xs font-semi-bold ${
-						theme === 'dark' ? 'text-white-800' : 'text-black-600'
+						theme === "dark" ? "text-white-800" : "text-black-600"
 					}`}
 				/>
 			</div>
 			<div
-				className={`text-xs font-normal ${theme === 'dark' ? 'text-white-800' : 'text-black-600'}`}
+				className={`text-xs font-normal ${theme === "dark" ? "text-white-800" : "text-black-600"}`}
 			>
-				You don't have account?{' '}
-				<button type='button' className='text-blue-40' onClick={() => pageHandler(false)}>
-					Singup instead!
+				You don't have account?{" "}
+				<button type="button" className="text-blue-40" onClick={() => pageHandler(false)}>
+					Login instead!
 				</button>
 			</div>
 		</form>

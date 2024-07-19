@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { ActivityCard } from "../shared/cards/ActivityCard";
+import { AnalyticsCard } from "../shared/cards";
 import { UIContext } from "../../hooks/context/UIContext";
-import { IFilterStatsResponse, IStat } from "./types";
+import { IStat } from "./types";
 import { joinTimeHandler } from "../../utils";
 
 interface IParticipantsProps {
@@ -25,10 +25,10 @@ export const ActivitiesCount: React.FC<IParticipantsProps> = ({ selectedStat }) 
 				Activitites stats
 			</h3>
 			<div className="w-full grid grid-cols-3  gap-2">
-				<ActivityCard
+				<AnalyticsCard
 					title="User Joined meeting"
 					count={
-						selectedStat?.attendances && selectedStat.attendances.length > 0
+						selectedStat.attendances.length > 0
 							? joinTimeHandler(
 									selectedStat.attendances[0]?.start_time || "",
 									selectedStat?.meeting?.start_time || ""
@@ -36,10 +36,10 @@ export const ActivitiesCount: React.FC<IParticipantsProps> = ({ selectedStat }) 
 							: "N/A"
 					}
 				/>
-				<ActivityCard
+				<AnalyticsCard
 					title="User Left meeting"
 					count={
-						selectedStat?.attendances && selectedStat.attendances.length > 0
+						selectedStat.attendances.length > 0
 							? joinTimeHandler(
 									selectedStat.attendances[selectedStat.attendances.length - 1]?.end_time || "",
 									selectedStat?.meeting?.end_time || ""
@@ -47,12 +47,30 @@ export const ActivitiesCount: React.FC<IParticipantsProps> = ({ selectedStat }) 
 							: "N/A"
 					}
 				/>
-				<ActivityCard title="User Left meeting" count={"5 min early"} />
-				<ActivityCard title="User Mute audio" count={"5 times"} />
-				<ActivityCard title="Average audio mute time" count={"10%"} />
-				<ActivityCard title="User Mute video" count={"8 times"} />
-				<ActivityCard title="Average video mute time" count={"26%"} />
-				<ActivityCard title="Message sent in meeting" count={6} />
+				<AnalyticsCard
+					title="User Mute audio"
+					count={
+						selectedStat.audio_muted.length > 0
+							? `${selectedStat.audio_muted.length} times`
+							: "Whole time"
+					}
+				/>
+				<AnalyticsCard
+					title="User Mute video"
+					count={
+						selectedStat.video_muted.length > 0
+							? `${selectedStat.video_muted.length} times`
+							: "Whole time"
+					}
+				/>
+				<AnalyticsCard
+					title="User shared screen"
+					count={`${selectedStat.screen_sharing.length} times`}
+				/>
+				<AnalyticsCard
+					title="User recorded meeting"
+					count={`${selectedStat.recordings.length} times`}
+				/>
 			</div>
 		</div>
 	);

@@ -4,3 +4,4 @@ export { MessageCard } from "./MessageCard";
 export { BadgeCard } from "./BadgeCard";
 export { MeetingCallCards } from "./MeetingCallCards";
 export { AttendanceCard } from "./AttendanceCard";
+export { AnalyticsCard } from "./AnalyticsCard";
