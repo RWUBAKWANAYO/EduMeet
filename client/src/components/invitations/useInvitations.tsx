@@ -62,6 +62,7 @@ export const useCreateInvitation = () => {
 };
 
 const filterInvitation = async (token: string, data: IFilterInvitationData) => {
+	console.log(data, "data...");
 	const response = await AxiosInstance({
 		url: `/invitations/filter?meeting_id=${data.meeting_id ?? ""}&role=${data.role ?? ""}&status=${
 			data.status ?? ""

@@ -33,13 +33,13 @@ const Home: React.FC = () => {
 		<div className="w-full h-full flex">
 			<div className="w-1/2 py-8 pl-8 pr-1.5 space-y-3">
 				<LinkButtons />
+				<AttendanceStats statsData={statsData} statsLoading={statsLoading} />
 				<ActivitiesCount
 					statsData={statsData}
 					statsLoading={statsLoading}
 					meetingsLoading={meetingsLoading}
 					meetingsData={meetingsData}
 				/>
-				<AttendanceStats statsData={statsData} statsLoading={statsLoading} />
 				<Invitations />
 			</div>
 			<div className={` w-1/2 min-h-screen  flex flex-col space-y-3 py-8 pr-8 pl-1.5 `}>

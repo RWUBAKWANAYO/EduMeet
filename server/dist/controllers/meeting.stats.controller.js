@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userMeetingStatsCount = exports.updateMeetingStats = exports.createMeetingStats = void 0;
+exports.fiterMeetingStats = exports.userMeetingStatsCount = exports.updateMeetingStats = exports.createMeetingStats = void 0;
 const utils_1 = require("../utils");
 const meeting_stats_model_1 = __importDefault(require("../models/meeting.stats.model"));
+const meeting_model_1 = __importDefault(require("../models/meeting.model"));
 const createMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, meetingId, participants }) {
     if (!participants || !roomId || !meetingId)
         return;
@@ -45,10 +46,10 @@ const updateMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
         stats.presence = true;
         switch (action) {
             case "join_meeting":
-                stats.attendances.push({ join_time: new Date() });
+                stats.attendances.push({ start_time: new Date() });
                 break;
             case "leave_meeting":
-                stats.attendances[stats.attendances.length - 1].leave_time = new Date();
+                stats.attendances[stats.attendances.length - 1].end_time = new Date();
                 break;
             case "audio_unmuted":
                 stats.audio_muted.push({ start_time: new Date() });
@@ -104,5 +105,45 @@ exports.userMeetingStatsCount = (0, utils_1.asyncErrorHandler)((req, res, _next)
             missed: missedCount,
             recordings: recordingsCount,
         },
+    });
+}));
+exports.fiterMeetingStats = (0, utils_1.asyncErrorHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const userId = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString();
+    const { roomId, meetingId } = req.query;
+    const existMeeting = yield meeting_model_1.default.findOne({ _id: meetingId });
+    if (!existMeeting)
+        next(new utils_1.ErrorFormat("Meeting not found", 404));
+    console.log(existMeeting, "..");
+    const query = {};
+    if ((existMeeting === null || existMeeting === void 0 ? void 0 : existMeeting.host.toString()) !== userId)
+        query.user = userId;
+    if (roomId)
+        query.room = roomId;
+    if (meetingId)
+        query.meeting = meetingId;
+    console.log(query, "query..");
+    const stats = yield meeting_stats_model_1.default.find(query)
+        .populate("room")
+        .populate({
+        path: "meeting",
+        populate: [
+            {
+                path: "participants",
+                select: " full_name photo",
+            },
+            {
+                path: "host",
+                select: " full_name photo",
+            },
+        ],
+    })
+        .populate({
+        path: "user",
+        select: "full_name email photo",
+    });
+    return res.status(200).json({
+        status: "success",
+        data: stats,
     });
 }));

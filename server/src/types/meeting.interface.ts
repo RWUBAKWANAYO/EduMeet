@@ -50,8 +50,8 @@ export interface IMeetingStats {
 	user: mongoose.Types.ObjectId;
 	presence: boolean;
 	attendances: {
-		join_time?: Date;
-		leave_time?: Date;
+		start_time?: Date;
+		end_time?: Date;
 	}[];
 	recordings: {
 		start_time?: Date;

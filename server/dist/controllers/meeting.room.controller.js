@@ -133,9 +133,7 @@ const joinMeetingRoom = (roomId, userId) => __awaiter(void 0, void 0, void 0, fu
         const existUser = yield user_model_1.default.findById(userId);
         if (!existUser)
             throw new Error(`User with id ${userId} not found`);
-        const isAttendeeExist = meetingRoom.attendees.find((attendee) => {
-            return attendee.toString() === userId;
-        });
+        const isAttendeeExist = meetingRoom.attendees.some((attendee) => attendee.toString() === existUser._id.toString());
         if (isAttendeeExist)
             return yield meetingRoom.populate({
                 path: "attendees",
@@ -143,6 +141,7 @@ const joinMeetingRoom = (roomId, userId) => __awaiter(void 0, void 0, void 0, fu
             });
         meetingRoom.attendees.push(existUser._id);
         yield meetingRoom.save();
+        console.log(meetingRoom.attendees, "user....");
         return yield meetingRoom.populate({
             path: "attendees",
             select: " full_name photo",
@@ -160,13 +159,13 @@ const removeAttendee = (roomId, userId) => __awaiter(void 0, void 0, void 0, fun
             throw new Error(`Meeting room with id ${roomId} not found`);
         }
         const newAttendees = meetingRoom.attendees.filter((attendee) => attendee.toString() !== userId);
+        console.log(newAttendees, "remove 01...");
         if (newAttendees.length === 0) {
             const updatedMeeting = yield meeting_model_1.default.findOne({ session_id: meetingRoom.session_id });
             if (updatedMeeting && (0, moment_1.default)(updatedMeeting.end_time).isBefore((0, moment_1.default)())) {
                 updatedMeeting.status = "ended";
                 yield updatedMeeting.save();
             }
-            return [];
         }
         meetingRoom.attendees = newAttendees;
         yield meetingRoom.save();

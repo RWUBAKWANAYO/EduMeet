@@ -6,6 +6,7 @@ import { useQuery } from "react-query";
 import { IMessageCountResponse, IStatsCountResponse } from "./types";
 import { useMeetings as joinnMeetingHandler } from "../meetings/useMeetings";
 import { IMeetingData } from "../../types/meetings.interface";
+import { IInvitaion } from "../../types/invitations.interface";
 
 // count meeting room messages
 const countMeetingMessages = async (token: string) => {
@@ -71,5 +72,15 @@ export const useMeetings = () => {
 		selectedDate,
 		selectDateHandler,
 		joinMeetingHandler,
+	};
+};
+
+export const useInvitations = () => {
+	const getPendingInvite = (inviteData: IInvitaion[]) => {
+		return inviteData.filter((invite) => invite.meeting_id && invite.meeting_id.status !== "ended");
+	};
+
+	return {
+		getPendingInvite,
 	};
 };

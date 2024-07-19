@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncErrorHandler } from "../utils";
+import { asyncErrorHandler, ErrorFormat } from "../utils";
 import MeetingStats from "../models/meeting.stats.model";
 import mongoose from "mongoose";
+import Meeting from "../models/meeting.model";
 
 export interface IUpdateStats {
 	roomId: string | mongoose.Types.ObjectId;
@@ -47,10 +48,10 @@ export const updateMeetingStats = async ({ action, roomId, userId }: IUpdateStat
 		stats.presence = true;
 		switch (action) {
 			case "join_meeting":
-				stats.attendances.push({ join_time: new Date() });
+				stats.attendances.push({ start_time: new Date() });
 				break;
 			case "leave_meeting":
-				stats.attendances[stats.attendances.length - 1].leave_time = new Date();
+				stats.attendances[stats.attendances.length - 1].end_time = new Date();
 				break;
 			case "audio_unmuted":
 				stats.audio_muted.push({ start_time: new Date() });
@@ -108,6 +109,48 @@ export const userMeetingStatsCount = asyncErrorHandler(
 				missed: missedCount,
 				recordings: recordingsCount,
 			},
+		});
+	}
+);
+
+export const fiterMeetingStats = asyncErrorHandler(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const userId = req.user?._id?.toString();
+		const { roomId, meetingId } = req.query;
+		const existMeeting = await Meeting.findOne({ _id: meetingId });
+		if (!existMeeting) next(new ErrorFormat("Meeting not found", 404));
+		console.log(existMeeting, "..");
+		const query: any = {};
+
+		if (existMeeting?.host.toString() !== userId) query.user = userId;
+		if (roomId) query.room = roomId;
+		if (meetingId) query.meeting = meetingId;
+
+		console.log(query, "query..");
+
+		const stats = await MeetingStats.find(query)
+			.populate("room")
+			.populate({
+				path: "meeting",
+				populate: [
+					{
+						path: "participants",
+						select: " full_name photo",
+					},
+					{
+						path: "host",
+						select: " full_name photo",
+					},
+				],
+			})
+			.populate({
+				path: "user",
+				select: "full_name email photo",
+			});
+
+		return res.status(200).json({
+			status: "success",
+			data: stats,
 		});
 	}
 );

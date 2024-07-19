@@ -27,10 +27,10 @@ const meetingStatsSchema = new mongoose_1.default.Schema({
     attendances: {
         type: [
             {
-                join_time: {
+                start_time: {
                     type: Date,
                 },
-                leave_time: {
+                end_time: {
                     type: Date,
                 },
             },

@@ -78,8 +78,13 @@ exports.filterMeetings = (0, utils_1.asyncErrorHandler)((req, res, _next) => __a
             $lt: endOfDayDate,
         };
     }
-    const meetings = yield meeting_model_1.default.find(query).populate({
+    const meetings = yield meeting_model_1.default.find(query)
+        .populate({
         path: "participants",
+        select: "full_name photo",
+    })
+        .populate({
+        path: "host",
         select: "full_name photo",
     });
     return res.status(200).json({ status: "success", count: meetings.length, data: meetings });

@@ -93,6 +93,7 @@ const meetingRoomHandler = (io, socket) => {
             roomId,
             userId: peerId,
         };
+        console.log(streamTrack, streamType);
         if (streamType === "video") {
             data.action = streamTrack["video"] === false ? "video_muted" : "video_unmuted";
         }

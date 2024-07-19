@@ -69,10 +69,15 @@ export const filterMeetings = asyncErrorHandler(
 			};
 		}
 
-		const meetings = await Meeting.find(query).populate({
-			path: "participants",
-			select: "full_name photo",
-		});
+		const meetings = await Meeting.find(query)
+			.populate({
+				path: "participants",
+				select: "full_name photo",
+			})
+			.populate({
+				path: "host",
+				select: "full_name photo",
+			});
 		return res.status(200).json({ status: "success", count: meetings.length, data: meetings });
 	}
 );

@@ -110,14 +110,11 @@ export const useEditMeeting = () => {
 export const useMeetings = () => {
 	const { user } = useContext(UserContext);
 	const { setAccessRoom } = useContext(MeetingsContext);
-	const allParticipants = (participansts: IUser[]) => [
-		{
-			_id: user?._id,
-			full_name: user?.full_name,
-			photo: user?.photo,
-		},
-		...participansts,
-	];
+	const allParticipants = (meeting: IMeetingData): IUser[] => {
+		console.log(meeting);
+		const members = meeting.participants ? meeting.participants : [];
+		return [meeting.host as IUser, ...members];
+	};
 
 	const useCreateCallback = (res: ICreateMeetingRoomResponse) => setAccessRoom(res);
 	const { mutate: createMeetingRoom } = useCreateMeetingRoom(useCreateCallback);

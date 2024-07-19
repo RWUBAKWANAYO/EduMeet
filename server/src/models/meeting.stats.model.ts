@@ -25,11 +25,10 @@ const meetingStatsSchema = new mongoose.Schema<IMeetingStats>(
 		attendances: {
 			type: [
 				{
-					join_time: {
+					start_time: {
 						type: Date,
 					},
-
-					leave_time: {
+					end_time: {
 						type: Date,
 					},
 				},

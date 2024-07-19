@@ -8,6 +8,7 @@ import { useConfirmInvitation, useFilterInvitations } from "../invitations/useIn
 import { MessageDisplay } from "../shared/MessageDisplay";
 import { errorFormat } from "../../utils";
 import moment from "moment";
+import { useInvitations } from "./useHome";
 
 export const Invitations = () => {
 	const { theme } = useContext(UIContext);
@@ -16,6 +17,7 @@ export const Invitations = () => {
 		status: "pending",
 	});
 	const { mutate: acceptInviteHandler } = useConfirmInvitation();
+	const { getPendingInvite } = useInvitations();
 	return (
 		<div
 			className={`py-4 w-full rounded-lg border ${
@@ -41,52 +43,55 @@ export const Invitations = () => {
 				<MessageDisplay message={errorFormat(error)} />
 			) : (
 				<>
-					{data?.data.slice(0, 4).map((invite) => (
-						<div
-							className={`mx-4  flex space-x-4 justify-between  space-x-2 py-3 border-b ${
-								theme === "dark" ? " border-transparent-90" : " border-gray-800"
-							} `}
-						>
-							<div
-								className={` flex-1 flex space-x-2 ${
-									theme === "dark" ? "text-transparent-300" : "text-black-400"
-								}`}
-							>
-								<RenderAvatar
-									photo={invite.sender_id?.photo || ""}
-									fullName={invite.sender_id?.full_name || ""}
-									hasExtraClass={`w-9 h-9  rounded-full`}
-								/>
-								<div className="space-y-1 flex-1">
-									<h4
-										className={`text-xs font-medium  ${
-											theme === "dark" ? "text-white-800" : "text-black-600"
+					{data &&
+						getPendingInvite(data?.data)
+							.slice(0, 4)
+							.map((invite, index: number) => (
+								<div
+									className={`mx-4  flex space-x-4 justify-between  space-x-2 py-3 border-b ${
+										theme === "dark" ? " border-transparent-90" : " border-gray-800"
+									} ${index === getPendingInvite(data?.data).length - 1 ? "mb-6" : ""}`}
+								>
+									<div
+										className={` flex-1 flex space-x-2 ${
+											theme === "dark" ? "text-transparent-300" : "text-black-400"
 										}`}
 									>
-										{moment(invite.meeting_id?.createdAt).format("dddd, MMMM Do YYYY")}
-									</h4>
-									<p
-										className={`text-xs mt-2 font-light ${
-											theme === "dark" ? "text-transparent-300" : "text-white-500"
-										}`}
-									>
-										{`${invite.sender_id?.full_name} invite you to join meeting: "${invite.meeting_id?.title}"`}
-									</p>
+										<RenderAvatar
+											photo={invite.sender_id?.photo || ""}
+											fullName={invite.sender_id?.full_name || ""}
+											hasExtraClass={`w-9 h-9  rounded-full`}
+										/>
+										<div className="space-y-1 flex-1">
+											<h4
+												className={`text-xs font-medium  ${
+													theme === "dark" ? "text-white-800" : "text-black-600"
+												}`}
+											>
+												{moment(invite.meeting_id?.createdAt).format("dddd, MMMM Do YYYY")}
+											</h4>
+											<p
+												className={`text-xs mt-2 font-light ${
+													theme === "dark" ? "text-transparent-300" : "text-white-500"
+												}`}
+											>
+												{`${invite.sender_id?.full_name} invite you to join meeting: "${invite.meeting_id?.title}"`}
+											</p>
+										</div>
+									</div>
+									<div>
+										<CommonButton
+											hasUniqueColor="bg-blue-100 border-transparent-0 text-white-100"
+											children="Accept"
+											type="button"
+											extraClass="h-8 px-4 text-xs font-semi-bold"
+											onClickHandler={() => acceptInviteHandler(invite._id!)}
+										/>
+									</div>
 								</div>
-							</div>
-							<div>
-								<CommonButton
-									hasUniqueColor="bg-blue-100 border-transparent-0 text-white-100"
-									children="Accept"
-									type="button"
-									extraClass="h-8 px-4 text-xs font-semi-bold"
-									onClickHandler={() => acceptInviteHandler(invite._id!)}
-								/>
-							</div>
-						</div>
-					))}
-					{data!.data.length > 4 && (
-						<div className="w-full flex justify-center pt-6 pb-4">
+							))}
+					{data && getPendingInvite(data?.data).length > 4 && (
+						<div className="w-full flex justify-center pb-4">
 							<Link to="/invitations" className="text-blue-100 text-sm flex items-center">
 								View more &nbsp; {ChevronRightIcon}
 							</Link>

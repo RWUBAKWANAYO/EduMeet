@@ -11,9 +11,11 @@ import {
 } from "../../assets/icons";
 import logo from "../../assets/images/logo.png";
 import { UIContext } from "../../hooks/context/UIContext";
+import { MeetingToAnalyze } from "../analytics/MeetingsToAnalyze";
 
-export const Sidebar = () => {
-	const { theme, toggleTheme, activePage } = useContext(UIContext);
+export const Sidebar: React.FC = () => {
+	const { theme, toggleTheme, activePage, openModal, closeModal } = useContext(UIContext);
+
 	const links = [
 		{
 			title: "Home",
@@ -33,6 +35,11 @@ export const Sidebar = () => {
 		{
 			title: "Invitations",
 			path: "/invitations",
+			icon: InviteClose("size-5"),
+		},
+		{
+			title: "Analytics",
+			path: "#",
 			icon: InviteClose("size-5"),
 		},
 	];
@@ -64,6 +71,7 @@ export const Sidebar = () => {
 						<Link
 							to={link.path}
 							title={link.title}
+							onClick={() => link.title === "Analytics" && openModal(<MeetingToAnalyze />)}
 							className={`flex items-center p-1.5 rounded-md gap-x-2 ${
 								theme === "dark"
 									? `${
