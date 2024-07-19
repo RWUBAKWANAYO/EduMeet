@@ -11,7 +11,10 @@ export interface ITheme {
 	openModal: (content: React.ReactNode) => void;
 	closeModal: () => void;
 	modalContent: React.ReactNode | null;
-	isDesktop: () => boolean;
+	isDesktop: boolean;
+	isMobile: boolean;
+	isSidebarOpen: boolean;
+	toggleSidebar: () => void;
 }
 
 export interface IUserContext {

@@ -15,7 +15,8 @@ import { UIContext } from "../../hooks/context/UIContext";
 import { MeetingToAnalyze } from "../analytics/MeetingsToAnalyze";
 
 export const Sidebar: React.FC = () => {
-	const { theme, toggleTheme, activePage, openModal, closeModal } = useContext(UIContext);
+	const { theme, toggleTheme, activePage, openModal, isMobile, toggleSidebar } =
+		useContext(UIContext);
 
 	const links = [
 		{
@@ -59,6 +60,11 @@ export const Sidebar: React.FC = () => {
 		},
 	];
 
+	const analyzeHandler = () => {
+		openModal(<MeetingToAnalyze />);
+		isMobile && toggleSidebar();
+	};
+
 	return (
 		<div className="h-full flex flex-col items-center w-full">
 			<div className="mb-10 w-full h-[60px] flex justify-center items-center   ">
@@ -72,7 +78,7 @@ export const Sidebar: React.FC = () => {
 						<Link
 							to={link.path}
 							title={link.title}
-							onClick={() => link.title === "Analytics" && openModal(<MeetingToAnalyze />)}
+							onClick={() => (link.title === "Analytics" ? analyzeHandler() : toggleSidebar())}
 							className={`flex items-center p-1.5 rounded-md gap-x-2 ${
 								theme === "dark"
 									? `${
@@ -88,7 +94,7 @@ export const Sidebar: React.FC = () => {
 							}`}
 						>
 							{link.icon}
-							<p className="text-xs hidden lg:flex font-semibold">{link.title}</p>
+							<p className="text-xs flex sm:hidden lg:flex font-semibold">{link.title}</p>
 						</Link>
 					</li>
 				))}
@@ -107,7 +113,7 @@ export const Sidebar: React.FC = () => {
 						onClick={link.onclick && link.onclick}
 					>
 						{link.icon}
-						<p className="text-xs hidden lg:flex font-semibold">{link.title}</p>
+						<p className="text-xs flex sm:hidden lg:flex font-semibold">{link.title}</p>
 					</Link>
 				))}
 			</div>

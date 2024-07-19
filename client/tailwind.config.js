@@ -68,6 +68,9 @@ module.exports = {
                     100: "#FF7337",
                 },
             },
+            screens: {
+                'xl': '1140px',
+            },
         },
     },
     plugins: [],

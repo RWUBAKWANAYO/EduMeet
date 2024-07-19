@@ -6,6 +6,7 @@ import { MessageDisplay } from "../shared/MessageDisplay";
 import { useCountMeetingMessages } from "./useHome";
 import { IStatsCountResponse } from "./types";
 import { IMeetingCountResponse } from "../meetings/types";
+import { errorFormat } from "../../utils";
 
 interface IActivitiesCountProps {
 	statsLoading: boolean;
@@ -29,7 +30,6 @@ export const ActivitiesCount: React.FC<IActivitiesCountProps> = ({
 				theme === "dark" ? "bg-blue-800 border-transparent-90" : "bg-white-100 border-gray-800"
 			}`}
 		>
-			{" "}
 			<h3
 				className={`mb-4 text-xs font-medium ${
 					theme === "dark" ? "text-transparent-300" : "text-black-400"
@@ -38,28 +38,28 @@ export const ActivitiesCount: React.FC<IActivitiesCountProps> = ({
 				Activities stats
 			</h3>
 			{invitationsLoading && meetingsLoading && messagesLoading && statsLoading ? (
-				<MessageDisplay message="Loading...." />
+				<MessageDisplay height="h-44" />
 			) : (
-				<div className="w-full grid grid-cols-2  gap-2">
+				<div className="w-full grid grid-cols-1 sm:grid-cols-2  gap-2">
 					{invitationsData?.data && (
 						<>
-							<ActivityCard title="Invitations Sent" count={invitationsData!.data.sent} />
-							<ActivityCard title="Invitate Receved" count={invitationsData!.data.received} />
+							<ActivityCard title="Invitations Sent" count={invitationsData.data.sent} />
+							<ActivityCard title="Invitate Receved" count={invitationsData.data.received} />
 							<ActivityCard
 								title="Pending invitation you sent"
-								count={invitationsData!.data.sentPending}
+								count={invitationsData.data.sentPending}
 							/>
 							<ActivityCard
 								title="Accepted invitation you sent"
-								count={invitationsData!.data.sentAccepted}
+								count={invitationsData.data.sentAccepted}
 							/>
 							<ActivityCard
 								title="Pending invitation you received"
-								count={invitationsData!.data.ReceivedPending}
+								count={invitationsData.data.ReceivedPending}
 							/>
 							<ActivityCard
 								title="Accepted invitation you received"
-								count={invitationsData!.data.ReceivedAccepted}
+								count={invitationsData.data.ReceivedAccepted}
 							/>
 						</>
 					)}

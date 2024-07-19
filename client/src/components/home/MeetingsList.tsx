@@ -8,6 +8,7 @@ import { CommonClipboard } from "../shared/buttons";
 import { useMeetings } from "./useHome";
 import { Link } from "react-router-dom";
 import { MeetingsContext } from "../../hooks/context/meetings/MeetingsContext";
+import { MessageDisplay } from "../shared/MessageDisplay";
 
 export const MeetingsList: React.FC = () => {
 	const { theme } = useContext(UIContext);
@@ -15,7 +16,7 @@ export const MeetingsList: React.FC = () => {
 	const { joinMeetingHandler } = useMeetings();
 
 	return (
-		<div className="w-full h-fit space-y-2">
+		<div className="w-full h-fit min-h-56 space-y-2">
 			<h3
 				className={`text-xs mb-4 font-medium ${
 					theme === "dark" ? "text-transparent-300" : "text-black-400"
@@ -23,17 +24,20 @@ export const MeetingsList: React.FC = () => {
 			>
 				Meetings
 			</h3>
+			{meetings.data.length === 0 && (
+				<MessageDisplay message="No meetings scheduled on above calendar date" height="min-h-56" />
+			)}
 			{meetings.data.slice(0, 5).map((meeting: IMeetingData) => (
 				<div
 					key={meeting?._id}
-					className={`flex justify-between items-center p-4 w-full h-fit rounded-md border
+					className={`flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0 sm:space-x-4 p-4 w-full h-fit rounded-md border
     ${
 			theme === "dark"
 				? ` bg-transparent-400 border-transparent-100`
 				: `border-gray-800 bg-white-100`
 		}`}
 				>
-					<div className="h-fit ">
+					<div className="h-fit">
 						<h3
 							className={`text-xs font-medium ${
 								theme === "dark" ? "text-white-800" : "text-black-600"
@@ -55,7 +59,7 @@ export const MeetingsList: React.FC = () => {
 						</p>
 					</div>
 					<div
-						className={`flex items-center space-x-2 text-sm ${
+						className={`flex space-x-2 text-sm ${
 							theme === "dark" ? "text-white-800" : "text-black-600"
 						}`}
 					>

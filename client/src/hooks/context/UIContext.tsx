@@ -43,8 +43,26 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	};
 
 	// window size helpers
-	const isDesktop = () => {
-		return window.innerWidth > 992;
+	const [isMobile, setIsMobile] = useState(false);
+	const [isDesktop, setIsDesktop] = useState(false);
+
+	useEffect(() => {
+		const updateScreenSize = () => {
+			setIsMobile(window.innerWidth <= 640);
+			setIsDesktop(window.innerWidth > 992);
+		};
+		updateScreenSize();
+		window.addEventListener("resize", updateScreenSize);
+		return () => {
+			window.removeEventListener("resize", updateScreenSize);
+		};
+	}, []);
+
+	// sidebar handler
+
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const toggleSidebar = () => {
+		setIsSidebarOpen(!isSidebarOpen);
 	};
 
 	return (
@@ -58,6 +76,9 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 				closeModal,
 				modalContent,
 				isDesktop,
+				isMobile,
+				isSidebarOpen,
+				toggleSidebar,
 			}}
 		>
 			{children}

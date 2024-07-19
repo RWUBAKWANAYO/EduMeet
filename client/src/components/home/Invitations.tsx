@@ -20,7 +20,7 @@ export const Invitations = () => {
 	const { getPendingInvite } = useInvitations();
 	return (
 		<div
-			className={`py-4 w-full rounded-lg border ${
+			className={`py-4 w-full grow rounded-lg border ${
 				theme === "dark" ? "bg-blue-800 border-transparent-90" : "bg-white-100 border-gray-800"
 			}`}
 		>
@@ -38,9 +38,9 @@ export const Invitations = () => {
 				</h3>
 			</div>
 			{isLoading ? (
-				<MessageDisplay message="Loading...." />
+				<MessageDisplay height="min-h-48" />
 			) : error ? (
-				<MessageDisplay message={errorFormat(error)} />
+				<MessageDisplay height="min-h-48" message={errorFormat(error)} />
 			) : (
 				<>
 					{data &&

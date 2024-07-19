@@ -107,7 +107,7 @@ const updateMeetingStatus = (meetingId, receiver, _next) => __awaiter(void 0, vo
     }
 });
 exports.updateMeetingStatus = updateMeetingStatus;
-exports.countMeetings = (0, utils_1.asyncErrorHandler)((req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.countMeetings = (0, utils_1.asyncErrorHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const userId = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString();
     const query = {

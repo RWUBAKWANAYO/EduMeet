@@ -12,7 +12,7 @@ export const ActivityCard = ({ title, count }: { title: string; count: number | 
 			}`}
 		>
 			<h4
-				className={`text-lg font-semibold h-full min-w-14 rounded-md p-3 flex items-center justify-center border-r ${
+				className={`text-lg font-semibold h-full min-w-20 sm:min-w-14 rounded-md p-3 flex items-center justify-center border-r ${
 					theme === "dark"
 						? "border-transparent-90 bg-transparent-400 text-white-800"
 						: "bg-black-200 border-gray-800 text-black-600"

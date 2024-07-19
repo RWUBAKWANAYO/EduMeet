@@ -101,7 +101,7 @@ export const updateMeetingStatus = async (meetingId: any, receiver: any, _next: 
 };
 
 export const countMeetings = asyncErrorHandler(
-	async (req: Request, res: Response, _next: NextFunction) => {
+	async (req: Request, res: Response, next: NextFunction) => {
 		const userId = req.user?._id?.toString();
 		const query: any = {
 			$or: [{ host: userId }, { participants: userId }],

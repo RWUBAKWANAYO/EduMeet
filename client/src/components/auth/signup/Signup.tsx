@@ -175,9 +175,11 @@ export const Signup: React.FC<{ pageHandler: (status: boolean) => void }> = ({ p
 				/>
 			</div>
 			<div
-				className={`text-xs font-normal ${theme === "dark" ? "text-white-800" : "text-black-600"}`}
+				className={`text-xs font-normal flex justify-center  ${
+					theme === "dark" ? "text-white-800" : "text-black-600"
+				}`}
 			>
-				You don't have account?{" "}
+				You don't have account? &nbsp;
 				<button type="button" className="text-blue-40" onClick={() => pageHandler(false)}>
 					Login instead!
 				</button>

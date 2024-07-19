@@ -1,18 +1,19 @@
 import React, { useContext } from "react";
-import { AbsentUserIcon, AttendedUserIcon } from "../../assets/icons";
 import { UIContext } from "../../hooks/context/UIContext";
 import { IStatsCountResponse } from "./types";
 import { MessageDisplay } from "../shared/MessageDisplay";
 import { AttendanceCard } from "../shared/cards";
-import { calculatePercentage } from "../../utils";
+import { calculatePercentage, errorFormat } from "../../utils";
 
 interface IActivitiesCountProps {
 	statsLoading: boolean;
 	statsData?: IStatsCountResponse;
+	statsError: Error | null;
 }
 export const AttendanceStats: React.FC<IActivitiesCountProps> = ({
 	statsLoading,
 	statsData = {},
+	statsError,
 }) => {
 	const { theme } = useContext(UIContext);
 	return (
@@ -29,10 +30,12 @@ export const AttendanceStats: React.FC<IActivitiesCountProps> = ({
 				Attendance Summary
 			</h3>
 			{statsLoading ? (
-				<MessageDisplay message="Loading...." />
+				<MessageDisplay height="h-28" />
+			) : statsError ? (
+				<MessageDisplay height="h-28" message={errorFormat(statsError)} />
 			) : (
 				statsData?.data && (
-					<div className="w-full grid grid-cols-2 gap-3">
+					<div className="w-full grid grid-cols-2 sm:grid-cols-1 gap-3">
 						<AttendanceCard
 							bgColor="bg-orange-400"
 							title="Meetings Attended"
