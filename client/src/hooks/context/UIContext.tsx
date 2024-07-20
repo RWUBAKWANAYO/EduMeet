@@ -45,11 +45,13 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	// window size helpers
 	const [isMobile, setIsMobile] = useState(false);
 	const [isDesktop, setIsDesktop] = useState(false);
+	const [isTablet, setIsTablet] = useState(false);
 
 	useEffect(() => {
 		const updateScreenSize = () => {
 			setIsMobile(window.innerWidth <= 640);
 			setIsDesktop(window.innerWidth > 992);
+			setIsTablet(window.innerWidth <= 1024);
 		};
 		updateScreenSize();
 		window.addEventListener("resize", updateScreenSize);
@@ -77,6 +79,7 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 				modalContent,
 				isDesktop,
 				isMobile,
+				isTablet,
 				isSidebarOpen,
 				toggleSidebar,
 			}}

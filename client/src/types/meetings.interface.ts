@@ -27,6 +27,8 @@ export interface IMeetingsResponse {
 	count: number;
 	data: IMeetingData[];
 	status: string;
+	isLoading: boolean;
+	error: null | Error;
 }
 
 export interface IMeetingRoom {

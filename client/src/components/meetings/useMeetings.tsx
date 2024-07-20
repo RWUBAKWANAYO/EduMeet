@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import AxiosInstance from "../../lib/axiosInstance";
 import { UserContext } from "../../hooks/context/UserContext";
 import { MeetingsContext } from "../../hooks/context/meetings/MeetingsContext";
@@ -110,6 +110,12 @@ export const useEditMeeting = () => {
 export const useMeetings = () => {
 	const { user } = useContext(UserContext);
 	const { setAccessRoom } = useContext(MeetingsContext);
+	const [isMeetingDetailsOpen, setIsMeetingDetailsOpen] = useState(false);
+
+	const toggleMeetingDetails = () => {
+		return setIsMeetingDetailsOpen(!isMeetingDetailsOpen);
+	};
+
 	const allParticipants = (meeting: IMeetingData): IUser[] => {
 		console.log(meeting);
 		const members = meeting.participants ? meeting.participants : [];
@@ -143,5 +149,5 @@ export const useMeetings = () => {
 		}
 	};
 
-	return { allParticipants, clickHandler };
+	return { allParticipants, clickHandler, isMeetingDetailsOpen, toggleMeetingDetails };
 };

@@ -41,6 +41,8 @@ export const Invitations = () => {
 				<MessageDisplay height="min-h-48" />
 			) : error ? (
 				<MessageDisplay height="min-h-48" message={errorFormat(error)} />
+			) : data?.data.length === 0 ? (
+				<MessageDisplay message="No Pending invitations available" height="min-h-48" />
 			) : (
 				<>
 					{data &&

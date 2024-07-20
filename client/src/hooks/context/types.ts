@@ -13,6 +13,7 @@ export interface ITheme {
 	modalContent: React.ReactNode | null;
 	isDesktop: boolean;
 	isMobile: boolean;
+	isTablet: boolean;
 	isSidebarOpen: boolean;
 	toggleSidebar: () => void;
 }

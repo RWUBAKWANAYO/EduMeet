@@ -105,7 +105,7 @@ export const ActivitiesDetails: React.FC<{ selectedStat: IStat }> = ({ selectedS
 	const { theme } = useContext(UIContext);
 
 	return (
-		<div className="w-full grid grid-cols-2 gap-4">
+		<div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4">
 			<div
 				className={`w-full rounded-lg overflow-auto h-[200px] border ${
 					theme === "dark" ? "bg-blue-800 border-transparent-90" : "bg-white-100 border-gray-800"

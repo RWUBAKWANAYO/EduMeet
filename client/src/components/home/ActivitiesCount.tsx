@@ -40,7 +40,7 @@ export const ActivitiesCount: React.FC<IActivitiesCountProps> = ({
 			{invitationsLoading && meetingsLoading && messagesLoading && statsLoading ? (
 				<MessageDisplay height="h-44" />
 			) : (
-				<div className="w-full grid grid-cols-1 sm:grid-cols-2  gap-2">
+				<div className="w-full grid grid-cols-1 sm:grid-cols-2 min-h-44  gap-2">
 					{invitationsData?.data && (
 						<>
 							<ActivityCard title="Invitations Sent" count={invitationsData.data.sent} />

@@ -32,7 +32,7 @@ export const useScreenRecorder = () => {
 		};
 	}, [startTime]);
 
-	if (!isDesktop()) {
+	if (!isDesktop) {
 		return {
 			startRecording: () => {},
 			stopRecording: () => {},

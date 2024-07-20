@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import {
-  ICreateMeetingRoomResponse,
-  IMeetingData,
-  IMeetingsResponse,
+	ICreateMeetingRoomResponse,
+	IMeetingData,
+	IMeetingsResponse,
 } from "../../../types/meetings.interface";
 import { UserContext } from "../UserContext";
 import { useNavigate } from "react-router-dom";
@@ -13,127 +13,144 @@ import { IUser } from "../../../types/users.interface";
 export const MeetingsContext = createContext<any>(null);
 
 export const MeetingsProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useContext(UserContext);
-  const [meetings, setMeetings] = useState<IMeetingsResponse>({
-    count: 0,
-    data: [],
-    status: "",
-  });
-  const [selectedMeeting, setSelectedMeeting] = useState<IMeetingsResponse["data"][0] | null>(null);
-  const [accessRoom, setAccessRoom] = useState<ICreateMeetingRoomResponse | null>(null);
-  const [requestToJoinData, setRequestToJoinData] = useState<IMeetingInvite[]>([]);
-  const navigate = useNavigate();
+	const { user } = useContext(UserContext);
+	const [meetings, setMeetings] = useState<IMeetingsResponse>({
+		count: 0,
+		data: [],
+		status: "",
+		isLoading: false,
+		error: null,
+	});
+	const [selectedMeeting, setSelectedMeeting] = useState<IMeetingsResponse["data"][0] | null>(null);
+	const [accessRoom, setAccessRoom] = useState<ICreateMeetingRoomResponse | null>(null);
+	const [requestToJoinData, setRequestToJoinData] = useState<IMeetingInvite[]>([]);
+	const navigate = useNavigate();
 
-  const updateMeetings = (data: IMeetingsResponse) => {
-    setMeetings(data);
-    setSelectedMeeting(data.data[0]);
-  };
+	const updateMeetings = (data: IMeetingsResponse) => {
+		setMeetings(data);
+		setSelectedMeeting(data.data[0]);
+	};
 
-  const selectMeetingHandler = (meeting: IMeetingData) => {
-    setSelectedMeeting(meeting);
-  };
+	const setMeetingsLoadingError = ({
+		isLoading,
+		error,
+	}: {
+		isLoading?: boolean;
+		error?: Error;
+	}) => {
+		setMeetings((prev) => ({
+			...prev,
+			isLoading: isLoading ?? prev.isLoading,
+			error: error ?? prev.error,
+		}));
+	};
 
-  const requestJoinMeeting = (meeting: IMeetingData) => {
-    socket.emit("request-join-meeting-room", { meeting, user });
-  };
+	const selectMeetingHandler = (meeting: IMeetingData) => {
+		setSelectedMeeting(meeting);
+	};
 
-  const acceptJoinRequestHandler = ({ roomId }: { roomId: string }) => {
-    if (!roomId) return;
-    navigate(`/meeting-rooms/${roomId}`);
-  };
+	const requestJoinMeeting = (meeting: IMeetingData) => {
+		socket.emit("request-join-meeting-room", { meeting, user });
+	};
 
-  const rejectJoinRequestHandler = () => {
-    setAccessRoom({
-      join_request_rejected: true,
-    });
-  };
+	const acceptJoinRequestHandler = ({ roomId }: { roomId: string }) => {
+		if (!roomId) return;
+		navigate(`/meeting-rooms/${roomId}`);
+	};
 
-  const joinMeetingInviteHandler = ({
-    meetingRoomId,
-    sender,
-  }: {
-    meetingRoomId: string;
-    user: IUser;
-    sender: IUser;
-  }) => {
-    setRequestToJoinData((prev) => {
-      return [
-        ...prev,
-        {
-          title: "Invite Request",
-          message: `${sender.full_name} has invited you to join a meeting.`,
-          user: sender,
-          sender: "host",
-          meetingRoomId,
-        },
-      ];
-    });
-  };
+	const rejectJoinRequestHandler = () => {
+		setAccessRoom({
+			join_request_rejected: true,
+		});
+	};
 
-  const removeRequestedUser = (requestedUser: IMeetingInvite["user"]) => {
-    setRequestToJoinData((prev: IMeetingInvite[]) =>
-      prev.filter((req) => req.user._id !== requestedUser._id)
-    );
-  };
+	const joinMeetingInviteHandler = ({
+		meetingRoomId,
+		sender,
+	}: {
+		meetingRoomId: string;
+		user: IUser;
+		sender: IUser;
+	}) => {
+		setRequestToJoinData((prev) => {
+			return [
+				...prev,
+				{
+					title: "Invite Request",
+					message: `${sender.full_name} has invited you to join a meeting.`,
+					user: sender,
+					sender: "host",
+					meetingRoomId,
+				},
+			];
+		});
+	};
 
-  const userAcceptHostInvitation = (invitation: IMeetingInvite) => {
-    removeRequestedUser(invitation.user);
-    navigate(`/meeting-rooms/${invitation.meetingRoomId}`);
-    setAccessRoom(null);
-  };
+	const removeRequestedUser = (requestedUser: IMeetingInvite["user"]) => {
+		setRequestToJoinData((prev: IMeetingInvite[]) =>
+			prev.filter((req) => req.user._id !== requestedUser._id)
+		);
+	};
 
-  const userRejectHostInvitation = (invitation: IMeetingInvite) => {
-    removeRequestedUser(invitation.user);
-    setAccessRoom(null);
-  };
+	const userAcceptHostInvitation = (invitation: IMeetingInvite) => {
+		removeRequestedUser(invitation.user);
+		navigate(`/meeting-rooms/${invitation.meetingRoomId}`);
+		setAccessRoom(null);
+	};
 
-  const hostAcceptUserJoinRequest = (requestedUser: IMeetingInvite["user"], roomId: string) => {
-    socket.emit("accept-user-join-request", { roomId, user: requestedUser });
-    removeRequestedUser(requestedUser);
-  };
-  const hostRejecttUserJoinRequest = (requestedUser: IMeetingInvite["user"]) => {
-    socket.emit("reject-user-join-request", { user: requestedUser });
-    removeRequestedUser(requestedUser);
-  };
+	const userRejectHostInvitation = (invitation: IMeetingInvite) => {
+		removeRequestedUser(invitation.user);
+		setAccessRoom(null);
+	};
 
-  useEffect(() => {
-    if (accessRoom && accessRoom.require_confirm) {
-      if (accessRoom.meeting) requestJoinMeeting(accessRoom.meeting);
-    }
-  }, [accessRoom]);
+	const hostAcceptUserJoinRequest = (requestedUser: IMeetingInvite["user"], roomId: string) => {
+		socket.emit("accept-user-join-request", { roomId, user: requestedUser });
+		removeRequestedUser(requestedUser);
+	};
+	const hostRejecttUserJoinRequest = (requestedUser: IMeetingInvite["user"]) => {
+		socket.emit("reject-user-join-request", { user: requestedUser });
+		removeRequestedUser(requestedUser);
+	};
 
-  useEffect(() => {
-    if (user) socket.emit("join-user-to-socket", user._id);
-    socket.on("join-request-accepted", acceptJoinRequestHandler);
-    socket.on("join-request-rejected", rejectJoinRequestHandler);
-    socket.on("invited-to-meeting-room", joinMeetingInviteHandler);
-    return () => {
-      socket.off("join-request-accepted", acceptJoinRequestHandler);
-      socket.off("join-request-rejected", rejectJoinRequestHandler);
-      socket.off("invited-to-meeting-room", joinMeetingInviteHandler);
-    };
-  }, []);
+	useEffect(() => {
+		if (accessRoom && accessRoom.require_confirm) {
+			if (accessRoom.meeting) requestJoinMeeting(accessRoom.meeting);
+		}
+	}, [accessRoom]);
 
-  return (
-    <MeetingsContext.Provider
-      value={{
-        meetings,
-        updateMeetings,
-        selectedMeeting,
-        selectMeetingHandler,
-        accessRoom,
-        setAccessRoom,
-        requestJoinMeeting,
-        requestToJoinData,
-        setRequestToJoinData,
-        removeRequestedUser,
-        userAcceptHostInvitation,
-        userRejectHostInvitation,
-        hostAcceptUserJoinRequest,
-        hostRejecttUserJoinRequest,
-      }}
-    >
-      {children}
-    </MeetingsContext.Provider>
-  );
+	useEffect(() => {
+		if (user) socket.emit("join-user-to-socket", user._id);
+		socket.on("join-request-accepted", acceptJoinRequestHandler);
+		socket.on("join-request-rejected", rejectJoinRequestHandler);
+		socket.on("invited-to-meeting-room", joinMeetingInviteHandler);
+		return () => {
+			socket.off("join-request-accepted", acceptJoinRequestHandler);
+			socket.off("join-request-rejected", rejectJoinRequestHandler);
+			socket.off("invited-to-meeting-room", joinMeetingInviteHandler);
+		};
+	}, []);
+
+	return (
+		<MeetingsContext.Provider
+			value={{
+				meetings,
+				updateMeetings,
+				selectedMeeting,
+				selectMeetingHandler,
+				accessRoom,
+				setAccessRoom,
+				requestJoinMeeting,
+				requestToJoinData,
+				setRequestToJoinData,
+				removeRequestedUser,
+				userAcceptHostInvitation,
+				userRejectHostInvitation,
+				hostAcceptUserJoinRequest,
+				hostRejecttUserJoinRequest,
+				setMeetingsLoadingError,
+			}}
+		>
+			{children}
+		</MeetingsContext.Provider>
+	);
 };

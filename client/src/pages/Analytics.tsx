@@ -22,10 +22,12 @@ export const Analytics = () => {
 				selectedStat?.meeting && (
 					<div className="w-full flex">
 						{(data.data[0].meeting.host as IUser)?._id === user?._id && (
-							<div className={` w-[320px] h-full  py-8 pl-8 pr-0 `}>
-								<div className={`w-full `} style={{ height: "calc(100vh - 60px)" }}>
+							<div
+								className={`overflow-auto w-fit md:w-[270px] lg:w-[320px] h-full p-3 pr-0  lg:p-8 lg:pr-0 `}
+							>
+								<div className={`w-full `}>
 									<h3
-										className={`pb-4 text-sm ${
+										className={`hidden md:flex pb-4 text-sm ${
 											theme === "dark" ? "text-white-800" : "tetx-black-600"
 										}`}
 									>
@@ -42,9 +44,9 @@ export const Analytics = () => {
 							</div>
 						)}
 						<div
-							className={`flex-1 h-full  py-8 pr-8 ${
+							className={`flex-1 h-full p-3 pl-0 lg:p-8 lg:pl-3 ${
 								(data.data[0].meeting.host as IUser)?._id === user?._id
-									? `pl-4 border-l ${
+									? `pl-4 sm:border-l ${
 											theme === "dark" ? "border-transparent-400" : "border-gray-800"
 									  }`
 									: "pl-8"
@@ -57,7 +59,10 @@ export const Analytics = () => {
 							>
 								Oliver Rwubakwanayo stats
 							</h3>
-							<div className={`w-full h-full space-y-3 overflow-auto`}>
+							<div
+								className={`w-full h-full space-y-3 overflow-auto`}
+								style={{ height: "calc(100vh - 160px)" }}
+							>
 								{<ActivitiesCount selectedStat={selectedStat} />}
 								{<ActivitiesDetails selectedStat={selectedStat} />}
 							</div>

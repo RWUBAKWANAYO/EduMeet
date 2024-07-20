@@ -57,13 +57,13 @@ const Home: React.FC = () => {
 					<div className="flex-1 grid grid-rows-3 space-y-3">
 						{meetingsLoading
 							? Array.from({ length: 3 }).map(() => (
-									<MessageDisplay hasBackground={true} height="" key={uuidv4()} />
+									<MessageDisplay hasBackground={true} height="h-28 sm:h-auto" key={uuidv4()} />
 							  ))
 							: meetingsError
 							? Array.from({ length: 3 }).map(() => (
 									<MessageDisplay
 										hasBackground={true}
-										height=""
+										height="h-28 sm:h-auto"
 										message={errorFormat(meetingsError)}
 										key={uuidv4()}
 									/>

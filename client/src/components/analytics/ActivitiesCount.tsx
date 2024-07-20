@@ -24,7 +24,7 @@ export const ActivitiesCount: React.FC<IParticipantsProps> = ({ selectedStat }) 
 			>
 				Activitites stats
 			</h3>
-			<div className="w-full grid grid-cols-3  gap-2">
+			<div className="w-full grid  grid-cols-1 md:grid-cols-2 xl:grid-cols-3  gap-2">
 				<AnalyticsCard
 					title="User Joined meeting"
 					count={

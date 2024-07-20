@@ -16,11 +16,19 @@ export const Invitations: React.FC = () => {
 
 	const { mutate } = useConfirmInvitation();
 	return (
-		<div className={`w-full  p-8 space-y-4`}>
+		<div className={`w-full  p-3 sm:p-8 space-y-4`}>
 			{isLoading ? (
-				<MessageDisplay message="Loading...." />
+				<div
+					className={`w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4`}
+				>
+					{Array.from({ length: 8 }).map(() => (
+						<MessageDisplay height="min-h-56" hasBackground={true} />
+					))}
+				</div>
 			) : error ? (
-				<MessageDisplay message={errorFormat(error)} />
+				<MessageDisplay height="h-[70vh]" message={errorFormat(error)} />
+			) : data?.data.length === 0 ? (
+				<MessageDisplay message="No invitations available" height="h-[70vh]" />
 			) : (
 				<>
 					<div className={`flex w-fit p-1`}>
@@ -70,7 +78,12 @@ export const Invitations: React.FC = () => {
 							onClickHandler={() => filterChangeHandler("receiver")}
 						/>
 					</div>
-					<div className={`w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4  gap-4`}>
+					<div
+						className={`w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4`}
+					>
+						{data?.data.length === 0 && (
+							<MessageDisplay message="No invitations available" height="min-h-56" />
+						)}
 						{data?.data.map((invite) => (
 							<div
 								className={`rounded-lg border overflow-hidden ${

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { UIContext } from "../../../hooks/context/UIContext";
 import { CommonButton, CommonClipboard } from "../../shared/buttons";
 import {
+	ArrowCircleIcon,
 	CheckIcon,
 	ContactIcon,
 	PencilIcon,
@@ -20,8 +21,11 @@ import { useMeetingDetails } from "./useMeetingDetails";
 import { useDeleteMeeting, useEditMeeting, useMeetings } from "../useMeetings";
 import { EditMeeting } from "../EditMeeting";
 import { UserContext } from "../../../hooks/context/UserContext";
+import { MessageDisplay } from "../../shared/MessageDisplay";
 
-export const MeetingDetails: React.FC = () => {
+export const MeetingDetails: React.FC<{ toggleMeetingDetails: () => void }> = ({
+	toggleMeetingDetails,
+}) => {
 	const { theme, openModal, closeModal } = useContext(UIContext);
 	const { selectedMeeting: meeting } = useContext(MeetingsContext);
 
@@ -42,25 +46,35 @@ export const MeetingDetails: React.FC = () => {
 		<div className="w-full">
 			{meeting ? (
 				<>
-					<div
-						className={`mt-0 border-b pb-6 ${
-							theme === "dark" ? " border-transparent-400" : "border-gray-800"
-						}`}
-					>
-						<h3
-							className={`text-2xl font-semi-bold ${
-								theme === "dark" ? "text-white-800" : "text-black-600"
+					<div className="flex items-start space-x-4 w-full">
+						<div
+							className={`mt-0 border-b pb-6 flex-1 ${
+								theme === "dark" ? " border-transparent-400" : "border-gray-800"
 							}`}
 						>
-							{meeting.title}
-						</h3>
-						<p
-							className={`text-xs mt-2 font-light ${
-								theme === "dark" ? "text-transparent-300" : "text-black-400"
-							}`}
+							<h3
+								className={`text-2xl font-semi-bold ${
+									theme === "dark" ? "text-white-800" : "text-black-600"
+								}`}
+							>
+								{meeting.title}
+							</h3>
+							<p
+								className={`text-xs mt-2 font-light ${
+									theme === "dark" ? "text-transparent-300" : "text-black-400"
+								}`}
+							>
+								⏰ {meetingDisplayTime(meeting.start_time, meeting.end_time, meeting.status)}
+							</p>
+						</div>
+						<button
+							type="button"
+							className="flex lg:hidden items-center text-sm font-medium text-blue-100 space-x-2"
+							onClick={toggleMeetingDetails}
 						>
-							⏰ {meetingDisplayTime(meeting.start_time, meeting.end_time, meeting.status)}
-						</p>
+							{ArrowCircleIcon()}
+							<span>Back</span>
+						</button>
 					</div>
 					<div
 						className={`mt-0 border-b flex  space-x-2 items-center  py-6 ${
@@ -242,13 +256,11 @@ export const MeetingDetails: React.FC = () => {
 					</div>
 				</>
 			) : (
-				<p
-					className={`text-xs w-fit text-center ${
-						theme === "dark" ? "text-white-800" : "text-black-600"
-					}`}
-				>
-					No meeting selected
-				</p>
+				<MessageDisplay
+					hasBackground={true}
+					height="h-[75vh]"
+					message="No meeting details to display"
+				/>
 			)}
 		</div>
 	);

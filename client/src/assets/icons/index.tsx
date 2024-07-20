@@ -52,3 +52,4 @@ export { AbsentUserIcon } from "./AbsentUserIcon";
 export { NoSymbolIcon } from "./NoSymbolIcon";
 export { ChartIcon } from "./ChartIcon";
 export { MenubarIcon } from "./MenubarIcon";
+export { ArrowCircleIcon } from "./ArrowCircleIcon";
