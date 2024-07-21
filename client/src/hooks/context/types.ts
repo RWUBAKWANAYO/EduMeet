@@ -16,6 +16,8 @@ export interface ITheme {
 	isTablet: boolean;
 	isSidebarOpen: boolean;
 	toggleSidebar: () => void;
+	isChatBubble: boolean;
+	chatBubbleHandler: () => void;
 }
 
 export interface IUserContext {

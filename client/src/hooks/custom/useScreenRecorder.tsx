@@ -1,16 +1,26 @@
 import { useEffect, useState, useContext } from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import moment from "moment";
-import { UIContext } from "../context/UIContext";
 import { MeetingRoomContext } from "../context/meetings/MeetingRoomContext";
 
 export const useScreenRecorder = () => {
-	const { isDesktop } = useContext(UIContext);
 	const { screenRecordingHandler } = useContext(MeetingRoomContext);
 
 	const [startTime, setStartTime] = useState<moment.Moment | null>(null);
 	const [elapsedTime, setElapsedTime] = useState<string>("00:00:00");
 
+	const { startRecording, stopRecording } = useReactMediaRecorder({
+		screen: true,
+		onStart: () => {
+			setStartTime(moment());
+			screenRecordingHandler("start_recording");
+		},
+		onStop: (blobUrl) => {
+			setStartTime(null);
+			screenRecordingHandler("stop_recording");
+			handleStopRecording(blobUrl);
+		},
+	});
 	useEffect(() => {
 		let timer: NodeJS.Timeout | null = null;
 
@@ -32,15 +42,6 @@ export const useScreenRecorder = () => {
 		};
 	}, [startTime]);
 
-	if (!isDesktop) {
-		return {
-			startRecording: () => {},
-			stopRecording: () => {},
-			elapsedTime: "00:00:00",
-			startTime: null,
-		};
-	}
-
 	const handleStopRecording = (blobUrl: string) => {
 		const link = document.createElement("a");
 		link.href = blobUrl;
@@ -49,20 +50,6 @@ export const useScreenRecorder = () => {
 		link.click();
 		document.body.removeChild(link);
 	};
-	/* eslint-disable-next-line react-hooks/rules-of-hooks */
-	const { startRecording, stopRecording } = useReactMediaRecorder({
-		screen: true,
-		onStart: () => {
-			setStartTime(moment());
-			screenRecordingHandler("start_recording");
-		},
-		onStop: (blobUrl) => {
-			setStartTime(null);
-			screenRecordingHandler("stop_recording");
-			handleStopRecording(blobUrl);
-		},
-	});
-
 	return {
 		elapsedTime,
 		startTime,

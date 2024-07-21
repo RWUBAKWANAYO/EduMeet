@@ -67,6 +67,10 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 		setIsSidebarOpen(!isSidebarOpen);
 	};
 
+	// meeting room UI handlers
+	const [isChatBubble, setIsChatBubble] = useState(false);
+	const chatBubbleHandler = () => setIsChatBubble(!isChatBubble);
+
 	return (
 		<UIContext.Provider
 			value={{
@@ -82,6 +86,8 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 				isTablet,
 				isSidebarOpen,
 				toggleSidebar,
+				isChatBubble,
+				chatBubbleHandler,
 			}}
 		>
 			{children}

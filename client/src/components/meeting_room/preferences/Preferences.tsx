@@ -19,7 +19,7 @@ export const Preferences: React.FC<IScreenRecorder> = ({
 	startRecording,
 	stopRecording,
 }) => {
-	const { theme, isDesktop } = useContext(UIContext);
+	const { theme, isDesktop, chatBubbleHandler } = useContext(UIContext);
 	const { leaveRoomHandler, shareScreenHandler, toggleTrack, streamTrack } =
 		useContext(MeetingRoomContext);
 
@@ -32,7 +32,7 @@ export const Preferences: React.FC<IScreenRecorder> = ({
 			<div className="absolute left-6">
 				<ThemeButton />
 			</div>
-			<div className="w-full  flex justify-center space-x-4">
+			<div className="w-full  flex ml-14 sm:justify-center space-x-2 sm:space-x-4">
 				{streamTrack.audio && (
 					<CommonButton
 						type="button"
@@ -109,6 +109,7 @@ export const Preferences: React.FC<IScreenRecorder> = ({
 					extraClass={` w-10 h-10 text-xs rounded-full border-none ${
 						theme === "dark" ? "bg-blue-300 border-none" : "bg-white-600 border-blue-50"
 					}`}
+					onClickHandler={chatBubbleHandler}
 				/>
 			</div>
 			<div className=" flex items-center pr-6 absolute top-0 right-0 h-full ">
@@ -116,7 +117,7 @@ export const Preferences: React.FC<IScreenRecorder> = ({
 					type="button"
 					children={<h3>End Call</h3>}
 					hasUniqueColor={` text-white-100 `}
-					extraClass={` px-6 h-9 text-xs rounded-full border-none bg-red-500`}
+					extraClass={` px-4 sm:px-6 h-9 text-xs rounded-full border-none bg-red-500`}
 					onClickHandler={leaveRoomHandler}
 				/>
 			</div>

@@ -8,14 +8,17 @@ import { IUser } from "../../../../types/users.interface";
 import { IScreenRecorder } from "../../../../hooks/context/types";
 
 export const SelfStream: React.FC<IScreenRecorder> = ({ startTime, elapsedTime }) => {
-	const { theme, isDesktop } = useContext(UIContext);
-	const { renderPeer, streamTrack, user } = useSelfStream();
+	const { theme, isDesktop, isChatBubble } = useContext(UIContext);
+	const { renderPeer, streamTrack, user, isExpanded, expandHandler } = useSelfStream();
 
 	return (
 		<div
-			className={`border w-full h-3/4 grow rounded-lg overflow-hidden relative ${
+			className={`border flex-1  rounded-lg overflow-hidden ${
 				theme === "dark" ? "bg-blue-800 border-transparent-400" : "bg-white-100 border-gray-800"
-			}`}
+			}
+
+			${isExpanded ? "fixed top-0 left-0 w-screen h-screen bg-blue-100 z-50" : "relative"}
+			`}
 		>
 			<VideoPlayer
 				stream={renderPeer().stream}
@@ -58,6 +61,7 @@ export const SelfStream: React.FC<IScreenRecorder> = ({ startTime, elapsedTime }
 					children={ExpandScreenIcon}
 					hasUniqueColor={` text-white-100 `}
 					extraClass="font-semi-bold w-9 h-9 text-xs rounded-full border-none bg-gray-500 "
+					onClickHandler={expandHandler}
 				/>
 				{streamTrack.audio && (
 					<CommonButton
