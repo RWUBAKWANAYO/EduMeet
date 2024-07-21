@@ -33,7 +33,7 @@ export const NewMeeting = () => {
 		<div className="w-full flex justify-center items-center">
 			<form className={`w-fit mb-8 p-8 `} onSubmit={submitHandler}>
 				<div
-					className={`w-full flex justify-between items-center border-b pb-4 ${
+					className={`w-full flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0 border-b pb-4 ${
 						theme === "dark" ? " border-transparent-400" : "border-gray-800 "
 					}`}
 				>
@@ -49,7 +49,7 @@ export const NewMeeting = () => {
 						hasUniqueColor="bg-blue-100 border-transparent-0 text-white-100"
 						children="Create Meeting"
 						type="submit"
-						extraClass=" h-9 px-4 text-xs font-medium "
+						extraClass="w-fit  h-9 px-4 text-xs font-medium "
 					/>
 				</div>
 				<div

@@ -5,15 +5,17 @@ export const MessageDisplay = ({
 	message = "",
 	hasBackground = false,
 	height = "h-full",
+	styles = {},
 }: {
 	message?: any;
 	hasBackground?: boolean;
 	height?: string;
+	styles?: React.CSSProperties;
 }) => {
 	const { theme } = useContext(UIContext);
 	return (
 		<div
-			className={`w-full flex items-center justify-center ${
+			className={`w-full flex items-center justify-center p-4 ${
 				hasBackground
 					? `border rounded-lg ${
 							theme === "dark"
@@ -23,6 +25,7 @@ export const MessageDisplay = ({
 					: ""
 			} ${height}
     }`}
+			style={styles}
 		>
 			<span
 				className={`text-xs w-fit text-center ${

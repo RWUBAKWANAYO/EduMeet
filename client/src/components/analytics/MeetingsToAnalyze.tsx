@@ -22,14 +22,14 @@ export const MeetingToAnalyze = () => {
 	};
 	return (
 		<div
-			className={`relative py-8 min-w-[450px] min-h-[400px] ${
+			className={`rounded-lg relative py-8 w-full sm:w-[550px] h-screen sm:h-[550px]  flex flex-col ${
 				theme === "dark" ? "bg-blue-700" : "bg-white-100"
 			}`}
 		>
 			<CommonButton
 				children={XMark()}
 				type="button"
-				extraClass={`w-8 h-8 text-xs absolute top-0 right-0 rounded-none border-none`}
+				extraClass={`rounded-lg rounded-se w-8 h-8 text-xs absolute top-0 right-0 rounded-none border-none`}
 				onClickHandler={closeModal}
 			/>
 			{isLoading ? (
@@ -48,7 +48,7 @@ export const MeetingToAnalyze = () => {
 								Meetings to Analyze
 							</h4>
 						</div>
-						<div className="w-[450px] h-[400px] overflow-auto px-6">
+						<div className="w-full flex-1 overflow-auto px-6">
 							{data?.data.map((meeting) => (
 								<div
 									key={meeting._id}

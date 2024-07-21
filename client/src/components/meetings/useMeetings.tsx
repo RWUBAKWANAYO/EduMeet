@@ -25,10 +25,16 @@ export const useFetchMeetings = (data: IMeetingsData = {}) => {
 
 	return useQuery<IMeetingsResponse, Error>(
 		["meetings", token, data],
-		() => fetchMeetings(token!, data),
+		() => {
+			updateMeetings({ isLoading: true });
+			return fetchMeetings(token!, data);
+		},
 		{
-			onSuccess: (data) => {
-				return updateMeetings(data);
+			onSuccess: (fetchedData) => {
+				updateMeetings({ data: fetchedData, isLoading: false });
+			},
+			onError: (error) => {
+				updateMeetings({ error, isLoading: false });
 			},
 			keepPreviousData: true,
 			refetchOnWindowFocus: false,

@@ -35,7 +35,9 @@ export const DateSelector: React.FC<IDateSelector> = ({ selectedDate, selectDate
 						: "border-gray-800"
 				}`}
 			/>
-			<NayoCalendar selectDateHandler={selectDateHandler} />
+			<div className="min-w-[287px] min-h-[300px]">
+				<NayoCalendar selectDateHandler={selectDateHandler} />
+			</div>
 		</div>
 	);
 };

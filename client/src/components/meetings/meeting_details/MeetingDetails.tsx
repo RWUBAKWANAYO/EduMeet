@@ -112,7 +112,7 @@ export const MeetingDetails: React.FC<{ toggleMeetingDetails: () => void }> = ({
 							tostData="Link"
 						/>
 
-						{meeting.status === "upcoming" && meeting.host === user?._id && (
+						{meeting.status === "upcoming" && meeting.host?._id === user?._id && (
 							<>
 								<CommonButton
 									children={PencilIcon}
@@ -258,7 +258,7 @@ export const MeetingDetails: React.FC<{ toggleMeetingDetails: () => void }> = ({
 			) : (
 				<MessageDisplay
 					hasBackground={true}
-					height="h-[75vh]"
+					styles={{ height: "calc(63vh + 96px)" }}
 					message="No meeting details to display"
 				/>
 			)}

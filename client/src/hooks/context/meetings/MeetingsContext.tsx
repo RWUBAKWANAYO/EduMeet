@@ -26,23 +26,22 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
 	const [requestToJoinData, setRequestToJoinData] = useState<IMeetingInvite[]>([]);
 	const navigate = useNavigate();
 
-	const updateMeetings = (data: IMeetingsResponse) => {
-		setMeetings(data);
-		setSelectedMeeting(data.data[0]);
-	};
-
-	const setMeetingsLoadingError = ({
+	const updateMeetings = ({
 		isLoading,
 		error,
+		data,
 	}: {
 		isLoading?: boolean;
 		error?: Error;
+		data?: IMeetingsResponse;
 	}) => {
 		setMeetings((prev) => ({
 			...prev,
 			isLoading: isLoading ?? prev.isLoading,
 			error: error ?? prev.error,
+			data: data?.data ?? prev.data,
 		}));
+		if (data) setSelectedMeeting(data.data[0]);
 	};
 
 	const selectMeetingHandler = (meeting: IMeetingData) => {
@@ -147,7 +146,6 @@ export const MeetingsProvider = ({ children }: { children: React.ReactNode }) =>
 				userRejectHostInvitation,
 				hostAcceptUserJoinRequest,
 				hostRejecttUserJoinRequest,
-				setMeetingsLoadingError,
 			}}
 		>
 			{children}
