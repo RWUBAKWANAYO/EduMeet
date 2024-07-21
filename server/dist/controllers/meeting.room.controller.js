@@ -87,7 +87,7 @@ exports.createMeetingRoom = (0, utils_1.asyncErrorHandler)((req, res, next) => _
         yield (0, meeting_stats_controller_1.createMeetingStats)({
             roomId: `${existingRoom._id}`,
             meetingId: meeting._id,
-            userId: userId,
+            userId,
             participants: [meeting.host, ...meeting.participants],
         });
         return res.status(200).json({
@@ -105,7 +105,7 @@ exports.createMeetingRoom = (0, utils_1.asyncErrorHandler)((req, res, next) => _
     yield (0, meeting_stats_controller_1.createMeetingStats)({
         roomId: `${meetingRoom._id}`,
         meetingId: `${meeting._id}`,
-        userId: userId,
+        userId,
         participants: [meeting.host, ...meeting.participants],
     });
     return res.status(200).json({
@@ -141,7 +141,6 @@ const joinMeetingRoom = (roomId, userId) => __awaiter(void 0, void 0, void 0, fu
             });
         meetingRoom.attendees.push(existUser._id);
         yield meetingRoom.save();
-        console.log(meetingRoom.attendees, "user....");
         return yield meetingRoom.populate({
             path: "attendees",
             select: " full_name photo",
@@ -159,7 +158,6 @@ const removeAttendee = (roomId, userId) => __awaiter(void 0, void 0, void 0, fun
             throw new Error(`Meeting room with id ${roomId} not found`);
         }
         const newAttendees = meetingRoom.attendees.filter((attendee) => attendee.toString() !== userId);
-        console.log(newAttendees, "remove 01...");
         if (newAttendees.length === 0) {
             const updatedMeeting = yield meeting_model_1.default.findOne({ session_id: meetingRoom.session_id });
             if (updatedMeeting && (0, moment_1.default)(updatedMeeting.end_time).isBefore((0, moment_1.default)())) {

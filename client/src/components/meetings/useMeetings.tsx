@@ -123,7 +123,6 @@ export const useMeetings = () => {
 	};
 
 	const allParticipants = (meeting: IMeetingData): IUser[] => {
-		console.log(meeting);
 		const members = meeting.participants ? meeting.participants : [];
 		return [meeting.host as IUser, ...members];
 	};

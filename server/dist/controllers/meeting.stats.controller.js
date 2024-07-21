@@ -114,7 +114,6 @@ exports.fiterMeetingStats = (0, utils_1.asyncErrorHandler)((req, res, next) => _
     const existMeeting = yield meeting_model_1.default.findOne({ _id: meetingId });
     if (!existMeeting)
         next(new utils_1.ErrorFormat("Meeting not found", 404));
-    console.log(existMeeting, "..");
     const query = {};
     if ((existMeeting === null || existMeeting === void 0 ? void 0 : existMeeting.host.toString()) !== userId)
         query.user = userId;
@@ -122,7 +121,6 @@ exports.fiterMeetingStats = (0, utils_1.asyncErrorHandler)((req, res, next) => _
         query.room = roomId;
     if (meetingId)
         query.meeting = meetingId;
-    console.log(query, "query..");
     const stats = yield meeting_stats_model_1.default.find(query)
         .populate("room")
         .populate({

@@ -14,7 +14,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-//routes
+// routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/meetings", meetingRouter);
@@ -23,7 +23,7 @@ app.use("/api/v1/meeting-messages", meetingMessageRouter);
 app.use("/api/v1/meeting-stats", meetingStatsRouter);
 app.use("/api/v1/invitations", invitationRouter);
 
-//jobs
+// jobs
 updateMeetingStatuses();
 
 export default app;

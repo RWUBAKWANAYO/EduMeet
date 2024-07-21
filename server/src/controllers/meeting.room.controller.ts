@@ -79,7 +79,7 @@ export const createMeetingRoom = asyncErrorHandler(
 			await createMeetingStats({
 				roomId: `${existingRoom._id}`,
 				meetingId: meeting._id as any,
-				userId: userId,
+				userId,
 				participants: [meeting.host, ...meeting.participants] as any,
 			});
 			return res.status(200).json({
@@ -97,7 +97,7 @@ export const createMeetingRoom = asyncErrorHandler(
 		await createMeetingStats({
 			roomId: `${meetingRoom._id}`,
 			meetingId: `${meeting._id}`,
-			userId: userId,
+			userId,
 			participants: [meeting.host, ...meeting.participants] as any,
 		});
 
@@ -141,7 +141,6 @@ export const joinMeetingRoom = async (roomId: string, userId: string) => {
 		meetingRoom.attendees.push(existUser._id);
 
 		await meetingRoom.save();
-		console.log(meetingRoom.attendees, "user....");
 		return await meetingRoom.populate({
 			path: "attendees",
 			select: " full_name photo",
@@ -158,7 +157,6 @@ export const removeAttendee = async (roomId: string, userId: string) => {
 			throw new Error(`Meeting room with id ${roomId} not found`);
 		}
 		const newAttendees = meetingRoom.attendees.filter((attendee) => attendee.toString() !== userId);
-		console.log(newAttendees, "remove 01...");
 		if (newAttendees.length === 0) {
 			const updatedMeeting = await Meeting.findOne({ session_id: meetingRoom.session_id });
 			if (updatedMeeting && moment(updatedMeeting.end_time).isBefore(moment())) {

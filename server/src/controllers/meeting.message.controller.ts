@@ -3,7 +3,6 @@ import { asyncErrorHandler, ErrorFormat } from "../utils";
 import MeetingMessage from "../models/meeting.message.model";
 import { IMeetingMessage } from "../types/meeting.interface";
 import { updateLatestMessage } from "./meeting.chat.controller";
-import mongoose from "mongoose";
 
 export const sendMeetingMessage = async (message: IMeetingMessage) => {
 	try {

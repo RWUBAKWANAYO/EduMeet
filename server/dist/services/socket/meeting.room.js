@@ -24,7 +24,7 @@ const meetingRoomHandler = (io, socket) => {
         socket.join(userId);
         socket.to(`${room._id}`).emit("user-request-to-join-room", {
             reqUser: user,
-            meeting: meeting,
+            meeting,
             roomId: `${room._id}`,
         });
     });
@@ -93,12 +93,11 @@ const meetingRoomHandler = (io, socket) => {
             roomId,
             userId: peerId,
         };
-        console.log(streamTrack, streamType);
         if (streamType === "video") {
-            data.action = streamTrack["video"] === false ? "video_muted" : "video_unmuted";
+            data.action = streamTrack.video === false ? "video_muted" : "video_unmuted";
         }
         else {
-            data.action = streamTrack["audio"] === false ? "audio_muted" : "audio_unmuted";
+            data.action = streamTrack.audio === false ? "audio_muted" : "audio_unmuted";
         }
         yield (0, meeting_stats_controller_1.updateMeetingStats)(data);
         socket.to(roomId.toString()).emit("user-change-stream-track", { peerId, streamTrack });

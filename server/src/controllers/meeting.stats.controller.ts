@@ -119,14 +119,11 @@ export const fiterMeetingStats = asyncErrorHandler(
 		const { roomId, meetingId } = req.query;
 		const existMeeting = await Meeting.findOne({ _id: meetingId });
 		if (!existMeeting) next(new ErrorFormat("Meeting not found", 404));
-		console.log(existMeeting, "..");
 		const query: any = {};
 
 		if (existMeeting?.host.toString() !== userId) query.user = userId;
 		if (roomId) query.room = roomId;
 		if (meetingId) query.meeting = meetingId;
-
-		console.log(query, "query..");
 
 		const stats = await MeetingStats.find(query)
 			.populate("room")
