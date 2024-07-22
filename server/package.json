@@ -4,12 +4,12 @@
 	"description": "",
 	"main": "dist/app.js",
 	"scripts": {
+		"prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
 		"build": "tsc",
 		"watch": "tsc -w",
 		"prestart": "npm run build",
-		"lint:fix": "tslint -c tslint.json -p tsconfig.json --fix",
-		"dev": "cross-env NODE_ENV=development concurrently \"npm run lint:fix\" \"npm run watch\" \"nodemon dist/server.js\"concurrently \"npm run lint:fix\" \"npm run watch\" \"nodemon dist/server.js\"",
-		"start": "cross-env NODE_ENV=production node dist/server.js"
+		"dev": "cross-env NODE_ENV=development concurrently --kill-others \"npm run watch\" \"nodemon dist/server.js\"",
+		"start": "export NODE_ENV=production && concurrently --kill-others \"npm run watch\" \"node dist/server.js\""
 	},
 	"repository": {
 		"type": "git",
