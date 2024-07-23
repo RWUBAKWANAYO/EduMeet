@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useContext } from "react";
 import { Navbar } from "../components/shared/Navbar";
 import { UIContext } from "../hooks/context/UIContext";
@@ -19,7 +20,10 @@ export const MeetingRoom = () => {
 	const { theme, isChatBubble, chatBubbleHandler } = useContext(UIContext);
 	const { chatSizeHandler, participantsSizeHandler, enlargeChatSize, enlargeParticipantsSize } =
 		useMeetingRoom();
-	const { startTime, elapsedTime, startRecording, stopRecording } = useScreenRecorder();
+	const { startTime, elapsedTime, startRecording, stopRecording } =
+		window.innerWidth > 1024
+			? useScreenRecorder()
+			: { startTime: null, elapsedTime: "", startRecording: () => {}, stopRecording: () => {} };
 	const { renderPeersVidoes } = usePeersStream();
 	return (
 		<div

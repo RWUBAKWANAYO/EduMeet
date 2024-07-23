@@ -32,7 +32,7 @@ export const Auth: React.FC = () => {
 				<img
 					src={authBackground}
 					alt="background"
-					className="w-full sm:h-full h-40  object-right-bottom object-cover "
+					className="w-full sm:h-full h-52  object-right-bottom object-cover "
 				/>
 			</div>
 		</div>
