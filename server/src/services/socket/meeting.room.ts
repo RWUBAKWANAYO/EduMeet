@@ -50,6 +50,7 @@ export const meetingRoomHandler = (io: Server, socket: Socket) => {
 		if (!roomId || !user) return;
 		const room = await joinMeetingRoom(roomId, user._id.toString());
 		if (!room) return;
+		if (room.status === "not_found") return socket.emit("get-meeting-room", "not_found");
 		await updateMeetingStats({
 			action: "join_meeting",
 			roomId: `${room._id}`,

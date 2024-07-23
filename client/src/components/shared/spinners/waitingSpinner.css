@@ -93,6 +93,7 @@
     0% {
         opacity: 1;
     }
+
     100% {
         opacity: 0;
     }
@@ -107,7 +108,7 @@
     border-radius: 50%;
     display: inline-block;
     position: relative;
-    border: 3px solid;
+    border: 2px solid;
     border-color: currentColor currentColor transparent;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
@@ -122,10 +123,10 @@
     top: 0;
     bottom: 0;
     margin: auto;
-    border: 3px solid;
+    border: 2px solid;
     border-color: transparent currentColor currentColor;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     animation: rotationBack 0.5s linear infinite;
     transform-origin: center center;
@@ -135,6 +136,7 @@
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -144,6 +146,7 @@
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(-360deg);
     }

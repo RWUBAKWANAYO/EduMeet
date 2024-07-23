@@ -29,7 +29,7 @@ const newSingleChat = async ({ roomId, members }: IMeetingChatArg) => {
 		});
 		if (existingChat) return existingChat;
 
-		const newChat = await MeetingChat.create(chatQuery);
+		const newChat = await MeetingChat.create({ ...chatQuery, members: memberIds });
 		return await newChat.populate({
 			path: "members",
 			select: " full_name photo",

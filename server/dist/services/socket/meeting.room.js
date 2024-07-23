@@ -46,6 +46,8 @@ const meetingRoomHandler = (io, socket) => {
         const room = yield (0, meeting_room_controller_1.joinMeetingRoom)(roomId, user._id.toString());
         if (!room)
             return;
+        if (room.status === "not_found")
+            return socket.emit("get-meeting-room", "not_found");
         yield (0, meeting_stats_controller_1.updateMeetingStats)({
             action: "join_meeting",
             roomId: `${room._id}`,

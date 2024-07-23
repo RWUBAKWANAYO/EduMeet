@@ -105,7 +105,7 @@ export const JoinMeetingForm = () => {
 						type="submit"
 						extraClass="w-full h-10 px-4 text-xs font-semibold"
 					/>
-					{isLoading && <SubmittingSpinner colors="bg-blue-100 text-white-100" size="w-8 h-8" />}
+					{isLoading && <SubmittingSpinner colors="bg-blue-100 text-white-100" size="w-7 h-7" />}
 				</div>
 			</form>
 		</div>

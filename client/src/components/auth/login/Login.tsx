@@ -2,13 +2,14 @@ import React, { useContext } from "react";
 import { useLogin } from "./useLogin";
 import { UIContext } from "../../../hooks/context/UIContext";
 import { CommonButton } from "../../shared/buttons";
-import { ContactIcon } from "../../../assets/icons";
 import { errorFormat } from "../../../utils";
 import { SubmittingSpinner } from "../../shared/spinners/Spinners";
+import { TestingAuth } from "../TestingAuth";
 
 export const Login: React.FC<{ pageHandler: (status: boolean) => void }> = ({ pageHandler }) => {
 	const { theme } = useContext(UIContext);
-	const { emailRef, passwordRef, handleSubmit, isLoading, error } = useLogin();
+	const { emailRef, passwordRef, handleSubmit, isLoading, error, handleTestAccountAuth } =
+		useLogin();
 
 	return (
 		<form className="space-y-4" onSubmit={handleSubmit}>
@@ -70,7 +71,7 @@ export const Login: React.FC<{ pageHandler: (status: boolean) => void }> = ({ pa
 					type="submit"
 					extraClass="w-full h-10 px-4 text-xs font-semibold mt-3"
 				/>
-				{isLoading && <SubmittingSpinner colors="bg-blue-40 text-white-100" size="w-8 h-8" />}
+				{isLoading && <SubmittingSpinner colors="bg-blue-40 text-white-100" size="w-7 h-7" />}
 			</div>
 
 			<div className="flex w-full items-center ">
@@ -92,25 +93,7 @@ export const Login: React.FC<{ pageHandler: (status: boolean) => void }> = ({ pa
 					}`}
 				/>
 			</div>
-			<div
-				className={`w-full relative h-fit mt-3 border rounded-md  ${
-					theme === "dark" ? "border-transparent-100" : "border-gray-800"
-				}`}
-			>
-				<CommonButton
-					children={
-						<div className="flex items-center space-x-4">
-							{ContactIcon}
-							<p>Use testing account</p>
-						</div>
-					}
-					type="button"
-					hasUniqueColor={`${theme === "dark" ? "bg-blue-800 " : "bg-white-700 "}`}
-					extraClass={`border-none w-full h-10 px-4 text-xs font-semi-bold ${
-						theme === "dark" ? "text-white-800" : "text-black-600"
-					}`}
-				/>
-			</div>
+			<TestingAuth />
 			<div
 				className={`text-xs font-normal flex justify-center ${
 					theme === "dark" ? "text-white-800" : "text-black-600"

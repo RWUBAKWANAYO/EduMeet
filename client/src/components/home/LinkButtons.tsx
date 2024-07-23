@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { CameraIcon, DateIcon, PlusCircleIcon } from "../../assets/icons";
 import { UIContext } from "../../hooks/context/UIContext";
 import { useMeetings } from "../meetings/useMeetings";
+import { v4 as uuidv4 } from "uuid";
 
 export const LinkButtons = () => {
 	const { theme } = useContext(UIContext);
@@ -41,6 +42,7 @@ export const LinkButtons = () => {
 					className={`flex flex-col items-center border p-4 rounded-md ${
 						theme === "dark" ? "bg-blue-800 border-transparent-90" : "bg-white-100 border-gray-800"
 					}`}
+					key={uuidv4()}
 				>
 					<CommonButton
 						type="button"

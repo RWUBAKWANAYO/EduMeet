@@ -18,7 +18,7 @@ export const Auth: React.FC = () => {
 				<div className="w-full flex items-center mb-6 space-x-2">
 					<img src={logo} alt="logo" className="w-9" />
 					<h1
-						className={`text-md font-extrabold flex-1 text-center ${
+						className={`text-xl leading-none font-extrabold flex-1 text-center ${
 							theme === "dark" ? "text-white-800" : "text-black-600"
 						}`}
 					>

@@ -2,7 +2,8 @@ import { useContext } from "react";
 import { AnalyticsCard } from "../shared/cards";
 import { UIContext } from "../../hooks/context/UIContext";
 import { IStat } from "./types";
-import { joinTimeHandler } from "../../utils";
+import { durationHandler, joinTimeHandler } from "../../utils";
+import moment from "moment";
 
 interface IParticipantsProps {
 	selectedStat: IStat;
@@ -25,6 +26,22 @@ export const ActivitiesCount: React.FC<IParticipantsProps> = ({ selectedStat }) 
 				Activitites stats
 			</h3>
 			<div className="w-full grid  grid-cols-1 md:grid-cols-2 xl:grid-cols-3  gap-2">
+				<AnalyticsCard
+					title="Meeting date"
+					count={
+						selectedStat.meeting?.start_time
+							? moment(selectedStat.meeting.start_time).format("MMMM Do YYYY")
+							: "N/A"
+					}
+				/>
+				<AnalyticsCard
+					title="Meeting Duration"
+					count={
+						selectedStat.meeting?.start_time && selectedStat.meeting?.end_time
+							? durationHandler(selectedStat.meeting.start_time, selectedStat.meeting.end_time)
+							: "N/A"
+					}
+				/>
 				<AnalyticsCard
 					title="User Joined meeting"
 					count={

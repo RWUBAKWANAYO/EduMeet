@@ -9,6 +9,7 @@ import { MessageDisplay } from "../shared/MessageDisplay";
 import { errorFormat } from "../../utils";
 import moment from "moment";
 import { useInvitations } from "./useHome";
+import { v4 as uuidv4 } from "uuid";
 
 export const Invitations = () => {
 	const { theme } = useContext(UIContext);
@@ -53,6 +54,7 @@ export const Invitations = () => {
 									className={`mx-4  flex space-x-4 justify-between  space-x-2 py-3 border-b ${
 										theme === "dark" ? " border-transparent-90" : " border-gray-800"
 									} ${index === getPendingInvite(data?.data).length - 1 ? "mb-6" : ""}`}
+									key={uuidv4()}
 								>
 									<div
 										className={` flex-1 flex space-x-2 ${

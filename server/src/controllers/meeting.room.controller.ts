@@ -157,11 +157,20 @@ export const removeAttendee = async (roomId: string, userId: string) => {
 			throw new Error(`Meeting room with id ${roomId} not found`);
 		}
 		const newAttendees = meetingRoom.attendees.filter((attendee) => attendee.toString() !== userId);
+		console.log(newAttendees, "newAttendees........", meetingRoom);
 		if (newAttendees.length === 0) {
 			const updatedMeeting = await Meeting.findOne({ session_id: meetingRoom.session_id });
-			if (updatedMeeting && moment(updatedMeeting.end_time).isBefore(moment())) {
+			if (
+				meetingRoom.meeting_type === "scheduled" &&
+				updatedMeeting &&
+				moment(updatedMeeting.end_time).isBefore(moment())
+			) {
 				updatedMeeting.status = "ended";
 				await updatedMeeting.save();
+			}
+			if (meetingRoom.meeting_type === "instant") {
+				console.log("called...");
+				await MeetingRoom.findOneAndDelete({ session_id: meetingRoom.session_id });
 			}
 		}
 		meetingRoom.attendees = newAttendees;

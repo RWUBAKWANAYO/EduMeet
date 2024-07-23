@@ -8,37 +8,39 @@ import { AxiosResponse } from "axios";
 import { socket } from "../../../lib/socket";
 
 export const useLogin = () => {
-  const { saveUser } = useContext(UserContext);
-  const emailRef = useRef<HTMLInputElement>(null!);
-  const passwordRef = useRef<HTMLInputElement>(null!);
-  const navigate = useNavigate();
+	const { saveUser } = useContext(UserContext);
+	const emailRef = useRef<HTMLInputElement>(null!);
+	const passwordRef = useRef<HTMLInputElement>(null!);
+	const navigate = useNavigate();
 
-  const { mutate, isLoading, error } = useMutation<IAuthResponse, Error, IAuthData>(
-    async (data: IAuthData): Promise<IAuthResponse> => {
-      const response: AxiosResponse<IAuthResponse> = await AxiosInstance({
-        url: "/auth/login",
-        method: "POST",
-        data,
-      });
-      return response.data;
-    },
-    {
-      onSuccess: (data: IAuthResponse) => {
-        saveUser(data);
-        socket.emit("join-user-to-socket", data.user._id);
-        navigate("/");
-      },
-    }
-  );
+	const { mutate, isLoading, error } = useMutation<IAuthResponse, Error, IAuthData>(
+		async (data: IAuthData): Promise<IAuthResponse> => {
+			const response: AxiosResponse<IAuthResponse> = await AxiosInstance({
+				url: "/auth/login",
+				method: "POST",
+				data,
+			});
+			return response.data;
+		},
+		{
+			onSuccess: (data: IAuthResponse) => {
+				saveUser(data);
+				socket.emit("join-user-to-socket", data.user._id);
+				navigate("/");
+			},
+		}
+	);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const user = {
-      email: emailRef?.current?.value,
-      password: passwordRef?.current?.value,
-    };
-    mutate(user);
-  };
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		const user = {
+			email: emailRef?.current?.value,
+			password: passwordRef?.current?.value,
+		};
+		mutate(user);
+	};
 
-  return { emailRef, passwordRef, handleSubmit, isLoading, error };
+	const handleTestAccountAuth = (user: IAuthData) => mutate(user);
+
+	return { emailRef, passwordRef, handleSubmit, isLoading, error, handleTestAccountAuth };
 };

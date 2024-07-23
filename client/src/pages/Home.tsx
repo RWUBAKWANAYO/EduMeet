@@ -79,7 +79,7 @@ const Home: React.FC = () => {
 												meetingsData!.data.total,
 												meetingsData!.data.upcoming
 											)}
-											color="#1A71FF"
+											color="rgb(168 85 247)"
 										/>
 										<StatisticsCard
 											icon={DateIcon}
@@ -89,7 +89,7 @@ const Home: React.FC = () => {
 												meetingsData.data.total,
 												meetingsData.data.ongoing
 											)}
-											color="rgb(168 85 247)"
+											color="#1A71FF"
 										/>
 										<StatisticsCard
 											icon={DateIcon}

@@ -22,7 +22,7 @@ export const Invitations: React.FC = () => {
 					className={`w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4`}
 				>
 					{Array.from({ length: 8 }).map(() => (
-						<MessageDisplay height="min-h-56" hasBackground={true} />
+						<MessageDisplay height="min-h-60" hasBackground={true} />
 					))}
 				</div>
 			) : error ? (
@@ -140,13 +140,15 @@ export const Invitations: React.FC = () => {
 									<div className="p-6 flex  space-x-3">
 										<p className="text-xs font-normal leading-6">
 											{user?._id === invite.sender_id._id
-												? `You have invited Humble to join the meeting "${
-														invite.meeting_id?.title
-												  }" on
+												? `You have invited Humble to join the meeting "${textSlice(
+														invite.meeting_id?.title || "",
+														80
+												  )}" on
 											${moment(invite.meeting_id?.start_time).format("MMMM Do YYYY, h:mm")}`
-												: `You have been invited to by Bob to join the meeting "${
-														invite.meeting_id?.title
-												  }" on
+												: `You have been invited to by Bob to join the meeting "${textSlice(
+														invite.meeting_id?.title || "",
+														80
+												  )}" on
 								    ${moment(invite.meeting_id?.start_time).format("MMMM Do YYYY, h:mm a")}`}
 										</p>
 									</div>

@@ -34,7 +34,7 @@ const newSingleChat = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomI
         });
         if (existingChat)
             return existingChat;
-        const newChat = yield meeting_chat_model_1.default.create(chatQuery);
+        const newChat = yield meeting_chat_model_1.default.create(Object.assign(Object.assign({}, chatQuery), { members: memberIds }));
         return yield newChat.populate({
             path: "members",
             select: " full_name photo",

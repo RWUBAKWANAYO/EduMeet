@@ -158,11 +158,18 @@ const removeAttendee = (roomId, userId) => __awaiter(void 0, void 0, void 0, fun
             throw new Error(`Meeting room with id ${roomId} not found`);
         }
         const newAttendees = meetingRoom.attendees.filter((attendee) => attendee.toString() !== userId);
+        console.log(newAttendees, "newAttendees........", meetingRoom);
         if (newAttendees.length === 0) {
             const updatedMeeting = yield meeting_model_1.default.findOne({ session_id: meetingRoom.session_id });
-            if (updatedMeeting && (0, moment_1.default)(updatedMeeting.end_time).isBefore((0, moment_1.default)())) {
+            if (meetingRoom.meeting_type === "scheduled" &&
+                updatedMeeting &&
+                (0, moment_1.default)(updatedMeeting.end_time).isBefore((0, moment_1.default)())) {
                 updatedMeeting.status = "ended";
                 yield updatedMeeting.save();
+            }
+            if (meetingRoom.meeting_type === "instant") {
+                console.log("called...");
+                yield meeting_room_model_1.default.findOneAndDelete({ session_id: meetingRoom.session_id });
             }
         }
         meetingRoom.attendees = newAttendees;

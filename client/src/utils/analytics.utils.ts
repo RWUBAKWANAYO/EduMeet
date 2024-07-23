@@ -36,3 +36,15 @@ export const leftTimeHandler = (leftTime?: Date | string, endTime?: Date | strin
 	}
 	return capitalizeText(formattedDuration);
 };
+
+export const durationHandler = (startTime?: Date | string, endTime?: Date | string): string => {
+	if (!startTime || !endTime) return "N/A";
+	const startTimeMoment = moment(startTime);
+	const endTimeMoment = moment(endTime);
+
+	const duration =
+		startTimeMoment.isValid() && endTimeMoment.isValid()
+			? moment.duration(endTimeMoment.diff(startTimeMoment)).humanize()
+			: "N/A";
+	return capitalizeText(duration);
+};
