@@ -37,7 +37,7 @@ export const Analytics = () => {
 						<div
 							className={`flex-1 h-full  ${
 								(data?.data[0].meeting.host as IUser)?._id === user?._id
-									? `p-4 lg:p-8 lg:pr-4 lg:pl-4 sm:border-l ${
+									? `p-4 pl-0 lg:p-8 lg:pr-4 lg:pl-4 sm:border-l ${
 											theme === "dark" ? "border-transparent-400" : "border-gray-800"
 									  }`
 									: "p-4 lg:p-8 lg:pr-4"

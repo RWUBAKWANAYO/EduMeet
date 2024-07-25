@@ -6,6 +6,7 @@ import { VideoPlayer } from "../video_player/VideoPlayer";
 import { usePeersStream } from "./usePeersStream";
 import { textSlice } from "../../../../utils";
 import { IPeer } from "../../../../hooks/context/types";
+import { v4 as uuidv4 } from "uuid";
 
 export const PeersStream = React.memo(() => {
 	const { theme, isChatBubble, isMobile } = useContext(UIContext);
@@ -25,7 +26,7 @@ export const PeersStream = React.memo(() => {
 				const peerState = peer as IPeer;
 				return (
 					<div
-						key={peerState.user._id}
+						key={uuidv4()}
 						className={`  ${isChatBubble ? "h-full w-[250px]" : "h-[250px] w-full"}`}
 						style={{
 							width: isMobile ? "150px" : isChatBubble ? "150px" : "25vw",
@@ -47,7 +48,9 @@ export const PeersStream = React.memo(() => {
 							/>
 							<CommonButton
 								type="button"
-								children={<h4 className="text-xs">{textSlice(peerState.user.full_name, 4)}</h4>}
+								children={
+									<h4 className="text-xs">{textSlice(peerState.user?.full_name || "", 4)}</h4>
+								}
 								hasUniqueColor={` text-white-100 `}
 								extraClass="font-semi-bold px-4 py-1.5 text-xs rounded-3xl absolute bottom-2 left-2 z-10 border-none bg-gray-500 "
 							/>

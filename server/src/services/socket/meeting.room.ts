@@ -1,17 +1,14 @@
 import { Server, Socket } from "socket.io";
-import {
-	checkExistMeetingRoom,
-	joinMeetingRoom,
-	removeAttendee,
-} from "../../controllers/meeting.room.controller";
+import { checkExistMeetingRoom, removeAttendee } from "../../controllers/meeting.room.controller";
 import { IUser } from "../../types/user.interface";
 import { meeitngChatsHandler } from "./meeting.chat";
 import { IMeeting } from "../../types/meeting.interface";
 import { IUpdateStats, updateMeetingStats } from "../../controllers/meeting.stats.controller";
-
+import { IMeetingRoom as IMeetingRoomData } from "../../types/meeting.interface";
 export interface IMeetingRoom {
 	peerId: string;
 	meeting: IMeeting;
+	room: IMeetingRoomData;
 	roomId: string;
 	user: IUser;
 	userId: string;
@@ -46,18 +43,15 @@ export const meetingRoomHandler = (io: Server, socket: Socket) => {
 		socket.to(userId).emit("join-request-rejected");
 	};
 
-	const joinRoomHandler = async ({ roomId, user }: IMeetingRoom) => {
-		if (!roomId || !user) return;
-		const room = await joinMeetingRoom(roomId, user._id.toString());
-		if (!room) return;
-		if (room.status === "not_found") return socket.emit("get-meeting-room", "not_found");
+	const joinRoomHandler = async ({ room, user }: IMeetingRoom) => {
+		if (!room || !user) return;
 		await updateMeetingStats({
 			action: "join_meeting",
 			roomId: `${room._id}`,
 			userId: `${user._id}`,
 		});
-		socket.join(roomId);
-		socket.to(roomId).emit("user-joined-meeting-room", user);
+		socket.join(`${room._id}`);
+		socket.to(`${room._id}`).emit("user-joined-meeting-room", user);
 		socket.emit("get-meeting-room", room);
 	};
 

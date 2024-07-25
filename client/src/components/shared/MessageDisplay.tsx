@@ -15,7 +15,7 @@ export const MessageDisplay = ({
 	const { theme } = useContext(UIContext);
 	return (
 		<div
-			className={`w-full flex items-center justify-center p-4 ${
+			className={`w-full flex items-center justify-center p-4  ${
 				hasBackground
 					? `border rounded-lg ${
 							theme === "dark"

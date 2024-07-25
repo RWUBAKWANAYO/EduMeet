@@ -35,7 +35,7 @@ export const Participants: React.FC<IParticipantsProps> = ({
 							<div
 								key={stat._id}
 								onClick={() => selectStatHandler(stat)}
-								className={`cursor-pointer flex w-full items-center justify-between space-x-2 px-4 py-2 rounded-lg border ${
+								className={`cursor-pointer w-fit flex sm:w-full items-center justify-between sm:space-x-2 sm:px-4 sm:py-2 rounded-full sm:rounded-lg border ${
 									theme === "dark"
 										? `border-transparent-90 ${
 												selectedStat._id === stat._id ? "bg-blue-300" : "bg-blue-800"
@@ -47,8 +47,8 @@ export const Participants: React.FC<IParticipantsProps> = ({
 							>
 								<div className={`flex-1 flex md:space-x-2 items-center`}>
 									<img src={stat.user?.photo} alt="avatar" className="w-8 h-8 rounded-full " />
-									<div className="flex-1 space-y-0.5">
-										<div className="hidden md:block w-full">
+									<div className="hidden md:block flex-1 space-y-0.5">
+										<div className=" w-full">
 											<h4
 												className={`text-sm ${
 													theme === "dark" ? "text-white-800" : "text-black-600"
@@ -67,8 +67,8 @@ export const Participants: React.FC<IParticipantsProps> = ({
 									</div>
 								</div>
 								<button
-									className={` ${
-										theme === "dark" ? "hidden md:block text-white-800" : "text-black-600"
+									className={`hidden md:block ${
+										theme === "dark" ? " text-white-800" : "text-black-600"
 									}`}
 								>
 									{ChevronRightIcon}

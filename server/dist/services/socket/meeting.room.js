@@ -40,21 +40,16 @@ const meetingRoomHandler = (io, socket) => {
         const userId = user === null || user === void 0 ? void 0 : user._id.toString();
         socket.to(userId).emit("join-request-rejected");
     });
-    const joinRoomHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, user }) {
-        if (!roomId || !user)
+    const joinRoomHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ room, user }) {
+        if (!room || !user)
             return;
-        const room = yield (0, meeting_room_controller_1.joinMeetingRoom)(roomId, user._id.toString());
-        if (!room)
-            return;
-        if (room.status === "not_found")
-            return socket.emit("get-meeting-room", "not_found");
         yield (0, meeting_stats_controller_1.updateMeetingStats)({
             action: "join_meeting",
             roomId: `${room._id}`,
             userId: `${user._id}`,
         });
-        socket.join(roomId);
-        socket.to(roomId).emit("user-joined-meeting-room", user);
+        socket.join(`${room._id}`);
+        socket.to(`${room._id}`).emit("user-joined-meeting-room", user);
         socket.emit("get-meeting-room", room);
     });
     const leaveRoomHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, peerId }) {

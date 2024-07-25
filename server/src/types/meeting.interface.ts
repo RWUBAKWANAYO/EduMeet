@@ -21,6 +21,7 @@ export interface IMeeting extends Document {
 	};
 }
 export interface IMeetingRoom extends Document {
+	_id?: mongoose.Schema.Types.ObjectId;
 	meeting_type: "instant" | "scheduled";
 	session_id: number | string;
 	attendees: mongoose.Schema.Types.ObjectId[];

@@ -5,14 +5,8 @@ import { ICreateMeetingRoomResponse } from "../../types/meetings.interface";
 import { useParams } from "react-router-dom";
 import { UserContext } from "../../hooks/context/UserContext";
 import { MeetingRoomContext } from "../../hooks/context/meetings/MeetingRoomContext";
-import { socket } from "../../lib/socket";
-
-type IMeetingRoomData = {
-	sessionId: number;
-	passcode?: string | undefined;
-	meetingType: "instant" | "scheduled";
-	userId: string | null | undefined;
-};
+import { IMeetingRoomData } from "./types";
+import { MeetingChatContext } from "../../hooks/context/meetings/MeetingChatContext";
 
 // create meeting room
 const CreateMeetingRoom = async (data: IMeetingRoomData) => {
@@ -39,6 +33,35 @@ export const useCreateMeetingRoom = (
 		}
 	);
 };
+// join meeting room
+const joinMeetingRoom = async (roomId: string, token: string) => {
+	const response = await AxiosInstance({
+		url: `/meeting-rooms/join/${roomId}`,
+		method: "GET",
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	return response.data;
+};
+
+export const useJoinMeetingRoomCall = (roomId: string) => {
+	const { token } = useContext(UserContext);
+	const { handleMeetingRoom } = useContext(MeetingRoomContext);
+	const { fetchMeetingChat } = useContext(MeetingChatContext);
+	return useQuery<ICreateMeetingRoomResponse, Error>(
+		["meetingRooms", roomId, token],
+		() => joinMeetingRoom(roomId, token!),
+		{
+			onSuccess: (data) => {
+				if (!data || !data.data) return;
+				handleMeetingRoom(data.data);
+				return fetchMeetingChat({ chatType: "group", roomId: data.data._id });
+			},
+			enabled: !!roomId && !!token,
+			keepPreviousData: true,
+			refetchOnWindowFocus: false,
+		}
+	);
+};
 
 export const useMeetingRoom = () => {
 	const [enlargeChatSize, setEnlargeChatSize] = useState(false);
@@ -47,21 +70,20 @@ export const useMeetingRoom = () => {
 	const participantsSizeHandler = () => setEnlargeParticipantsSize(!enlargeParticipantsSize);
 
 	const { roomId } = useParams();
-	const { user } = useContext(UserContext);
 	const { setMeetingRoomId } = useContext(MeetingRoomContext);
-
-	useEffect(() => {
-		if (!roomId || !user) return;
-		socket.emit("join-meeting-room", { roomId, user });
-	}, [roomId, user]);
 
 	useEffect(() => {
 		setMeetingRoomId(roomId || "");
 	}, [roomId, setMeetingRoomId]);
+
+	const { data, isLoading, error } = useJoinMeetingRoomCall(roomId || "");
+
 	return {
 		chatSizeHandler,
 		participantsSizeHandler,
 		enlargeChatSize,
 		enlargeParticipantsSize,
+		isLoading,
+		error,
 	};
 };

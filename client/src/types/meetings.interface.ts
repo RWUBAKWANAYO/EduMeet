@@ -32,6 +32,7 @@ export interface IMeetingsResponse {
 }
 
 export interface IMeetingRoom {
+	_id?: string;
 	meeting_type: "instant" | "scheduled";
 	session_id: number | string;
 	attendees: IUser[];

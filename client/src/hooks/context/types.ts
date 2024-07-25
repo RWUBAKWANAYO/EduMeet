@@ -1,5 +1,5 @@
 import { MutableRefObject } from "react";
-import { IMeetingData } from "../../types/meetings.interface";
+import { IMeetingData, IMeetingRoom } from "../../types/meetings.interface";
 import { IUser } from "../../types/users.interface";
 import { PeerStateType } from "../reducers/meeting/peer";
 
@@ -59,6 +59,7 @@ export interface IMeetingRoomContext {
 	stream: MediaStream | undefined;
 	peers: PeerStateType;
 	leaveRoomHandler: () => void;
+	handleMeetingRoom: (room: IMeetingRoom) => void;
 	screenStream: MediaStream | undefined;
 	screenSharingId: string;
 	shareScreenHandler: () => void;
@@ -74,6 +75,7 @@ export interface IScreenRecorder {
 	elapsedTime?: string;
 	startRecording?: () => void;
 	stopRecording?: () => void;
+	isLoading?: boolean;
 }
 
 export interface IMeetingRoomMessage {

@@ -283,7 +283,6 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 	}, []);
 
 	useEffect(() => {
-		socket.on("get-meeting-room", handleMeetingRoom);
 		socket.on("user-start-sharing", handleUserStartSharing);
 		socket.on("user-stop-sharing", handleUserStopSharing);
 		socket.on("user-left-meeting-room", handleUserDisconnect);
@@ -291,7 +290,6 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 		socket.on("user-request-to-join-room", requestTojoinRoomHandler);
 
 		return () => {
-			socket.off("get-meeting-room", handleMeetingRoom);
 			socket.off("user-start-sharing", handleUserStartSharing);
 			socket.off("user-stop-sharing", handleUserStopSharing);
 			socket.off("user-left-meeting-room", handleUserDisconnect);
@@ -301,7 +299,6 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 	}, [
 		user,
 		getUserMediaTracks,
-		handleMeetingRoom,
 		handleUserStartSharing,
 		handleUserStopSharing,
 		handleUserDisconnect,
@@ -328,6 +325,7 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 			setMeetingRoomId,
 			stream,
 			peers,
+			handleMeetingRoom,
 			leaveRoomHandler,
 			screenStream,
 			screenSharingId,
@@ -343,6 +341,7 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 			setMeetingRoomId,
 			stream,
 			peers,
+			handleMeetingRoom,
 			leaveRoomHandler,
 			screenStream,
 			screenSharingId,

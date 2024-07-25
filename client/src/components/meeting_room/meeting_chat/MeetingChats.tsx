@@ -89,7 +89,6 @@ export const MeetingChats: React.FC<{
 								) : (
 									<PeersToChatWith peersList={peersList} />
 								))}
-							<>{console.log(meetingChat)}</>
 							{meetingChat.chatType === "single" &&
 								meetingChat.chatTab === "chat" &&
 								(meetingChat.messages.length === 0 ? (

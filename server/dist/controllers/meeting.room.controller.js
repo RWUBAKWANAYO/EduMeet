@@ -19,6 +19,7 @@ const meeting_room_model_1 = __importDefault(require("../models/meeting.room.mod
 const utils_1 = require("../utils");
 const moment_1 = __importDefault(require("moment"));
 const meeting_stats_controller_1 = require("./meeting.stats.controller");
+const mongoose_1 = __importDefault(require("mongoose"));
 const checkExistMeetingRoom = (sessionId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const meetingRoom = yield meeting_room_model_1.default.findOne({ session_id: +sessionId }).populate("meeting");
@@ -42,10 +43,7 @@ const instantMeetingHandler = (sessionId, res, next) => __awaiter(void 0, void 0
             meeting_type: "instant",
             session_id: +sessionId,
         });
-        return res.status(200).json({
-            status: "success",
-            data: meetingRoom,
-        });
+        meetingRoom;
     }
     catch (error) {
         next(new utils_1.ErrorFormat(error.message, 500));
@@ -113,44 +111,55 @@ exports.createMeetingRoom = (0, utils_1.asyncErrorHandler)((req, res, next) => _
         data: meetingRoom,
     });
 }));
-const joinMeetingRoom = (roomId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+const populateMeetingRoom = (meetingRoom, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const meetingRoom = yield meeting_room_model_1.default.findById(roomId).populate({
+        meetingRoom = yield meetingRoom.populate({
+            path: "attendees",
+            select: "full_name photo",
+        });
+        meetingRoom = yield meetingRoom.populate({
             path: "meeting",
             populate: [
                 {
                     path: "participants",
-                    select: " full_name photo",
+                    select: "full_name photo",
                 },
                 {
                     path: "host",
-                    select: " full_name photo",
+                    select: "full_name photo",
                 },
             ],
         });
-        if (!meetingRoom)
-            throw new Error(`Meeting room with id ${roomId} not found`);
-        const existUser = yield user_model_1.default.findById(userId);
-        if (!existUser)
-            throw new Error(`User with id ${userId} not found`);
-        const isAttendeeExist = meetingRoom.attendees.some((attendee) => attendee.toString() === existUser._id.toString());
-        if (isAttendeeExist)
-            return yield meetingRoom.populate({
-                path: "attendees",
-                select: " full_name photo",
-            });
-        meetingRoom.attendees.push(existUser._id);
-        yield meetingRoom.save();
-        return yield meetingRoom.populate({
-            path: "attendees",
-            select: " full_name photo",
+        return res.status(200).json({
+            status: "success",
+            data: meetingRoom,
         });
     }
     catch (error) {
-        throw new Error(error.message);
+        return next(new utils_1.ErrorFormat(error.message, 500));
     }
 });
+const joinMeetingRoom = 
+// asyncErrorHandler(
+(req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { roomId } = req.params;
+    const existUser = req.user;
+    if (!mongoose_1.default.Types.ObjectId.isValid(roomId)) {
+        return next(new utils_1.ErrorFormat(`Invalid meeting room id ${roomId}`, 400));
+    }
+    let meetingRoom = yield meeting_room_model_1.default.findById(roomId).exec();
+    if (!meetingRoom)
+        return next(new utils_1.ErrorFormat(`Meeting room with id ${roomId} not found`, 404));
+    const isAttendeeExist = meetingRoom.attendees.some((attendee) => attendee.toString() === existUser._id.toString());
+    if (isAttendeeExist) {
+        return yield populateMeetingRoom(meetingRoom, res, next);
+    }
+    meetingRoom.attendees.push(existUser._id);
+    yield meetingRoom.save();
+    return yield populateMeetingRoom(meetingRoom, res, next);
+});
 exports.joinMeetingRoom = joinMeetingRoom;
+// );
 const removeAttendee = (roomId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const meetingRoom = yield meeting_room_model_1.default.findById(roomId);
@@ -158,7 +167,6 @@ const removeAttendee = (roomId, userId) => __awaiter(void 0, void 0, void 0, fun
             throw new Error(`Meeting room with id ${roomId} not found`);
         }
         const newAttendees = meetingRoom.attendees.filter((attendee) => attendee.toString() !== userId);
-        console.log(newAttendees, "newAttendees........", meetingRoom);
         if (newAttendees.length === 0) {
             const updatedMeeting = yield meeting_model_1.default.findOne({ session_id: meetingRoom.session_id });
             if (meetingRoom.meeting_type === "scheduled" &&
@@ -168,7 +176,6 @@ const removeAttendee = (roomId, userId) => __awaiter(void 0, void 0, void 0, fun
                 yield updatedMeeting.save();
             }
             if (meetingRoom.meeting_type === "instant") {
-                console.log("called...");
                 yield meeting_room_model_1.default.findOneAndDelete({ session_id: meetingRoom.session_id });
             }
         }

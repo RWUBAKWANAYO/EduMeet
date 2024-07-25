@@ -8,8 +8,7 @@ import { TestingAuth } from "../TestingAuth";
 
 export const Login: React.FC<{ pageHandler: (status: boolean) => void }> = ({ pageHandler }) => {
 	const { theme } = useContext(UIContext);
-	const { emailRef, passwordRef, handleSubmit, isLoading, error, handleTestAccountAuth } =
-		useLogin();
+	const { emailRef, passwordRef, handleSubmit, isLoading, error } = useLogin();
 
 	return (
 		<form className="space-y-4" onSubmit={handleSubmit}>

@@ -29,14 +29,14 @@ export const MeetingChatProvider = ({ children }: { children: React.ReactNode })
 	});
 
 	const fetchMeetingChat = useCallback(
-		({ chatType, chatTab, memberId }: IFetchChatData) => {
+		({ chatType, chatTab, memberId, roomId }: IFetchChatData) => {
 			if (chatTab === "peers") {
 				dispatch(changeChatTypeAction(chatType));
 				dispatch(changeSingleChatTab("peers"));
 				return;
 			}
 			const chatData: IFetchChatData = {
-				roomId: meetingRoomId,
+				roomId: roomId ? roomId : meetingRoomId,
 				chatType: chatType,
 			};
 			if (chatType === "single") {
@@ -86,11 +86,6 @@ export const MeetingChatProvider = ({ children }: { children: React.ReactNode })
 	);
 
 	useEffect(() => {
-		if (!user || !meetingRoomId) return;
-		fetchMeetingChat({ chatType: "group" });
-	}, [user, meetingRoomId]);
-
-	useEffect(() => {
 		socket.on("meeting-chat-joined", addChatHandler);
 		socket.on("meeting-message-received", addMessageHandler);
 
@@ -103,7 +98,6 @@ export const MeetingChatProvider = ({ children }: { children: React.ReactNode })
 	const providerValue = useMemo(
 		() => ({
 			sendMessage,
-
 			meetingChat,
 			fetchMeetingChat,
 		}),

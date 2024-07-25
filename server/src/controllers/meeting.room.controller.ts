@@ -6,6 +6,8 @@ import { ErrorFormat, asyncErrorHandler, getMeetingStatus } from "../utils";
 import { IMeetingRoom } from "../types/meeting.interface";
 import moment from "moment";
 import { createMeetingStats } from "./meeting.stats.controller";
+import { IUser } from "../types/user.interface";
+import mongoose from "mongoose";
 
 export const checkExistMeetingRoom = async (sessionId: number) => {
 	try {
@@ -28,10 +30,7 @@ const instantMeetingHandler = async (sessionId: number, res: Response, next: Nex
 			meeting_type: "instant",
 			session_id: +sessionId,
 		});
-		return res.status(200).json({
-			status: "success",
-			data: meetingRoom,
-		});
+		meetingRoom;
 	} catch (error: any) {
 		next(new ErrorFormat(error.message, 500));
 	}
@@ -108,47 +107,64 @@ export const createMeetingRoom = asyncErrorHandler(
 	}
 );
 
-export const joinMeetingRoom = async (roomId: string, userId: string) => {
+const populateMeetingRoom = async (
+	meetingRoom: IMeetingRoom,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
-		const meetingRoom = await MeetingRoom.findById(roomId).populate({
+		meetingRoom = await meetingRoom.populate({
+			path: "attendees",
+			select: "full_name photo",
+		});
+
+		meetingRoom = await meetingRoom.populate({
 			path: "meeting",
 			populate: [
 				{
 					path: "participants",
-					select: " full_name photo",
+					select: "full_name photo",
 				},
 				{
 					path: "host",
-					select: " full_name photo",
+					select: "full_name photo",
 				},
 			],
 		});
+		return res.status(200).json({
+			status: "success",
+			data: meetingRoom,
+		});
+	} catch (error: any) {
+		return next(new ErrorFormat(error.message, 500));
+	}
+};
 
-		if (!meetingRoom) throw new Error(`Meeting room with id ${roomId} not found`);
+export const joinMeetingRoom =
+	// asyncErrorHandler(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const { roomId } = req.params;
+		const existUser = req.user as IUser;
 
-		const existUser = await User.findById(userId);
-		if (!existUser) throw new Error(`User with id ${userId} not found`);
+		if (!mongoose.Types.ObjectId.isValid(roomId)) {
+			return next(new ErrorFormat(`Invalid meeting room id ${roomId}`, 400));
+		}
+		let meetingRoom = await MeetingRoom.findById(roomId).exec();
+
+		if (!meetingRoom) return next(new ErrorFormat(`Meeting room with id ${roomId} not found`, 404));
 
 		const isAttendeeExist = meetingRoom.attendees.some(
 			(attendee) => attendee.toString() === existUser._id.toString()
 		);
-		if (isAttendeeExist)
-			return await meetingRoom.populate({
-				path: "attendees",
-				select: " full_name photo",
-			});
+		if (isAttendeeExist) {
+			return await populateMeetingRoom(meetingRoom, res, next);
+		}
 
 		meetingRoom.attendees.push(existUser._id);
-
 		await meetingRoom.save();
-		return await meetingRoom.populate({
-			path: "attendees",
-			select: " full_name photo",
-		});
-	} catch (error: any) {
-		throw new Error(error.message);
-	}
-};
+		return await populateMeetingRoom(meetingRoom, res, next);
+	};
+// );
 
 export const removeAttendee = async (roomId: string, userId: string) => {
 	try {
@@ -157,7 +173,6 @@ export const removeAttendee = async (roomId: string, userId: string) => {
 			throw new Error(`Meeting room with id ${roomId} not found`);
 		}
 		const newAttendees = meetingRoom.attendees.filter((attendee) => attendee.toString() !== userId);
-		console.log(newAttendees, "newAttendees........", meetingRoom);
 		if (newAttendees.length === 0) {
 			const updatedMeeting = await Meeting.findOne({ session_id: meetingRoom.session_id });
 			if (
@@ -169,7 +184,6 @@ export const removeAttendee = async (roomId: string, userId: string) => {
 				await updatedMeeting.save();
 			}
 			if (meetingRoom.meeting_type === "instant") {
-				console.log("called...");
 				await MeetingRoom.findOneAndDelete({ session_id: meetingRoom.session_id });
 			}
 		}

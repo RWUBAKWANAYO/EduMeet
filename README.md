@@ -1,4 +1,4 @@
-# EduConnect
+# EduMeet
 
 ## Overview
 EduMeet is a virtual meeting web application designed to provide an enhanced experience for both meeting hosts and participants. With EduMeet, users can effortlessly organize and manage meetings while benefiting from comprehensive tracking of participant engagement. Key features include monitoring when users join and leave meetings, frequency of muting video or audio, screen sharing activities, recording sessions, and more.
@@ -12,6 +12,7 @@ Explore a live demo of EduMeet:  [EduMeet Live Demo](https://edumeet.netlify.app
 
 ## Database Architecture
 The image below represents the minimal database architecture of EduMeet, detailing the collections, their properties, and the interactions between collections:
+
 ![Nayo Meet](https://github.com/user-attachments/assets/59bbc0a2-8525-46ec-a3ed-1f6f16ae0c72)
 
 ## Technologies Used
