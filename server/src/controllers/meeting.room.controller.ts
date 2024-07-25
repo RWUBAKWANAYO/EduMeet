@@ -30,7 +30,10 @@ const instantMeetingHandler = async (sessionId: number, res: Response, next: Nex
 			meeting_type: "instant",
 			session_id: +sessionId,
 		});
-		meetingRoom;
+		return res.status(200).json({
+			status: "success",
+			data: meetingRoom,
+		});
 	} catch (error: any) {
 		next(new ErrorFormat(error.message, 500));
 	}
@@ -149,7 +152,7 @@ export const joinMeetingRoom =
 		if (!mongoose.Types.ObjectId.isValid(roomId)) {
 			return next(new ErrorFormat(`Invalid meeting room id ${roomId}`, 400));
 		}
-		let meetingRoom = await MeetingRoom.findById(roomId).exec();
+		const meetingRoom = await MeetingRoom.findById(roomId).exec();
 
 		if (!meetingRoom) return next(new ErrorFormat(`Meeting room with id ${roomId} not found`, 404));
 

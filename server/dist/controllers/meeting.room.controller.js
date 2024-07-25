@@ -43,7 +43,10 @@ const instantMeetingHandler = (sessionId, res, next) => __awaiter(void 0, void 0
             meeting_type: "instant",
             session_id: +sessionId,
         });
-        meetingRoom;
+        return res.status(200).json({
+            status: "success",
+            data: meetingRoom,
+        });
     }
     catch (error) {
         next(new utils_1.ErrorFormat(error.message, 500));
@@ -147,7 +150,7 @@ const joinMeetingRoom =
     if (!mongoose_1.default.Types.ObjectId.isValid(roomId)) {
         return next(new utils_1.ErrorFormat(`Invalid meeting room id ${roomId}`, 400));
     }
-    let meetingRoom = yield meeting_room_model_1.default.findById(roomId).exec();
+    const meetingRoom = yield meeting_room_model_1.default.findById(roomId).exec();
     if (!meetingRoom)
         return next(new utils_1.ErrorFormat(`Meeting room with id ${roomId} not found`, 404));
     const isAttendeeExist = meetingRoom.attendees.some((attendee) => attendee.toString() === existUser._id.toString());
