@@ -45,12 +45,14 @@ export const meetingRoomHandler = (io: Server, socket: Socket) => {
 
 	const joinRoomHandler = async ({ room, user }: IMeetingRoom) => {
 		if (!room || !user) return;
+		console.log("USER...", user, "ROOM...", room);
 		await updateMeetingStats({
 			action: "join_meeting",
 			roomId: `${room._id}`,
 			userId: `${user._id}`,
 		});
 		socket.join(`${room._id}`);
+		console.log("user joined...", `${room._id}`);
 		socket.to(`${room._id}`).emit("user-joined-meeting-room", user);
 		socket.emit("get-meeting-room", room);
 	};

@@ -91,6 +91,7 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 
 	const handleUserJoined = useCallback(
 		(peeredUser: IUser) => {
+			console.log("user joined....");
 			if (!currentPeer || !stream || !streamTrackRef.current) return;
 			dispatch(addSinglePeerAction(peeredUser));
 			const call = currentPeer.call(peeredUser._id, stream, {
@@ -105,6 +106,7 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 
 	const handleCall = useCallback(
 		(call: any) => {
+			console.log("handle call....");
 			const { calledUser, calledTrack } = call.metadata;
 			if (!calledUser || !calledTrack) return;
 			dispatch(addSinglePeerAction(calledUser));
@@ -196,6 +198,7 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 		if (screenSharingId) {
 			handleScreenShareEnded();
 		} else {
+			if (!streamTrack.video) return alert("Please turn on your video");
 			navigator.mediaDevices
 				.getDisplayMedia({})
 				.then((newStream) => {
@@ -273,7 +276,7 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 			path: "/peerjs",
 		} as PeerInterface);
 		peer.on("open", (_id) => setCurrentPeer(peer));
-
+		console.log("peer....", peer);
 		getUserMediaTracks()
 			.then((stream) => {
 				setStream(stream);
@@ -306,7 +309,9 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 	]);
 
 	useEffect(() => {
+		console.log("ON JOIN....", currentPeer, "------", stream);
 		if (!currentPeer || !stream) return;
+		console.log("joined and call....");
 		socket.on("user-joined-meeting-room", handleUserJoined);
 		currentPeer.on("call", handleCall);
 

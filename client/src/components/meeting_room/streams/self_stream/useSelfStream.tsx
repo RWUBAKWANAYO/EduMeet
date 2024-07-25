@@ -10,6 +10,16 @@ export const useSelfStream = () => {
 	const expandHandler = () => setIsExpanded(!isExpanded);
 
 	const renderPeer = useCallback(() => {
+		console.log(
+			"0....",
+			screenSharingId,
+			"1...",
+			user?._id,
+			"2..",
+			peers[screenSharingId],
+			"3...",
+			screenStream
+		);
 		if (!screenSharingId) return { user, stream };
 		if (screenSharingId === user?._id) {
 			return { user, stream: screenStream };
