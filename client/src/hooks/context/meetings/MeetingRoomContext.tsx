@@ -84,6 +84,7 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 		(room: IMeetingRoom) => {
 			meetingInfo.current = room.meeting!;
 			dispatch(addAllPeersAction(room.attendees));
+			socket.emit("join-meeting-room", { room, user });
 		},
 		[dispatch]
 	);

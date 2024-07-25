@@ -1,26 +1,53 @@
-import { useEffect, useState, useContext } from "react";
-import { useReactMediaRecorder } from "react-media-recorder";
+import { useEffect, useState, useContext, useRef } from "react";
 import moment from "moment";
 import { MeetingRoomContext } from "../context/meetings/MeetingRoomContext";
 
 export const useScreenRecorder = () => {
 	const { screenRecordingHandler } = useContext(MeetingRoomContext);
-
 	const [startTime, setStartTime] = useState<moment.Moment | null>(null);
 	const [elapsedTime, setElapsedTime] = useState<string>("00:00:00");
+	const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+	const chunks = useRef<Blob[]>([]);
 
-	const { startRecording, stopRecording } = useReactMediaRecorder({
-		screen: true,
-		onStart: () => {
-			setStartTime(moment());
-			screenRecordingHandler("start_recording");
-		},
-		onStop: (blobUrl) => {
-			setStartTime(null);
-			screenRecordingHandler("stop_recording");
-			handleStopRecording(blobUrl);
-		},
-	});
+	const startRecording = async () => {
+		try {
+			const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+			const recorder = new MediaRecorder(stream);
+			setMediaRecorder(recorder);
+
+			recorder.onstart = () => {
+				setStartTime(moment());
+				screenRecordingHandler("start_recording");
+			};
+
+			recorder.ondataavailable = (event) => {
+				if (event.data.size > 0) {
+					chunks.current.push(event.data);
+				}
+			};
+
+			recorder.onstop = () => {
+				const blob = new Blob(chunks.current, { type: "video/mp4" });
+				const blobUrl = URL.createObjectURL(blob);
+				setStartTime(null);
+				screenRecordingHandler("stop_recording");
+				handleStopRecording(blobUrl);
+				chunks.current = [];
+			};
+
+			recorder.start();
+		} catch (error) {
+			console.error("Error starting screen recording:", error);
+			// Handle error gracefully, e.g., show an error message to the user
+		}
+	};
+
+	const stopRecording = () => {
+		if (mediaRecorder && mediaRecorder.state !== "inactive") {
+			mediaRecorder.stop();
+		}
+	};
+
 	useEffect(() => {
 		let timer: NodeJS.Timeout | null = null;
 
@@ -50,6 +77,7 @@ export const useScreenRecorder = () => {
 		link.click();
 		document.body.removeChild(link);
 	};
+
 	return {
 		elapsedTime,
 		startTime,
