@@ -2,7 +2,6 @@ import app from "./app";
 import http from "http";
 import "dotenv/config";
 import { Server } from "socket.io";
-import { ExpressPeerServer } from "peer";
 import connectMongoDB from "./config/mongodb";
 import { globalErrorHandler } from "./middlewares";
 import { ErrorFormat } from "./utils";
@@ -13,10 +12,6 @@ import { userSocketHandler } from "./services/socket/user";
 const server = http.createServer(app);
 
 connectMongoDB(process.env.MONGODB_URL || "");
-
-const peerServer = ExpressPeerServer(server, { path: "/" });
-
-app.use("/peerjs", peerServer);
 
 const io = new Server(server, {
 	cors: { origin: "*" },
