@@ -1,0 +1,18 @@
+{
+  "extends": ["tslint:recommended"],
+  "defaultSeverity": "error",
+  "jsRules": {},
+  "rules": {
+    "no-console": {
+      "severity": "warning",
+      "options": ["log", "error", "debug", "info", "time", "timeEnd", "trace"]
+    },
+    "quotemark": [true, "double"],
+    "no-unused-expression": {
+      "severity": "warning"
+    },
+    "only-arrow-functions": false,
+    "no-shadowed-variable": false
+  }
+}
+
