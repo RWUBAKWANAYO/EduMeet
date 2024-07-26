@@ -99,9 +99,6 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 			call?.on("stream", (peerStream) => {
 				dispatch(addPeerStreamAction(peeredUser._id, peerStream));
 			});
-			call.on("error", (err) => {
-				console.error("Call error:", err);
-			});
 		},
 		[currentPeer, stream, dispatch]
 	);
