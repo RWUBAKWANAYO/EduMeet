@@ -93,6 +93,7 @@ const meetingRoomHandler = (io, socket) => {
             data.action = streamTrack.audio === false ? "audio_muted" : "audio_unmuted";
         }
         yield (0, meeting_stats_controller_1.updateMeetingStats)(data);
+        console.log("CHANGE STREAM*******");
         socket.to(roomId.toString()).emit("user-change-stream-track", { peerId, streamTrack });
     });
     const screenRecordingHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, peerId, recordingAction }) {

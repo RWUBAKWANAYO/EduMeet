@@ -68,7 +68,6 @@ export const filterMeetings = asyncErrorHandler(
 				$lt: endOfDayDate,
 			};
 		}
-		console.log("DATE.......", query);
 		const meetings = await Meeting.find(query)
 			.sort({ createdAt: -1 })
 			.populate({

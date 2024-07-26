@@ -104,7 +104,6 @@ export const createMeetingRoom = asyncErrorHandler(
 			participants: [meeting.host, ...meeting.participants] as any,
 		});
 
-		console.log(stat, "STAT....");
 		if (!stat) return next(new ErrorFormat("Fail to create meeting stats", 500));
 
 		return res.status(200).json({
@@ -139,11 +138,7 @@ const populateMeetingRoom = async (
 				},
 			],
 		});
-		console.log(
-			"CALLED**********",
-			meetingRoom.meeting_type === "scheduled",
-			(meetingRoom?.meeting as any)?.participants.includes(user._id)
-		);
+
 		if (
 			meetingRoom.meeting_type === "scheduled" &&
 			(meetingRoom?.meeting as any)?.participants.includes(user._id)
@@ -153,7 +148,6 @@ const populateMeetingRoom = async (
 				roomId: `${meetingRoom._id}`,
 				userId: `${user._id}`,
 			});
-			console.log("UPDATE STATS....", `${meetingRoom._id}`, `${user._id}`, stats);
 			if (!stats) return next(new ErrorFormat("Fail to update meeting stats", 500));
 		}
 
