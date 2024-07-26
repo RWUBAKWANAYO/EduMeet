@@ -29,6 +29,7 @@ const createMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
             user: participant,
         }));
         const meetingStats = yield meeting_stats_model_1.default.insertMany(stats);
+        // if (!meetingStats) throw new Error("Failed to create meeting stats");
         return meetingStats;
     }
     catch (error) {

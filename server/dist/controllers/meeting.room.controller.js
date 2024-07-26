@@ -20,6 +20,7 @@ const utils_1 = require("../utils");
 const moment_1 = __importDefault(require("moment"));
 const meeting_stats_controller_1 = require("./meeting.stats.controller");
 const mongoose_1 = __importDefault(require("mongoose"));
+// import { io } from "../server";
 const checkExistMeetingRoom = (sessionId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const meetingRoom = yield meeting_room_model_1.default.findOne({ session_id: +sessionId }).populate("meeting");
@@ -103,18 +104,22 @@ exports.createMeetingRoom = (0, utils_1.asyncErrorHandler)((req, res, next) => _
     });
     if (!meetingRoom)
         throw new Error("Fail to create meeting room");
-    yield (0, meeting_stats_controller_1.createMeetingStats)({
+    const stat = yield (0, meeting_stats_controller_1.createMeetingStats)({
         roomId: `${meetingRoom._id}`,
         meetingId: `${meeting._id}`,
         userId,
         participants: [meeting.host, ...meeting.participants],
     });
+    console.log(stat, "STAT....");
+    if (!stat)
+        return next(new utils_1.ErrorFormat("Fail to create meeting stats", 500));
     return res.status(200).json({
         status: "success",
         data: meetingRoom,
     });
 }));
-const populateMeetingRoom = (meetingRoom, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const populateMeetingRoom = (meetingRoom, user, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
         meetingRoom = yield meetingRoom.populate({
             path: "attendees",
@@ -133,6 +138,18 @@ const populateMeetingRoom = (meetingRoom, res, next) => __awaiter(void 0, void 0
                 },
             ],
         });
+        console.log("CALLED**********", meetingRoom.meeting_type === "scheduled", (_a = meetingRoom === null || meetingRoom === void 0 ? void 0 : meetingRoom.meeting) === null || _a === void 0 ? void 0 : _a.participants.includes(user._id));
+        if (meetingRoom.meeting_type === "scheduled" &&
+            ((_b = meetingRoom === null || meetingRoom === void 0 ? void 0 : meetingRoom.meeting) === null || _b === void 0 ? void 0 : _b.participants.includes(user._id))) {
+            const stats = yield (0, meeting_stats_controller_1.updateMeetingStats)({
+                action: "join_meeting",
+                roomId: `${meetingRoom._id}`,
+                userId: `${user._id}`,
+            });
+            console.log("UPDATE STATS....", `${meetingRoom._id}`, `${user._id}`, stats);
+            if (!stats)
+                return next(new utils_1.ErrorFormat("Fail to update meeting stats", 500));
+        }
         return res.status(200).json({
             status: "success",
             data: meetingRoom,
@@ -142,9 +159,7 @@ const populateMeetingRoom = (meetingRoom, res, next) => __awaiter(void 0, void 0
         return next(new utils_1.ErrorFormat(error.message, 500));
     }
 });
-const joinMeetingRoom = 
-// asyncErrorHandler(
-(req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const joinMeetingRoom = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { roomId } = req.params;
     const existUser = req.user;
     if (!mongoose_1.default.Types.ObjectId.isValid(roomId)) {
@@ -155,14 +170,13 @@ const joinMeetingRoom =
         return next(new utils_1.ErrorFormat(`Meeting room with id ${roomId} not found`, 404));
     const isAttendeeExist = meetingRoom.attendees.some((attendee) => attendee.toString() === existUser._id.toString());
     if (isAttendeeExist) {
-        return yield populateMeetingRoom(meetingRoom, res, next);
+        return yield populateMeetingRoom(meetingRoom, existUser, res, next);
     }
     meetingRoom.attendees.push(existUser._id);
     yield meetingRoom.save();
-    return yield populateMeetingRoom(meetingRoom, res, next);
+    return yield populateMeetingRoom(meetingRoom, existUser, res, next);
 });
 exports.joinMeetingRoom = joinMeetingRoom;
-// );
 const removeAttendee = (roomId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const meetingRoom = yield meeting_room_model_1.default.findById(roomId);

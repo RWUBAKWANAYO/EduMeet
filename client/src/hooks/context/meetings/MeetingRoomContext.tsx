@@ -273,7 +273,7 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 			host: process.env.REACT_APP_PEERJS_HOST,
 			port: process.env.REACT_APP_PEERJS_PORT,
 			secure: process.env.REACT_APP_PEERJS_SECURE === "true",
-			path: "/peerjs",
+			path: "/",
 		} as PeerInterface);
 		peer.on("open", (_id) => setCurrentPeer(peer));
 		console.log("peer....", peer);

@@ -20,8 +20,8 @@ export const VideoPlayer: React.FC<{
 				} ${theme === "dark" ? "bg-blue-800" : "bg-white-100"}`}
 			>
 				<RenderAvatar
-					photo={user.photo ?? ""}
-					fullName={user.full_name ?? ""}
+					photo={user?.photo ?? ""}
+					fullName={user?.full_name ?? ""}
 					hasExtraClass={`${avatarSize} rounded-full`}
 				/>
 			</div>

@@ -34,6 +34,8 @@ export const createMeetingStats = async ({ roomId, meetingId, participants }: IU
 		}));
 
 		const meetingStats = await MeetingStats.insertMany(stats);
+		// if (!meetingStats) throw new Error("Failed to create meeting stats");
+
 		return meetingStats;
 	} catch (error: any) {
 		throw new Error(error.message);

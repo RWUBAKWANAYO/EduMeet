@@ -31,10 +31,10 @@ export const useFetchMeetings = (data: IMeetingsData = {}) => {
 		},
 		{
 			onSuccess: (fetchedData) => {
-				updateMeetings({ data: fetchedData, isLoading: false });
+				return updateMeetings({ data: fetchedData, isLoading: false });
 			},
 			onError: (error) => {
-				updateMeetings({ error, isLoading: false });
+				return updateMeetings({ error, isLoading: false });
 			},
 			keepPreviousData: true,
 			refetchOnWindowFocus: false,

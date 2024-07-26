@@ -5,9 +5,10 @@ import MeetingRoom from "../models/meeting.room.model";
 import { ErrorFormat, asyncErrorHandler, getMeetingStatus } from "../utils";
 import { IMeetingRoom } from "../types/meeting.interface";
 import moment from "moment";
-import { createMeetingStats } from "./meeting.stats.controller";
+import { createMeetingStats, updateMeetingStats } from "./meeting.stats.controller";
 import { IUser } from "../types/user.interface";
 import mongoose from "mongoose";
+// import { io } from "../server";
 
 export const checkExistMeetingRoom = async (sessionId: number) => {
 	try {
@@ -96,12 +97,15 @@ export const createMeetingRoom = asyncErrorHandler(
 			meeting: meeting._id,
 		});
 		if (!meetingRoom) throw new Error("Fail to create meeting room");
-		await createMeetingStats({
+		const stat = await createMeetingStats({
 			roomId: `${meetingRoom._id}`,
 			meetingId: `${meeting._id}`,
 			userId,
 			participants: [meeting.host, ...meeting.participants] as any,
 		});
+
+		console.log(stat, "STAT....");
+		if (!stat) return next(new ErrorFormat("Fail to create meeting stats", 500));
 
 		return res.status(200).json({
 			status: "success",
@@ -112,6 +116,7 @@ export const createMeetingRoom = asyncErrorHandler(
 
 const populateMeetingRoom = async (
 	meetingRoom: IMeetingRoom,
+	user: IUser,
 	res: Response,
 	next: NextFunction
 ) => {
@@ -134,6 +139,24 @@ const populateMeetingRoom = async (
 				},
 			],
 		});
+		console.log(
+			"CALLED**********",
+			meetingRoom.meeting_type === "scheduled",
+			(meetingRoom?.meeting as any)?.participants.includes(user._id)
+		);
+		if (
+			meetingRoom.meeting_type === "scheduled" &&
+			(meetingRoom?.meeting as any)?.participants.includes(user._id)
+		) {
+			const stats = await updateMeetingStats({
+				action: "join_meeting",
+				roomId: `${meetingRoom._id}`,
+				userId: `${user._id}`,
+			});
+			console.log("UPDATE STATS....", `${meetingRoom._id}`, `${user._id}`, stats);
+			if (!stats) return next(new ErrorFormat("Fail to update meeting stats", 500));
+		}
+
 		return res.status(200).json({
 			status: "success",
 			data: meetingRoom,
@@ -143,31 +166,28 @@ const populateMeetingRoom = async (
 	}
 };
 
-export const joinMeetingRoom =
-	// asyncErrorHandler(
-	async (req: Request, res: Response, next: NextFunction) => {
-		const { roomId } = req.params;
-		const existUser = req.user as IUser;
+export const joinMeetingRoom = async (req: Request, res: Response, next: NextFunction) => {
+	const { roomId } = req.params;
+	const existUser = req.user as IUser;
 
-		if (!mongoose.Types.ObjectId.isValid(roomId)) {
-			return next(new ErrorFormat(`Invalid meeting room id ${roomId}`, 400));
-		}
-		const meetingRoom = await MeetingRoom.findById(roomId).exec();
+	if (!mongoose.Types.ObjectId.isValid(roomId)) {
+		return next(new ErrorFormat(`Invalid meeting room id ${roomId}`, 400));
+	}
+	const meetingRoom = await MeetingRoom.findById(roomId).exec();
 
-		if (!meetingRoom) return next(new ErrorFormat(`Meeting room with id ${roomId} not found`, 404));
+	if (!meetingRoom) return next(new ErrorFormat(`Meeting room with id ${roomId} not found`, 404));
 
-		const isAttendeeExist = meetingRoom.attendees.some(
-			(attendee) => attendee.toString() === existUser._id.toString()
-		);
-		if (isAttendeeExist) {
-			return await populateMeetingRoom(meetingRoom, res, next);
-		}
+	const isAttendeeExist = meetingRoom.attendees.some(
+		(attendee) => attendee.toString() === existUser._id.toString()
+	);
+	if (isAttendeeExist) {
+		return await populateMeetingRoom(meetingRoom, existUser, res, next);
+	}
 
-		meetingRoom.attendees.push(existUser._id);
-		await meetingRoom.save();
-		return await populateMeetingRoom(meetingRoom, res, next);
-	};
-// );
+	meetingRoom.attendees.push(existUser._id);
+	await meetingRoom.save();
+	return await populateMeetingRoom(meetingRoom, existUser, res, next);
+};
 
 export const removeAttendee = async (roomId: string, userId: string) => {
 	try {
