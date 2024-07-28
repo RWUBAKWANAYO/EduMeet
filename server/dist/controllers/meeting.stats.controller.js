@@ -50,30 +50,40 @@ const updateMeetingStats = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
                 stats.attendances.push({ start_time: new Date() });
                 break;
             case "leave_meeting":
+                if (stats.attendances.length === 0)
+                    return;
                 stats.attendances[stats.attendances.length - 1].end_time = new Date();
                 break;
             case "audio_unmuted":
                 stats.audio_muted.push({ start_time: new Date() });
                 break;
             case "audio_muted":
+                if (stats.audio_muted.length === 0)
+                    return;
                 stats.audio_muted[stats.audio_muted.length - 1].end_time = new Date();
                 break;
             case "video_unmuted":
                 stats.video_muted.push({ start_time: new Date() });
                 break;
             case "video_muted":
+                if (stats.video_muted.length === 0)
+                    return;
                 stats.video_muted[stats.video_muted.length - 1].end_time = new Date();
                 break;
             case "start_sharing":
                 stats.screen_sharing.push({ start_time: new Date() });
                 break;
             case "stop_sharing":
+                if (stats.screen_sharing.length === 0)
+                    return;
                 stats.screen_sharing[stats.screen_sharing.length - 1].end_time = new Date();
                 break;
             case "start_recording":
                 stats.recordings.push({ start_time: new Date() });
                 break;
             case "stop_recording":
+                if (stats.recordings.length === 0)
+                    return;
                 stats.recordings[stats.recordings.length - 1].end_time = new Date();
                 break;
             default:

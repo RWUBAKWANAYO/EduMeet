@@ -141,7 +141,10 @@ const populateMeetingRoom = async (
 
 		if (
 			meetingRoom.meeting_type === "scheduled" &&
-			(meetingRoom?.meeting as any)?.participants.includes(user._id)
+			((meetingRoom?.meeting as any)?.participants.find(
+				(partipant) => partipant?._id.toString() === user._id.toString()
+			) ||
+				(meetingRoom?.meeting as any)?.host?._id.toString() === user._id.toString())
 		) {
 			const stats = await updateMeetingStats({
 				action: "join_meeting",

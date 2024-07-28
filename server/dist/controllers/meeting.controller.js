@@ -78,7 +78,6 @@ exports.filterMeetings = (0, utils_1.asyncErrorHandler)((req, res, _next) => __a
             $lt: endOfDayDate,
         };
     }
-    console.log("DATE.......", query);
     const meetings = yield meeting_model_1.default.find(query)
         .sort({ createdAt: -1 })
         .populate({

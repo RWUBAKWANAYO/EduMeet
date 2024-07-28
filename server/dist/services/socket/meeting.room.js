@@ -43,10 +43,8 @@ const meetingRoomHandler = (io, socket) => {
     const joinRoomHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ room, user }) {
         if (!room || !user)
             return;
-        console.log("USER...", user, "ROOM...", room);
         socket.join(`${room._id}`);
-        console.log("user joined...", `${room._id}`);
-        io.to(`${room._id}`).emit("user-joined-meeting-room", user);
+        socket.to(`${room._id}`).emit("user-joined-meeting-room", user);
     });
     const leaveRoomHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, peerId }) {
         if (!roomId || !peerId)
@@ -66,6 +64,13 @@ const meetingRoomHandler = (io, socket) => {
             action: "start_sharing",
             roomId,
             userId: peerId,
+        });
+        socket.to(roomId.toString()).emit("user-change-stream-track", {
+            peerId,
+            streamTrack: {
+                audio: true,
+                video: true,
+            },
         });
         socket.to(roomId.toString()).emit("user-start-sharing", peerId);
     });
@@ -93,7 +98,6 @@ const meetingRoomHandler = (io, socket) => {
             data.action = streamTrack.audio === false ? "audio_muted" : "audio_unmuted";
         }
         yield (0, meeting_stats_controller_1.updateMeetingStats)(data);
-        console.log("CHANGE STREAM*******");
         socket.to(roomId.toString()).emit("user-change-stream-track", { peerId, streamTrack });
     });
     const screenRecordingHandler = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomId, peerId, recordingAction }) {

@@ -67,6 +67,13 @@ export const meetingRoomHandler = (io: Server, socket: Socket) => {
 			roomId,
 			userId: peerId,
 		});
+		socket.to(roomId.toString()).emit("user-change-stream-track", {
+			peerId,
+			streamTrack: {
+				audio: true,
+				video: true,
+			},
+		});
 		socket.to(roomId.toString()).emit("user-start-sharing", peerId);
 	};
 

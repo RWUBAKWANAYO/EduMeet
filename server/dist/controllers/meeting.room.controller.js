@@ -110,7 +110,6 @@ exports.createMeetingRoom = (0, utils_1.asyncErrorHandler)((req, res, next) => _
         userId,
         participants: [meeting.host, ...meeting.participants],
     });
-    console.log(stat, "STAT....");
     if (!stat)
         return next(new utils_1.ErrorFormat("Fail to create meeting stats", 500));
     return res.status(200).json({
@@ -119,7 +118,7 @@ exports.createMeetingRoom = (0, utils_1.asyncErrorHandler)((req, res, next) => _
     });
 }));
 const populateMeetingRoom = (meetingRoom, user, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c;
     try {
         meetingRoom = yield meetingRoom.populate({
             path: "attendees",
@@ -138,15 +137,14 @@ const populateMeetingRoom = (meetingRoom, user, res, next) => __awaiter(void 0, 
                 },
             ],
         });
-        console.log("CALLED**********", meetingRoom.meeting_type === "scheduled", (_a = meetingRoom === null || meetingRoom === void 0 ? void 0 : meetingRoom.meeting) === null || _a === void 0 ? void 0 : _a.participants.includes(user._id));
         if (meetingRoom.meeting_type === "scheduled" &&
-            ((_b = meetingRoom === null || meetingRoom === void 0 ? void 0 : meetingRoom.meeting) === null || _b === void 0 ? void 0 : _b.participants.includes(user._id))) {
+            (((_a = meetingRoom === null || meetingRoom === void 0 ? void 0 : meetingRoom.meeting) === null || _a === void 0 ? void 0 : _a.participants.find((partipant) => (partipant === null || partipant === void 0 ? void 0 : partipant._id.toString()) === user._id.toString())) ||
+                ((_c = (_b = meetingRoom === null || meetingRoom === void 0 ? void 0 : meetingRoom.meeting) === null || _b === void 0 ? void 0 : _b.host) === null || _c === void 0 ? void 0 : _c._id.toString()) === user._id.toString())) {
             const stats = yield (0, meeting_stats_controller_1.updateMeetingStats)({
                 action: "join_meeting",
                 roomId: `${meetingRoom._id}`,
                 userId: `${user._id}`,
             });
-            console.log("UPDATE STATS....", `${meetingRoom._id}`, `${user._id}`, stats);
             if (!stats)
                 return next(new utils_1.ErrorFormat("Fail to update meeting stats", 500));
         }

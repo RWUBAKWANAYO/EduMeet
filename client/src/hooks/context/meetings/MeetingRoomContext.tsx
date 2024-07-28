@@ -196,7 +196,6 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 		if (screenSharingId) {
 			handleScreenShareEnded();
 		} else {
-			if (!streamTrack.video) return alert("Please turn on your video");
 			navigator.mediaDevices
 				.getDisplayMedia({})
 				.then((newStream) => {
@@ -209,6 +208,7 @@ export const MeetingRoomProvider = ({ children }: { children: React.ReactNode })
 					setScreenStream(newStream);
 					if (currentPeer) {
 						setScreenSharingId(currentPeer.id);
+						setStreamTrack({ audio: true, video: true });
 						socket.emit("start-sharing", { peerId: currentPeer.id, roomId: meetingRoomId });
 					}
 				})
