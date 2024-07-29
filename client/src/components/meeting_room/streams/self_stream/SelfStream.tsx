@@ -4,13 +4,12 @@ import { ExpandScreenIcon, RecordIcon, SoundWaveIcon } from "../../../../assets/
 import { UIContext } from "../../../../hooks/context/UIContext";
 import { VideoPlayer } from "../video_player/VideoPlayer";
 import { useSelfStream } from "./useSelfStream";
-import { IUser } from "../../../../types/users.interface";
 import { IScreenRecorder } from "../../../../hooks/context/types";
 import { MessageDisplay } from "../../../shared/MessageDisplay";
 
 export const SelfStream: React.FC<IScreenRecorder> = ({ startTime, elapsedTime, isLoading }) => {
 	const { theme, isDesktop } = useContext(UIContext);
-	const { renderPeer, streamTrack, user, isExpanded, expandHandler } = useSelfStream();
+	const { renderPeer, isExpanded, expandHandler } = useSelfStream();
 
 	return (
 		<div
@@ -27,8 +26,8 @@ export const SelfStream: React.FC<IScreenRecorder> = ({ startTime, elapsedTime, 
 				<>
 					<VideoPlayer
 						stream={renderPeer().stream}
-						streamTrack={streamTrack}
-						user={user as IUser}
+						streamTrack={renderPeer().streamTrack}
+						user={renderPeer().user}
 						avatarSize="w-20 h-20"
 					/>
 					<div
@@ -58,7 +57,7 @@ export const SelfStream: React.FC<IScreenRecorder> = ({ startTime, elapsedTime, 
 					</div>
 					<div
 						className={`h-full absolute top-0 right-2 py-2 z-10 flex flex-col ${
-							streamTrack.audio ? "justify-between" : "justify-end"
+							renderPeer().streamTrack?.audio ? "justify-between" : "justify-end"
 						}`}
 					>
 						<CommonButton
@@ -68,7 +67,7 @@ export const SelfStream: React.FC<IScreenRecorder> = ({ startTime, elapsedTime, 
 							extraClass="font-semi-bold w-9 h-9 text-xs rounded-full border-none bg-gray-500 "
 							onClickHandler={expandHandler}
 						/>
-						{streamTrack.audio && (
+						{renderPeer().streamTrack?.audio && (
 							<CommonButton
 								type="button"
 								children={SoundWaveIcon}

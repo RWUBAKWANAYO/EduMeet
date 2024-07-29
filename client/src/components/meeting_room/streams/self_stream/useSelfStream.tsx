@@ -10,22 +10,20 @@ export const useSelfStream = () => {
 	const expandHandler = () => setIsExpanded(!isExpanded);
 
 	const renderPeer = useCallback(() => {
-		if (!screenSharingId) return { user, stream };
+		if (!screenSharingId) return { user, stream, streamTrack };
 		if (screenSharingId === user?._id) {
-			return { user, stream: screenStream };
+			return { user, stream: screenStream, streamTrack };
 		} else {
 			return { ...peers[screenSharingId] };
 		}
-	}, [peers, screenSharingId, screenStream, stream, user]);
+	}, [peers, screenSharingId, streamTrack, screenStream, stream, user]);
 
 	return useMemo(
 		() => ({
 			renderPeer,
-			streamTrack,
-			user,
 			isExpanded,
 			expandHandler,
 		}),
-		[renderPeer, streamTrack, isExpanded, expandHandler]
+		[renderPeer, streamTrack, user, isExpanded, expandHandler]
 	);
 };
